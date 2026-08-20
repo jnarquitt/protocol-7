@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0">
+<title>P7-AP01-M01 — The Ash Ledger — Player Briefing</title>
+<style>
+:root{
+  --bg:#0d0c0b; --bg2:#15120f; --card:#1b1713; --card-border:#3b3226;
+  --gold:#c99b2e; --gold-dim:#806423; --red:#8e1f1f; --red2:#be3b32;
+  --text:#eee7d8; --text-dim:#b9ae9b; --paper:#f0e4c8; --paper-text:#261d13;
+  --paper-border:#b79b63; --green:#4d7b56; --blue:#496778;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#0b0a09,#11100e 35%,#0b0a09);
+ color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+ line-height:1.5;padding-bottom:64px}
+a{color:var(--gold)}
+.container{max-width:900px;margin:0 auto;padding:0 12px}
+.hero{min-height:315px;display:flex;align-items:flex-end;border-bottom:4px solid var(--gold-dim);
+ background:
+ radial-gradient(circle at 72% 25%,rgba(190,59,50,.28),transparent 22%),
+ linear-gradient(135deg,#22140e 0%,#0a0908 48%,#281712 100%);
+ position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:-20% -5%;opacity:.24;
+ background:repeating-linear-gradient(112deg,transparent 0 22px,rgba(201,155,46,.3) 23px 24px,transparent 25px 50px);
+ transform:skewY(-8deg)}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.87))}
+.hero-inner{position:relative;z-index:1;padding:24px 18px 20px;width:100%;max-width:900px;margin:0 auto}
+.hero .kicker{text-transform:uppercase;letter-spacing:.14em;font-weight:900;color:var(--gold);font-size:.78rem}
+.hero h1{font-family:Georgia,"Times New Roman",serif;font-size:2.35rem;line-height:1.03;margin:5px 0;color:#fff;
+ text-shadow:0 2px 12px #000}
+.hero .subtitle{font-family:Georgia,serif;font-style:italic;color:var(--paper);font-size:1.02rem}
+.badges{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
+.badge{background:rgba(0,0,0,.62);border:1px solid var(--gold-dim);color:var(--gold);
+ padding:4px 10px;border-radius:20px;font-size:.76rem;white-space:nowrap}
+.navbar{position:sticky;top:0;z-index:50;background:rgba(13,12,11,.97);border-bottom:1px solid var(--card-border);backdrop-filter:blur(6px)}
+.navscroll{display:flex;gap:6px;overflow-x:auto;padding:9px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.navscroll::-webkit-scrollbar{display:none}
+.navscroll a{flex:0 0 auto;color:var(--text-dim);text-decoration:none;font-size:.8rem;padding:6px 11px;border-radius:16px;
+ border:1px solid var(--card-border);background:var(--card);white-space:nowrap;font-weight:750}
+.navscroll a.active,.navscroll a:active{background:var(--red);color:#fff;border-color:var(--red2)}
+section{padding:28px 0 10px;border-bottom:1px solid var(--card-border);scroll-margin-top:58px}
+section:last-of-type{border-bottom:none}
+.section-title{display:flex;align-items:center;gap:10px;font-family:Georgia,serif;color:var(--gold);
+ font-size:1.48rem;font-weight:800;border-bottom:2px solid var(--gold-dim);padding-bottom:8px;margin-bottom:16px}
+.section-title .num{background:var(--red);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+ justify-content:center;font-family:Georgia,serif;font-size:1rem;flex:0 0 auto}
+h3,h4,h5{font-family:Georgia,"Times New Roman",serif;color:var(--gold)}
+h3{margin-top:22px;margin-bottom:8px} h4{margin:0 0 6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:14px 16px;margin:10px 0}
+.card p:last-child{margin-bottom:0}
+.readaloud{background:var(--paper);color:var(--paper-text);border:1px solid var(--paper-border);border-left:6px solid var(--red);
+ border-radius:4px;padding:14px 16px;font-style:italic;font-family:Georgia,serif;margin:14px 0;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.readaloud .tag,.gmnote .tag,.pathnote .tag,.exposure .tag{display:block;font-style:normal;font-weight:900;font-size:.7rem;
+ letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+.readaloud .tag{color:var(--red)}
+.gmnote{background:rgba(77,123,86,.12);border:1px solid var(--green);border-radius:7px;padding:11px 14px;margin:10px 0;font-size:.93rem}
+.gmnote .tag{color:#91d29a}
+.pathnote{background:rgba(73,103,120,.15);border:1px solid var(--blue);border-radius:7px;padding:11px 14px;margin:10px 0;font-size:.93rem}
+.pathnote .tag{color:#9cc9dd}
+.exposure{background:rgba(190,59,50,.11);border:1px solid var(--red);border-radius:7px;padding:11px 14px;margin:10px 0;font-size:.93rem}
+.exposure .tag{color:#ff9189}
+.dc{display:inline-block;background:var(--red);color:#fff;font-size:.75rem;font-weight:900;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.pill-row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.pill{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:3px 9px;font-size:.76rem}
+.small{font-size:.82rem;color:var(--text-dim)}
+hr.divider{border:0;border-top:1px dashed var(--card-border);margin:22px 0}
+ul.checklist{list-style:none;padding-left:0}
+ul.checklist li{padding:5px 0 5px 28px;position:relative}
+ul.checklist li:before{content:"☐";position:absolute;left:0;color:var(--gold);font-size:1.1rem}
+table.ref{width:100%;border-collapse:collapse;margin:12px 0;font-size:.87rem}
+table.ref th,table.ref td{border:1px solid var(--card-border);padding:7px 8px;text-align:left;vertical-align:top;white-space:normal;word-break:normal}
+table.ref th{background:#211a13;color:var(--gold)}
+table.ref tr:nth-child(even){background:rgba(255,255,255,.025)}
+.tablewrap{overflow-x:auto;margin:12px 0;-webkit-overflow-scrolling:touch}
+details.statblock{background:var(--card);border:1px solid var(--card-border);border-radius:10px;margin:14px 0;overflow:hidden}
+details.statblock summary{cursor:pointer;padding:12px 16px;list-style:none;font-family:Georgia,serif;font-size:1.08rem;color:var(--gold);
+ background:linear-gradient(90deg,rgba(142,31,31,.26),transparent)}
+details.statblock summary::-webkit-details-marker{display:none}
+details.statblock summary .meta{font-size:.75rem;color:var(--text-dim);font-family:-apple-system,sans-serif;font-weight:500;margin-left:8px}
+.statblock-body{padding:0 16px 16px}
+.statline{margin:6px 0;font-size:.92rem}.statline b{color:var(--gold)}
+.flow{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:10px 0;font-size:.8rem}
+.flow span{background:var(--card);border:1px solid var(--card-border);padding:4px 8px;border-radius:6px}
+.flow .arrow{color:var(--gold);border:0;background:none;padding:0 2px}
+.tracker{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:8px 0}
+.tracker div{border:1px solid var(--card-border);background:#14110e;padding:8px 5px;text-align:center;border-radius:6px;font-size:.75rem}
+.back-top{position:fixed;bottom:16px;right:16px;background:var(--red);color:#fff;width:44px;height:44px;border-radius:50%;
+ display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.55);z-index:40;font-size:1.2rem}
+footer{text-align:center;padding:28px 14px;color:var(--text-dim);font-size:.8rem}
+@media(max-width:480px){
+ .hero{min-height:285px}.hero h1{font-size:2rem}.section-title{font-size:1.3rem}
+ table.ref{font-size:.78rem}.tracker{grid-template-columns:1fr}
+}
+@media print{
+ .navbar,.back-top{display:none}.hero{min-height:auto;background:#111}.container{max-width:none}
+ body{background:#fff;color:#111}.card,details.statblock{background:#fff;color:#111}
+ section{break-inside:auto}.readaloud{box-shadow:none}
+}
+
+.handout{max-width:760px;margin:0 auto;padding:20px 12px 60px}
+.handout h2{font-family:Georgia,serif;color:var(--gold)}
+</style></head><body>
+<header class="hero"><div class="hero-inner"><div class="kicker">PROTOCOL 7 · P7-AP01-M01</div>
+<h1>The Ash Ledger</h1><div class="subtitle">Player Briefing / Apocryphon</div>
+<div class="badges"><span class="badge">San Francisco · April 1906</span><span class="badge">Rules target v0.180 PRE-BETA</span></div></div></header>
+<div class="handout">
+<h2>Apocryphon</h2>
+<div class="readaloud">At six past the falling hour, the woman with the blue pencil counts what the fire will erase. Brick remembers weight. Mud remembers water. A ledger crosses the bay twice, though no ferry carries it. When the third copy is made, seven men stop asking whether the city fell and begin asking why it stood.</div>
+<h2>Known Mission Constraint</h2>
+<p>Aletheia has identified a historical discontinuity connected to the aftermath of the 1906 San Francisco earthquake. The disaster itself is not the target. Something that should survive the disaster does not.</p>
+<h2>Insertion</h2>
+<p>South of Market, shortly after dawn. Period clothing, ordinary currency, and basic cover materials are prepared. Extraction is provisionally scheduled for the Ferry Building south arcade at 23:40 local.</p>
+<h2>Vector Questions</h2>
+<ul><li>What does your Vector think “the third copy” means?</li><li>What cover role can you plausibly hold in a city under emergency conditions?</li><li>What kind of future technology would you refuse to risk in public, even to save a life?</li></ul>
+</div></body></html>
