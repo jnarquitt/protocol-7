@@ -1,0 +1,1104 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Protocol 7 Interactive Mobile Character Sheet v0.187</title>
+<style>
+.vam-category-tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.vam-category-tab{white-space:nowrap;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:10px;padding:9px 10px;font-weight:900}
+.vam-category-tab.active{background:var(--red);border-color:var(--gold);color:#fff}
+.vam-bar-jumps{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
+.vam-bar-jump{white-space:nowrap;border:1px solid var(--gold);background:#0d0a08;color:var(--gold2);border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:900}
+.vam-tier{margin:12px 0 16px}
+.vam-tier-header{position:sticky;top:124px;z-index:12;background:var(--red);color:#fff;border:1px solid var(--gold);border-radius:10px;padding:8px 10px;margin:0 0 7px;font-weight:1000;box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.vam-tier-header .small{color:#f4e8cb}
+.vam-count{float:right;color:var(--gold2)}
+
+:root{--bg:#100d0b;--panel:#1a1511;--panel2:#241b14;--ink:#f5efe1;--muted:#c9bda7;--red:#a92720;--red2:#6f1815;--gold:#c49a27;--gold2:#e1bc50;--line:#4b3a29;--good:#9bd19e;--bad:#ef9b8b}
+*{box-sizing:border-box}html{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:18px}body{margin:0;padding-bottom:88px}
+header{position:sticky;top:0;z-index:20;background:rgba(16,13,11,.97);border-bottom:2px solid var(--gold)}
+.head{padding:10px 12px 7px;max-width:900px;margin:auto}.title{display:flex;align-items:end;justify-content:space-between;gap:8px}.title h1{font-size:1.18rem;margin:0;color:#fff}.title small{color:var(--gold2);font-size:.72rem}.save{font-size:.68rem;color:var(--good)}
+.meters{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}.meter{background:var(--panel2);border:1px solid var(--line);border-radius:9px;text-align:center;padding:5px 2px}.meter b{display:block;color:var(--gold2);font-size:.95rem}.meter span{font-size:.58rem;color:var(--muted);text-transform:uppercase}
+.tabs{display:flex;overflow-x:auto;gap:4px;padding:0 8px 8px;scrollbar-width:none}.tabs button{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 11px;border-radius:10px;font-weight:800}.tabs button.active{background:var(--red);border-color:var(--gold);color:#fff}
+main{max-width:900px;margin:auto;padding:10px}.tab{display:none}.tab.active{display:block}h2{font-size:1.35rem;margin:6px 0 10px;color:var(--gold2);border-bottom:2px solid var(--red);padding-bottom:5px}h3{font-size:1rem;color:#fff;margin:12px 0 7px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px;margin:9px 0}.soft{background:var(--panel2)}.grid{display:grid;gap:8px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+label{display:block;color:var(--gold2);font-size:.72rem;font-weight:850;margin-bottom:4px}input,select,textarea{width:100%;background:#0d0a08;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit}textarea{min-height:90px;resize:vertical}
+.btn{border:1px solid var(--line);background:#2a2119;color:var(--ink);border-radius:11px;padding:10px 12px;font-weight:850;min-height:44px}.btn.primary{background:var(--red);border-color:var(--gold)}.btn.gold{background:var(--gold);color:#1a1208}.btn.danger{background:#4a1713}.row{display:flex;gap:7px;flex-wrap:wrap}.row>*{flex:1}
+.hint,.small{color:var(--muted);font-size:.76rem;line-height:1.35}.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 7px;font-size:.68rem;margin:2px}.pool{font-weight:850;color:#fff;line-height:1.45}.die{color:var(--gold2)}
+.skill{display:grid;grid-template-columns:1fr 150px;gap:7px;align-items:center;padding:8px 0;border-bottom:1px solid #34291f}
+.skill-buy{display:grid;grid-template-columns:42px 56px 42px;gap:5px;align-items:center}
+.skill-buy button{min-height:42px;padding:0;font-size:1.15rem}
+.skill-ranks{text-align:center;font-weight:900;color:var(--gold2);font-size:.9rem}
+.skill-die{text-align:center;color:#fff;font-size:.72rem;margin-top:2px}
+.skill-cap{font-size:.64rem;color:var(--muted);text-align:center}
+.skill-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;margin-top:6px}
+.pin-skill{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;color:var(--muted);white-space:nowrap}
+.pin-skill input{width:18px;height:18px}
+.skill-subtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:9px 0 10px}
+.skill-subtab{border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:11px;padding:10px 6px;font-weight:900;min-height:44px}
+.skill-subtab.active{background:var(--red);border-color:var(--gold);color:#fff}
+.skill-pool-preview{margin-top:5px;padding:6px 7px;border-left:3px solid var(--gold);background:#0d0a08;border-radius:6px;font-size:.72rem;line-height:1.35}
+.skill-pool-preview b{color:var(--gold2)}
+.skill:last-child{border-bottom:0}.skill-name{font-weight:850}.skill-use{font-size:.68rem;color:var(--muted)}.ability-card{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #34291f}.ability-card:last-child{border-bottom:0}.ability-title{font-weight:900;color:#fff}.ability-title span{color:var(--gold2)}.ability-desc{font-size:.72rem;color:var(--muted);line-height:1.35;margin-top:3px}.ability-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:6px}.ability-picker button{min-height:42px;padding:7px 4px}.ability-picker button.chosen{background:var(--gold);color:#171006;border-color:var(--gold2)}.ability-picker button.unavailable{opacity:.35}.dice-tray{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.traydie{border:1px solid var(--gold);background:#17110c;border-radius:10px;padding:8px;text-align:center}.traydie b{display:block;color:var(--gold2);font-size:1.05rem}.traydie span{font-size:.66rem;color:var(--muted)}
+.check{display:flex;gap:8px;align-items:flex-start;padding:8px;border:1px solid var(--line);border-radius:10px;margin:6px 0;background:#120e0b}.check input{width:22px;height:22px;flex:0 0 auto}.check b{color:var(--gold2)}.over{color:var(--bad)!important}
+.bar-meter{display:flex;gap:3px;flex-wrap:wrap}.bar{height:20px;min-width:13px;flex:1;border:1px solid #705d3e;background:#221b14;border-radius:3px}.bar.on{background:var(--gold)}
+.action{display:grid;grid-template-columns:1fr auto;gap:7px;padding:8px 0;border-bottom:1px solid #34291f}
+.play-item{padding:8px 0;border-bottom:1px solid #34291f}.play-item:last-child{border-bottom:0}.play-item b{color:var(--gold2)}
+.step-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #34291f}
+.step-row:last-child{border-bottom:0}.step-buttons{display:flex;gap:5px;align-items:center}.step-buttons button{min-width:42px}
+.step-effect{font-size:.69rem;color:var(--muted);margin-top:2px}.step-active{color:var(--gold2);font-weight:900}
+.era-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.era-panel{background:#0d0a08;border:1px solid var(--line);border-radius:11px;padding:10px}
+.era-value{font-weight:900;color:var(--gold2);font-size:1rem;padding:8px 0}
+.rule-subtabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 9px;scrollbar-width:none}
+.rule-subtab{white-space:nowrap;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:10px;padding:9px 10px;font-weight:900}
+.rule-subtab.active{background:var(--red);border-color:var(--gold);color:#fff}
+.rule-ref{font-size:.62rem;color:var(--gold2);text-transform:uppercase;letter-spacing:.03em;margin-top:7px}
+.rule-step{padding:7px 0;border-bottom:1px solid #34291f}.rule-step:last-child{border-bottom:0}
+.rule-step b{color:var(--gold2)}
+.rule-table{width:100%;border-collapse:collapse;font-size:.74rem;margin-top:6px}
+.rule-table td,.rule-table th{border-bottom:1px solid #34291f;padding:6px 5px;vertical-align:top}
+.rule-table th{text-align:left;color:var(--gold2)}
+.rule-key{display:inline-block;border:1px solid var(--gold);border-radius:6px;padding:1px 5px;color:var(--gold2);font-weight:900}
+.die-chip{display:inline-block;border-radius:7px;padding:2px 6px;margin:1px 2px;font-weight:900;border:1px solid rgba(255,255,255,.28);color:#fff}
+.die-ability{background:#7a1f1f}
+.die-skill{background:#8a6b16}
+.die-weapon{background:#3f5575}
+.die-tool{background:#49613e}
+.dice-legend{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.dice-legend .die-chip{font-size:.68rem}.ability-symbol{font-weight:1000;font-size:1.05em;display:inline-block;min-width:1em;text-align:center}.roller{background:#0b0907;border:1px solid var(--gold);border-radius:12px;padding:10px;margin-top:8px}.result{font-size:1.5rem;font-weight:900;color:var(--gold2)}.faces{font-size:.8rem;color:var(--muted)}
+.sticky{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(0deg,#100d0b 78%,transparent);padding:14px 10px 10px;z-index:30}.stickyin{max-width:900px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hidden{display:none!important}.warn{color:var(--bad)}.ok{color:var(--good)}.file{display:none}
+@media(max-width:520px){html{font-size:17px}.era-grid{grid-template-columns:1fr}.two,.three{grid-template-columns:1fr}.meters{grid-template-columns:repeat(5,1fr)}.card{padding:10px}.skill{grid-template-columns:1fr}.skill-buy{grid-template-columns:48px 1fr 48px}.skill-buy button{min-height:46px}}
+.danger-zone{border:1px solid #7a1f1f;background:#241616}.danger-zone h3{color:#ffb0a6}
+
+.help-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;min-width:28px;border-radius:50%;border:1px solid var(--gold);background:#0e0b09;color:var(--gold2);font-weight:1000;font-size:.9rem;padding:0;margin-left:5px;vertical-align:middle}
+.help-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.72);padding:12px;align-items:flex-end;justify-content:center}
+.help-modal.open{display:flex}.help-sheet{width:min(720px,100%);max-height:84vh;overflow:auto;background:var(--panel);border:2px solid var(--gold);border-radius:16px 16px 8px 8px;padding:15px;box-shadow:0 -8px 30px rgba(0,0,0,.5)}
+.help-body{font-size:.96rem;line-height:1.48}.help-body p{margin:9px 0}.help-body .help-meta{color:var(--gold2);font-weight:900}.help-body .help-rule{border-top:1px solid var(--line);padding-top:9px;margin-top:10px}
+
+.play-status{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:7px 0}.play-status .meter{padding:7px 3px}.play-section-title{margin:11px 0 3px;padding:6px 8px;background:#0d0a08;border-left:4px solid var(--gold);border-radius:6px;color:var(--gold2);font-size:.78rem;font-weight:1000;text-transform:uppercase;letter-spacing:.03em}.play-details{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin:9px 0;overflow:hidden}.play-details summary{cursor:pointer;list-style:none;padding:12px;color:#fff;font-weight:900}.play-details summary::-webkit-details-marker{display:none}.play-details summary:after{content:"+";float:right;color:var(--gold2)}.play-details[open] summary:after{content:"-"}.play-details-body{padding:0 11px 11px}.play-priority{border-color:var(--gold)}
+@media(max-width:520px){.play-status{grid-template-columns:repeat(3,1fr)}}
+
+.inline-roll-result{min-width:112px;max-width:155px;border:1px solid var(--line);background:#120f0c;border-radius:8px;padding:6px 7px;text-align:center;line-height:1.15}
+.inline-roll-result .inline-total{font-size:1.05rem;font-weight:1000;color:var(--gold2)}
+.inline-roll-result .inline-faces{font-size:.61rem;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.pool-roll-controls{display:flex;align-items:center;gap:6px;flex-shrink:0}
+@media(max-width:520px){.inline-roll-result{min-width:96px;max-width:120px}.pool-roll-controls{gap:4px}.pool-roll-controls .btn{padding:8px 9px}}
+
+.gear-choice-wrap{margin-top:7px;padding-top:7px;border-top:1px solid #34291f}
+.gear-choice-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.gear-choice{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#120f0c;border-radius:999px;padding:6px 9px;font-size:.69rem;font-weight:800}
+.gear-choice input{width:16px;height:16px;margin:0}
+
+/* v0.180 mobile viewport: browser sheet should open at useful phone width without pinch-zooming */
+:root{
+  --mobile-gutter: 8px;
+}
+html,body{
+  width:100%;
+  max-width:100%;
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+}
+body{
+  box-sizing:border-box;
+}
+.wrap, .app, main, .shell, .container{
+  width:100%;
+  max-width:none;
+  box-sizing:border-box;
+}
+.wrap{
+  margin:0 auto !important;
+  padding-left:var(--mobile-gutter) !important;
+  padding-right:var(--mobile-gutter) !important;
+}
+@media (max-width: 700px){
+  :root{ --mobile-gutter: 6px; }
+  .wrap{
+    width:100% !important;
+    max-width:none !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+  .card{
+    max-width:100%;
+    box-sizing:border-box;
+  }
+}
+@supports (padding: max(0px)){
+  .wrap{
+    padding-left:max(var(--mobile-gutter), env(safe-area-inset-left)) !important;
+    padding-right:max(var(--mobile-gutter), env(safe-area-inset-right)) !important;
+  }
+}
+
+.vam-category-tab,.vam-bar-jump{touch-action:manipulation;-webkit-tap-highlight-color:rgba(179,139,40,.22)}
+/* v0.180 Gear subtab contrast fix */
+.gear-subtabs{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:3px 0 9px;
+}
+.gear-subtabs button{
+  flex:0 0 auto;
+  background:#17120e !important;
+  color:#f6e7b5 !important;
+  border:1px solid #9b7725 !important;
+  border-radius:9px;
+  padding:9px 11px;
+  font-size:.74rem;
+  font-weight:900;
+  letter-spacing:.03em;
+  box-shadow:none;
+  opacity:1 !important;
+  -webkit-appearance:none;
+  appearance:none;
+  touch-action:manipulation;
+}
+.gear-subtabs button.active{
+  background:#8b1e1e !important;
+  color:#ffffff !important;
+  border-color:#d7aa39 !important;
+  box-shadow:inset 0 0 0 1px #d7aa39;
+}
+.gear-subtabs button:focus-visible{
+  outline:2px solid #f1c552;
+  outline-offset:2px;
+}
+
+
+.mission-phase-tabs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 0 8px}.mission-phase{flex:0 0 auto;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:9px;padding:8px 9px;font-weight:850;white-space:nowrap;touch-action:manipulation}.mission-phase.active{background:var(--red);color:#fff;border-color:var(--gold)}.mission-outcome{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel2)}.mission-outcome.good{border-color:#7b9b69}.mission-outcome.warn{border-color:var(--gold)}.mission-outcome.bad{border-color:#b93b31}
+.era-profile-note{margin-top:8px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:#15100c}.era-load-list{margin-top:6px;display:grid;gap:3px}.era-load-item{padding-left:12px;position:relative}.era-load-item:before{content:"•";position:absolute;left:0;color:var(--gold2)}
+/* v0.187 visual-usability layer */
+:root{--bg:#151414;--panel:#211d1d;--panel2:#2b2523;--red:#9f302f;--red2:#6f2525;--gold:#c8a655;--gold2:#ead080;--line:#554944;--muted:#cbbfae;--shadow:0 13px 34px rgba(0,0,0,.24)}
+body{background:radial-gradient(circle at 85% -8%,rgba(159,48,47,.15),transparent 31rem),linear-gradient(150deg,#141313,#1a1616 58%,#121212);letter-spacing:.005em}
+header{background:rgba(22,20,20,.95);backdrop-filter:blur(14px);box-shadow:0 8px 28px rgba(0,0,0,.28)}
+.head{max-width:1120px;padding:13px 16px 9px}.title h1{font:950 1.22rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em}.title small{display:block;margin-top:5px;letter-spacing:.06em}
+.meters{gap:8px}.meter{background:linear-gradient(145deg,#302925,#231f1e);border-color:#67574d;padding:7px 4px}.meter b{font-size:1.02rem}.meter span{letter-spacing:.08em}
+.tabs{max-width:1120px;margin:auto;padding:0 14px 10px;gap:6px}.tabs button{border-radius:999px;padding:9px 13px;font-size:.76rem;letter-spacing:.02em}.tabs button.active{box-shadow:inset 0 0 0 1px var(--gold2),0 4px 12px #0005}
+main{max-width:1120px;padding:19px 16px 100px}h2{font:950 1.55rem/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:-.025em;margin-top:10px;padding-bottom:9px}h3{font-size:1.04rem}
+.card{background:linear-gradient(145deg,rgba(39,33,31,.98),rgba(29,26,25,.98));border-color:#5c4d45;border-radius:17px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}.card .card{box-shadow:none;background:#181616}.soft{background:linear-gradient(145deg,#302925,#24201e)}
+input,select,textarea{background:#141313;border-color:#6b5a50;padding:12px 13px}input:hover,select:hover,textarea:hover{border-color:#9b7b4e}input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid rgba(234,208,128,.42);outline-offset:2px}
+.btn{background:#332c29;border-color:#6a594f;transition:transform .15s,border-color .15s,background .15s}.btn:hover{transform:translateY(-1px);border-color:var(--gold)}.btn.primary{background:linear-gradient(135deg,var(--red),var(--red2))}.btn.gold{background:linear-gradient(135deg,var(--gold2),var(--gold))}
+.skill,.ability-card,.action,.play-item,.step-row{padding-block:11px}.skill-pool-preview,.play-section-title,.era-panel{background:#171515}.pool{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.die-chip{padding:4px 7px}
+.sticky{background:linear-gradient(0deg,#191717 76%,transparent);padding-bottom:max(11px,env(safe-area-inset-bottom))}.stickyin{max-width:1120px}
+.help-sheet{background:#25211f;box-shadow:0 -15px 55px #000b}
+@media(min-width:760px){.tab.active{animation:p7rise .18s ease-out}@keyframes p7rise{from{opacity:.25;transform:translateY(7px)}to{opacity:1;transform:none}}}
+@media(max-width:700px){html{font-size:16px}.head{padding:10px 10px 7px}.title h1{font-size:1.03rem}.title small{font-size:.61rem}.tabs{padding-inline:9px}.tabs button{min-height:42px}.meters{gap:4px}.meter{padding:5px 2px}.meter span{font-size:.49rem}main{padding:11px 9px 94px}.card{padding:12px;border-radius:14px}.row>.btn{min-width:130px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><div class="head"><div class="title"><h1>PROTOCOL 7 <small>Interactive Vector Sheet • PRE-BETA v0.187</small></h1><div id="saveStatus" class="save">autosaved</div></div>
+<div class="meters"><div class="meter"><b id="mBuild">0/6</b><span>Abilities</span></div><div class="meter"><b id="mHP">—</b><span>HP</span></div><div class="meter"><b id="mAP">3</b><span>AP</span></div><div class="meter"><b id="mBars">0/16</b><span>BAR</span></div><div class="meter"><b id="mExp">0</b><span>Exposure</span></div></div></div>
+<nav class="tabs" id="tabs"></nav></header>
+<main>
+<section class="tab active" id="tab-start"><h2>Start Here</h2><div class="card danger-zone">
+<h3>Current Character</h3>
+<p class="small">Erase the character currently stored on this device and return to a completely blank Vector.</p>
+<button class="btn danger" onclick="resetAll()">CLEAR CURRENT CHARACTER</button>
+</div>
+<div class="card"><h3>Choose a Starting Configuration</h3>
+<p class="small">Choose a complete starting configuration or build your own Vector. A complete configuration assigns Abilities, spends all 20 Skill Ranks, loads its VAM package, sets its recommended Path, and pins a small set of useful untrained Skills to Play. Gear is selected separately by era.</p>
+<label>Starting Configuration</label>
+<select id="startPreset" onchange="chooseStartingPreset(this.value)"></select>
+<div id="startPresetSummary" class="small" style="margin-top:7px"></div>
+<button id="beginCreationBtn" type="button" class="btn primary" style="width:100%;margin-top:9px" onclick="beginCreation(event)">BEGIN CHARACTER CREATION</button>
+<div id="beginCreationStatus" class="small" style="margin-top:7px"></div>
+</div>
+<div class="card"><h3>Build a Vector</h3><p class="hint">This sheet is self-contained and works offline. Your choices feed the Play tab automatically.</p>
+<div class="check"><span>•</span><div><b>Abilities</b><div class="small">You receive two d8s, two d6s, and two d4s. Assign exactly one die to each Ability.</div></div></div>
+<button class="btn gold" style="width:100%;font-size:1.05rem;margin:8px 0 10px" onclick="showTab('abilities')">ASSIGN ABILITY DICE NOW</button><div class="card soft"><h3>The Six Abilities</h3><div class="ability-card"><div><div class="ability-title">Strength <span>(STR)</span></div><div class="ability-desc">Force, leverage, endurance under load, and physical control.</div></div><div class="pill">Ability</div></div><div class="ability-card"><div><div class="ability-title">Dexterity <span>(DEX)</span></div><div class="ability-desc">Coordination, speed, fine manipulation, balance, and precise movement.</div></div><div class="pill">Ability</div></div><div class="ability-card"><div><div class="ability-title">Constitution <span>(CON)</span></div><div class="ability-desc">Stamina, toughness, recovery, and bodily resistance.</div></div><div class="pill">Ability</div></div><div class="ability-card"><div><div class="ability-title">Intelligence <span>(INT)</span></div><div class="ability-desc">Analysis, technical reasoning, memory, and deduction.</div></div><div class="pill">Ability</div></div><div class="ability-card"><div><div class="ability-title">Wisdom <span>(WIS)</span></div><div class="ability-desc">Awareness, judgment, intuition, and composure.</div></div><div class="pill">Ability</div></div><div class="ability-card"><div><div class="ability-title">Charisma <span>(CHA)</span></div><div class="ability-desc">Presence, rapport, persuasion, deception, and command.</div></div><div class="pill">Ability</div></div></div>
+<div class="check"><span>•</span><div><b>Skills</b><div class="small">Spend 20 Skill Ranks. The sheet calculates Skill dice.</div></div></div>
+<div class="check"><span>•</span><div><b>VAMs</b><div class="small">Load up to 16 BAR. BAR is capacity, not charge.</div></div></div>
+<div class="check"><span>•</span><div><b>Gear</b><div class="small">Select mission equipment. Future devices can create Exposure.</div></div></div>
+<div class="check"><span>•</span><div><b>Hit Points</b><div class="small">Maximum HP is based on Constitution: CON die maximum × 3. No HP roll is required.</div></div></div><div class="check"><span>•</span><div><b>Play</b><div class="small">Complete pools are ready on the Roller tab; Play holds your turn controls, VAMs, gear, and current effects.</div></div></div></div>
+<div class="card soft"><b>Protocol Dice</b><p class="small">Roll the whole pool. Results 1–3 are blank. Results 4+ score at face value. Standard pool: three associated Ability dice + Skill die + relevant gear, Help, advantage, or VAM.</p></div></section>
+
+<section class="tab" id="tab-play"><h2>Play</h2>
+<div class="card soft play-priority"><div class="two grid"><div><label>Vector</label><div id="playName" class="pool">Unnamed Vector</div></div><div><label>At a Glance</label><div class="small">HP, AP, BAR, and Exposure remain visible in the header while you scroll.</div></div></div>
+<div class="play-status"><div class="meter"><b id="playReactionState">Ready</b><span>Reaction</span></div><div class="meter"><b id="playNextAP">3</b><span>Next Turn AP</span></div><div class="meter"><b id="playPoolCount">0</b><span>Roller Pools</span></div></div></div>
+<div class="card play-priority"><h3>Turn Controls</h3>
+<div class="play-status" style="margin-bottom:8px"><div class="meter"><b id="turnCurrentAP">3</b><span>Current AP</span></div><div class="meter"><b id="turnReactionState">Ready</b><span>Reaction</span></div><div class="meter"><b id="turnNextAP">3</b><span>Next Turn AP</span></div></div>
+<div class="row"><button type="button" class="btn" onclick="adjustAP(-1)">Spend 1 AP</button><button type="button" class="btn" onclick="adjustAP(1)">Restore 1 AP</button><button type="button" class="btn" id="reactionBtn" onclick="useReaction()">Use Reaction</button></div>
+<div class="row" style="margin-top:7px"><button class="btn gold" onclick="useReactionAP()">Reaction + Spend 1 AP</button><button class="btn" onclick="startNextTurn()">START NEXT TURN</button></div><div id="reactionDebtNote" class="small" style="margin-top:7px"></div>
+<div id="actions"></div></div>
+
+<details class="play-details" open><summary>Loaded VAM Options</summary><div class="play-details-body"><div id="playVams"></div></div></details>
+<details class="play-details"><summary>Equipped Gear</summary><div class="play-details-body"><div id="playGear"></div></div></details>
+<details class="play-details"><summary>Ability Die Step Effects</summary><div class="play-details-body"><p class="small"><b>Change a specific Ability die before pools are built.</b> Use these controls for injuries, exhaustion, toxins, augmentation, or other temporary or persistent effects.</p><div id="abilityStepControls"></div><div class="row" style="margin-top:8px"><button class="btn" onclick="clearAbilitySteps()">CLEAR STEP EFFECTS</button></div></div></details>
+<details class="play-details"><summary>Dice &amp; Ability Reference</summary><div class="play-details-body"><h3>Ability Symbol Key</h3><div class="dice-legend"><span class="die-chip die-ability"><span class="ability-symbol">◆</span> STR</span><span class="die-chip die-ability"><span class="ability-symbol">➤</span> DEX</span><span class="die-chip die-ability"><span class="ability-symbol">●</span> CON</span><span class="die-chip die-ability"><span class="ability-symbol">■</span> INT</span><span class="die-chip die-ability"><span class="ability-symbol">✦</span> WIS</span><span class="die-chip die-ability"><span class="ability-symbol">♥</span> CHA</span></div><p class="small">◆ Strength, ➤ Dexterity, ● Constitution, ■ Intelligence, ✦ Wisdom, ♥ Charisma.</p><h3>Dice Color Key</h3><div class="dice-legend"><span class="die-chip die-ability">Ability</span><span class="die-chip die-skill">Skill</span><span class="die-chip die-weapon">Weapon</span><span class="die-chip die-tool">Tool / Armor</span></div><p class="small">Color shows where a die comes from. Die size shows which physical die to roll.</p></div></details>
+</section>
+
+<section class="tab" id="tab-vector"><h2>Vector</h2><div class="card grid two"><div><label>Vector Name</label><input data-key="name"></div><div><label>Discipline / Path</label><input data-key="discipline" placeholder="Preconfigured path or your own recommended path"><div id="pathSource" class="small" style="margin-top:4px"></div></div></div><div class="card"><label>Notes / Cover Identity</label><textarea data-key="notes"></textarea></div>
+<div class="card"><button id="finishCharacterBtn" type="button" class="btn gold" style="width:100%;font-size:1.05rem" onclick="finishCharacter(event)">SAVE CHARACTER &amp; GO TO PLAY</button><div id="finishStatus" class="small" style="margin-top:7px"></div></div>
+</section><section class="tab" id="tab-abilities"><h2>Abilities</h2><div class="card"><h3>Ability Symbol Key</h3>
+<div class="dice-legend">
+<span class="die-chip die-ability"><span class="ability-symbol">◆</span> STR</span>
+<span class="die-chip die-ability"><span class="ability-symbol">➤</span> DEX</span>
+<span class="die-chip die-ability"><span class="ability-symbol">●</span> CON</span>
+<span class="die-chip die-ability"><span class="ability-symbol">■</span> INT</span>
+<span class="die-chip die-ability"><span class="ability-symbol">✦</span> WIS</span>
+<span class="die-chip die-ability"><span class="ability-symbol">♥</span> CHA</span>
+</div>
+<p class="small">All Ability dice share the dark-red color. The symbol tells you which Ability supplied that die: ◆ Strength, ➤ Dexterity, ● Constitution, ■ Intelligence, ✦ Wisdom, and ♥ Charisma. The d4/d6/d8/etc. still tells you which physical die to roll.</p></div>
+<div class="card soft"><b>How this works</b><p class="small">You have exactly six dice to assign: <b>two d8s, two d6s, and two d4s</b>. Each Ability gets exactly one die. Tap one of the three die buttons under an Ability. The remaining-dice tray updates immediately.</p></div>
+<div class="card"><h3>Assign Ability Dice</h3>
+<p class="small"><b>You have exactly six Ability dice:</b> two d8s, two d6s, and two d4s. Give exactly one die to each Ability. If you chose a full preconfiguration on Start Here, these dice are already assigned for that path and you may change them if you want.</p>
+<div id="abilityTray" class="dice-tray"></div>
+<div id="abilities"></div>
+<p id="abilityCheck" class="small"></p>
+<div class="row"><button class="btn" onclick="clearAbilities()">Clear Assignments</button></div>
+<div class="roller" style="margin-top:9px"><div class="result" id="abilityHPPreview">CON-based HP</div><div class="faces">Maximum HP = CON die maximum × 3: d4 12 • d6 18 • d8 24 • d10 30 • d12 36.</div></div>
+<div class="card soft" style="margin:10px 0 0"><b>HP and Constitution</b><p class="small">Constitution sets maximum HP. If CON changes during play, maximum HP changes while damage already taken is preserved. There is no separate Strength-based HP advancement rule.</p></div></div>
+</section>
+
+<section class="tab" id="tab-skills"><h2>Skills</h2>
+<div class="card soft"><p class="small" style="margin-top:0"><b>Buy Skills with your 20 starting Skill Ranks.</b> Every Skill also has a <b>Roll</b> button, so you can immediately use trained or untrained Skills from this tab. An untrained Skill uses a d4 Skill die. Use <b>Pin to Roller</b> when you want an untrained Skill to remain visible on the Roller tab for quick access.</p><p class="small"><b>Buy Skills with your 20 starting Skill Ranks.</b> A full Start Here preconfiguration spends all 20 ranks for you; you may still adjust them. Choose General, Combat, or Defense below. Every Skill shows the current dice for its three associated Abilities plus the current Skill die, so you can see the base pool before spending ranks.</p>
+<div class="row"><div><b id="skillSpent">0</b><div class="small">Ranks spent</div></div><div><b id="skillRemain">20</b><div class="small">Remaining</div></div></div></div>
+<div id="skillSubtabs" class="skill-subtabs"></div><div id="skills"></div>
+<div id="skillsRollResult" class="roller"><div class="result">Skill Roller Ready</div><div class="faces">Tap Roll beside any Skill. Untrained Skills use d4.</div></div>
+<div class="card"><div id="skillsNextHint" class="small"></div><button id="skillsNextBtn" class="btn primary" style="width:100%;margin-top:8px" onclick="nextAfterSkills()">CONTINUE CHARACTER CREATION</button></div>
+</section>
+
+<section class="tab" id="tab-vams"><h2>VAMs</h2><div class="card"><h3>Biocognitive Augmentation Rating (BAR)</h3>
+<p class="small"><b>Biocognitive Augmentation Rating (BAR)</b> is the standard measure of the processing, integration, and neural-interface capacity required to operate a VAM. Each VAM has a BAR value representing how much of a Vector's available augmentation capacity it occupies while loaded. A standard Vector implant supports up to <b>16 BAR</b> of active VAMs.</p>
+<p class="small"><b>BAR measures capacity, not energy.</b> A 4-BAR VAM occupies four points of the implant's available augmentation architecture while loaded; it does not consume four units of power. Unloading the VAM makes that capacity available again.</p></div>
+<div class="card"><label>Preconfigured VAM Loadout</label><select id="vamPreset" onchange="loadPreset(this.value)"></select><p class="small">This VAM-tab selector changes only the loaded VAMs. Full preconfigured Abilities, Skills, and Path are chosen from <b>Start Here</b>.</p></div>
+<div class="card"><div class="row"><div><b id="barsUsed">0 / 16 BAR</b><div class="small">Biocognitive Augmentation Rating</div></div><button class="btn" onclick="clearVams()">Clear Load</button></div><div id="barMeter" class="bar-meter"></div><p class="small"><b>Loading a VAM into unused BAR capacity is free.</b> During play, replacing one or more already-loaded VAMs is a <b>1 AP field swap</b>. The whole swap costs 1 AP, not 1 AP per VAM.</p></div>
+<div class="card"><h3>Browse VAMs</h3><div id="vamCategoryTabs" class="vam-category-tabs"></div><div id="vamBarJumps" class="vam-bar-jumps"></div><p class="small">Choose a category, then jump directly to a BAR tier. As you scroll, the current BAR tier stays visible.</p></div>
+<div id="vams"></div></section>
+
+<section class="tab" id="tab-gear"><h2>Gear</h2><div class="card soft"><h3>Era-Neutral Equipment Grammar</h3><p class="small">Equipment is described by what it does in play, then expressed through an era-appropriate object. A dagger, compact pistol, and future compact sidearm can all be <b>Concealable Weapons</b> without becoming the same fiction. One primary gear item normally contributes to a Skill roll.</p><div class="small"><b>Templates:</b> Concealable Weapon • Melee Weapon • Service Ranged Weapon • Precision Weapon • Area/Automatic Weapon • Heavy Weapon • Protective Armor • Specialist Tool.</div></div>
+<div class="card"><div class="era-grid">
+<div class="era-panel"><label>Chosen Configuration</label><div id="gearConfig" class="era-value">Custom</div><div class="small">This follows the full preconfiguration chosen on Start Here.</div></div>
+<div class="era-panel"><label>Mission Era</label><select id="gearEra" onchange="setGearEra(this.value)"><option value="1900s">1900s</option><option value="1910s">1910s</option><option value="1920s">1920s</option><option value="1930s">1930s</option><option value="1940s">1940s</option><option value="1950s">1950s</option><option value="1960s">1960s</option><option value="1970s">1970s</option><option value="1980s">1980s</option><option value="1990s">1990s</option><option value="2000s">2000s</option><option value="2010s">2010s</option><option value="2020s">2020s</option></select><div id="gearEraProfile" class="small" style="margin-top:7px"></div></div>
+</div>
+<div id="eraLoadoutSummary" class="skill-pool-preview" style="margin-top:9px"></div>
+<button id="eraLoadBtn" class="btn gold" style="width:100%;margin-top:9px" onclick="loadEraGear()">LOAD ERA-APPROPRIATE GEAR</button>
+<p class="small">These decade presets are representative starting points for 1900-2029. Exact year, geography, profession, wartime status, legality, and local access can move individual items earlier or later. The GM may substitute any ordinary period-plausible equivalent without creating Exposure merely because it exists. Checked gear with a linked Skill and die is added automatically to the matching pool.</p></div>
+<div class="rule-subtabs gear-subtabs">
+<button type="button" id="gearArmorTab" data-gear-view="armor" class="active" onclick="setGearViewFromButton(this)">ARMOR</button>
+<button type="button" id="gearWeaponsTab" data-gear-view="weapons" class="" onclick="setGearViewFromButton(this)">WEAPONS</button>
+<button type="button" id="gearToolsTab" data-gear-view="tools" class="" onclick="setGearViewFromButton(this)">TOOLS</button>
+<button type="button" id="gearLoadoutTab" data-gear-view="loadout" class="" onclick="setGearViewFromButton(this)">LOADOUT</button>
+</div>
+<div id="gearArmorView"><div class="card"><h3>Armor</h3><p class="small">Armor is separated here because it is frequently needed during defense. Equipped armor also appears in Loadout and on Play.</p><div id="armor"></div></div></div>
+<div id="gearWeaponsView" style="display:none"><div class="card"><h3>Weapons</h3><div id="weapons"></div></div></div>
+<div id="gearToolsView" style="display:none"><div class="card"><h3>Tools &amp; Devices</h3><div id="tools"></div></div><div class="card"><label>Other / Period Gear</label><textarea data-key="otherGear"></textarea></div></div>
+<div id="gearLoadoutView" style="display:none"><div class="card"><h3>Current Loadout</h3><p class="small">A play-oriented summary of what this Vector currently has checked. Change an item in Armor, Weapons, or Tools; this list updates automatically.</p><div id="gearLoadout"></div></div></div>
+<div class="card"><p class="small">Checked gear is available to the Play and Roller tabs when mechanically relevant.</p><button class="btn primary" style="width:100%" onclick="showTab('vector')">NEXT: VECTOR DETAILS</button></div></section>
+
+<section class="tab" id="tab-roller"><h2>Roller</h2>
+<div class="card soft"><p class="small"><b>This is the during-play rolling screen.</b> Initiative, every trained Skill, and every selected untrained Skill appear here as one-tap complete pools. Each roll shows its result immediately beside its own Roll button, so you do not have to scroll to a shared result box.</p></div>
+<div class="rule-subtabs"><button id="rollerQuickTab" class="active" onclick="setRollerView('quick')">QUICK ROLLS</button><button id="rollerCustomTab" onclick="setRollerView('custom')">CUSTOM POOL</button></div>
+<div id="rollerQuickView">
+  <div class="card"><h3>One-Tap Pools</h3><p class="small">Grouped by job: Initiative, Defense, Combat, then General. Trained Skills appear automatically. Recommended or manually pinned untrained Skills remain available with an <b>Untrained d4</b> label.</p><div id="playPools"></div></div>
+</div>
+<div id="rollerCustomView" style="display:none">
+  <div class="card soft"><p class="small"><b>Build any pool manually here.</b> Results 1–3 are blank; results 4+ score at face value.</p></div>
+  <div class="card"><div class="grid three">
+  <div><label>d4</label><input id="pd4" type="number" min="0" value="0"></div>
+  <div><label>d6</label><input id="pd6" type="number" min="0" value="0"></div>
+  <div><label>d8</label><input id="pd8" type="number" min="0" value="0"></div>
+  <div><label>d10</label><input id="pd10" type="number" min="0" value="0"></div>
+  <div><label>d12</label><input id="pd12" type="number" min="0" value="0"></div>
+  </div><button class="btn gold" style="width:100%;margin-top:8px" onclick="rollCustom()">ROLL PROTOCOL DICE</button>
+  <div id="rollResult" class="roller"><div class="result">Ready</div><div class="faces">1–3 are blank.</div></div></div>
+</div></section>
+<section class="tab" id="tab-mission"><h2>Mission</h2>
+<div class="card play-priority"><h3>Operation Procedure</h3><div id="missionPhaseTabs" class="mission-phase-tabs"></div><div id="missionPhaseHelp" class="small"></div><p class="small">The phases are a mission scaffold, not a railroad. Move backward when new evidence changes the plan.</p></div>
+<div class="card grid"><div><label>Apocryphon / Briefing</label><textarea data-key="apocryphon"></textarea></div><div><label>Current Interpretation</label><textarea data-key="interpretation"></textarea></div><div><label>Confirmation Keys</label><textarea data-key="keys"></textarea></div><div><label>What must survive?</label><textarea data-key="carrier"></textarea></div></div>
+<div class="card"><h3>Historical Carrier</h3><div class="two grid"><div><label>Required at Verification</label><select data-key="carrierRequired"><option>Fragile</option><option>Established</option><option>Durable</option></select></div><div><label>Current Strength</label><select data-key="carrierStrength"><option>Fragile</option><option>Established</option><option>Durable</option></select></div></div><div class="row" style="margin-top:8px"><button type="button" class="btn" onclick="adjustCarrier(-1)">WEAKEN</button><button type="button" class="btn gold" onclick="adjustCarrier(1)">STRENGTHEN</button></div><div id="carrierHelp" class="small" style="margin-top:8px"></div><p class="small"><b>Improve only when the fiction creates or protects an independent transmission route.</b> Public dissemination, extra witnesses, institutional records, or impossible technology may strengthen the Carrier and raise Exposure at the same time.</p><label>Carrier / Exposure tradeoff notes</label><textarea data-key="carrierRisk"></textarea></div>
+<div class="card"><h3>Exposure</h3><div class="row"><button class="btn" onclick="exposure(-1)">−</button><div class="meter" style="flex:2"><b id="expBig">0 — Clean</b><span>Exposure</span></div><button class="btn" onclick="exposure(1)">+</button></div><div id="expHelp" class="small"></div><label style="margin-top:8px">Mission Exposure Target (maximum acceptable)</label><input type="number" min="0" max="7" step="1" data-key="exposureTarget"><label>Containment Plan</label><textarea data-key="containmentPlan"></textarea></div>
+<div class="card"><h3>Historical Verification</h3><div id="missionOutcome" class="mission-outcome"></div><label>Verification / aftermath notes</label><textarea data-key="verificationNotes"></textarea></div>
+</section>
+
+<section class="tab" id="tab-rules"><h2>Learn &amp; Rules</h2><div class="card play-priority"><h3>Interactive Complete Rules Guide</h3><p class="small">Open the searchable, tabbed, mobile-friendly rules publication. It works offline and includes direct links, quick reference, and browsable rules indexes.</p><a class="btn gold" style="display:block;text-align:center;text-decoration:none" href="Protocol_7_v0.187_Interactive_Rules_Guide.html" target="_blank">OPEN COMPLETE RULES GUIDE</a></div><div class="card play-priority"><h3>How to Use This App at the Table</h3>
+<p class="small">The app has character-building/reference tabs and two tabs intended for frequent use during a scene: <b>Play</b> and <b>Roller</b>. You do not need to return to character creation to make ordinary rolls.</p>
+<div class="rule-step"><b>Start:</b> Begin or clear a character, choose a complete starting configuration or build from scratch, and move through character creation.</div>
+<div class="rule-step"><b>Vector:</b> Review identity, Path/configuration, Ability dice, HP, and other core character information.</div>
+<div class="rule-step"><b>Skills:</b> Buy and review Skills. Every Skill can be rolled here, including untrained Skills at d4. Pin useful untrained Skills so they remain available in Roller during play.</div>
+<div class="rule-step"><b>VAM:</b> Build or review the Vector's loaded augmentation package, BAR use, and VAM options.</div>
+<div class="rule-step"><b>Gear:</b> Select and equip era-appropriate weapons, armor, and tools. Equipped gear contributes its die automatically when it applies to a complete pool.</div>
+<div class="rule-step"><b>Play:</b> This is the character-state and decision screen during scenes. Use it for Action Points (AP), Reactions, loaded VAM options, equipped gear, Ability Die Step Effects, and quick reference information. Current AP is shown directly in Turn Controls; Spend 1 AP and Restore 1 AP change it immediately. Play is deliberately not the main rolling screen.</div>
+<div class="rule-step"><b>Roller:</b> This is the main rolling screen. <b>Quick Rolls</b> contains Initiative, every trained Skill, and pinned untrained Skills, grouped Initiative / Defense / Combat / General. Each one-tap pool displays its result immediately beside its own Roll button. <b>Custom Pool</b> is for unusual pools assembled manually.</div>
+<div class="rule-step"><b>Learn / Rules:</b> Use this tab to teach the game, refresh procedures, and find concise table references. Use the guidebook when you need the expanded treatment.</div>
+</div>
+<div class="card soft"><p class="small"><b>You should be able to play Protocol 7 from this app.</b> Use Play for character state and decisions, Roller for routine dice pools, and Learn / Rules when you need to teach or check a procedure. Physical Protocol Dice are strongly encouraged because the app keeps the table clear: your phone handles the character sheet and pool reference, while the space in front of you can be used almost entirely for rolling dice.</p>
+<p class="small"><b>Using ordinary dice:</b> treat 1, 2, and 3 as blank. Every result of 4 or higher scores at face value.</p></div>
+<div id="ruleSubtabs" class="rule-subtabs"></div>
+<div id="ruleContent"></div>
+<div class="card"><h3>Armor: One Mechanical Job</h3><p class="small"><b>Armor normally contributes its listed gear die to an appropriate defense pool when it can physically protect you.</b> It does not also subtract damage after the roll. Separate damage reduction exists only when a specific item or rule says so.</p></div><div class="card"><h3>Skill Ranks and Breakpoints</h3><p class="small">Skill Ranks are cumulative. The Skill die improves at <b>0 d4, 1 d6, 3 d8, 6 d10, 10 d12, 15 d12+d4, 21 d12+d6, 28 d12+d8, 36 d12+d10, 45 d12+d12.</b></p><p class="small"><b>Ranks between breakpoints are Progress Ranks.</b> They count toward the next improvement but do not change the current Skill die until the breakpoint is reached. The Skills tab shows how many ranks remain.</p></div><div class="card"><h3>Hit Points</h3><p class="small"><b>Maximum HP = CON die maximum x 3.</b></p><p class="small">CON d4 = 12 HP; CON d6 = 18 HP; CON d8 = 24 HP; CON d10 = 30 HP; CON d12 = 36 HP.</p><p class="small">Changing CON changes maximum HP. During play, damage already taken is preserved.</p></div><div class="card"><h3>Complete Pool: Current Procedure</h3>
+<div class="rule-step"><b>1. Define the scope.</b> State exactly what this roll is resolving and how the Vector is doing it.</div>
+<div class="rule-step"><b>2. Choose the Skill.</b> The Skill determines the three associated Ability dice.</div>
+<div class="rule-step"><b>3. Add the three Ability dice.</b> Apply current Die Step Effects first; repeated Abilities are added more than once.</div>
+<div class="rule-step"><b>4. Add the Skill die.</b> Untrained Skills use d4.</div>
+<div class="rule-step"><b>5. Choose one primary relevant gear item.</b> Add that item’s gear die. Compatible gear does not stack unless a rule explicitly permits it.</div>
+<div class="rule-step"><b>6. Apply situational dice.</b> Add Help, Advantage, VAM, cover, or circumstance dice and apply Disadvantage normally.</div>
+<div class="rule-step"><b>7. Roll once.</b> Results 1-3 are blank; add every 4+ at face value.</div>
+</div></section>
+
+<section class="tab" id="tab-save"><h2>Save / Share</h2><div class="card"><p class="small">Autosaves locally on this device. Export JSON to move the character to another phone or browser.</p><div class="grid"><button class="btn primary" onclick="downloadJSON()">Download Character JSON</button><button class="btn" onclick="document.getElementById('jsonFile').click()">Load Character JSON</button><input class="file" id="jsonFile" type="file" accept=".json,application/json"><button class="btn danger" onclick="resetAll()">Reset Character</button></div></div></section>
+</main>
+<script>
+const SKILLS=[{"name": "Athletics", "abilities": "STR / STR / CON", "uses": "Climbing, swimming, lifting, endurance", "cat": "General"}, {"name": "Acrobatics", "abilities": "DEX / DEX / STR", "uses": "Balance, tumbling, agile movement", "cat": "General"}, {"name": "Stealth", "abilities": "DEX / DEX / WIS", "uses": "Hiding, shadowing, quiet movement", "cat": "General"}, {"name": "Perception", "abilities": "WIS / WIS / INT", "uses": "Notice details, surveillance", "cat": "General"}, {"name": "Investigation", "abilities": "INT / INT / WIS", "uses": "Research, evidence, deduction", "cat": "General"}, {"name": "Survival", "abilities": "WIS / CON / INT", "uses": "Navigation, tracking, fieldcraft", "cat": "General"}, {"name": "Medicine", "abilities": "INT / WIS / DEX", "uses": "Treatment, stabilization", "cat": "General"}, {"name": "Science", "abilities": "INT / INT / WIS", "uses": "Experimentation, analysis", "cat": "General"}, {"name": "Engineering", "abilities": "INT / INT / DEX", "uses": "Repair, design, improvisation", "cat": "General"}, {"name": "Computing", "abilities": "INT / INT / WIS", "uses": "Software, electronics, data", "cat": "General"}, {"name": "Security", "abilities": "DEX / INT / WIS", "uses": "Locks, alarms, bypasses", "cat": "General"}, {"name": "Tradecraft", "abilities": "WIS / INT / CHA", "uses": "Covert operations, surveillance", "cat": "General"}, {"name": "History", "abilities": "INT / INT / WIS", "uses": "Context, records, institutions", "cat": "General"}, {"name": "Culture", "abilities": "INT / WIS / CHA", "uses": "Etiquette, period behavior", "cat": "General"}, {"name": "Linguistics", "abilities": "INT / INT / CHA", "uses": "Languages, codes, translation", "cat": "General"}, {"name": "Influence", "abilities": "CHA / CHA / WIS", "uses": "Persuasion, negotiation", "cat": "General"}, {"name": "Deception", "abilities": "CHA / CHA / INT", "uses": "Lies, cover identities", "cat": "General"}, {"name": "Leadership", "abilities": "CHA / WIS / CON", "uses": "Command, coordination", "cat": "General"}, {"name": "Driving", "abilities": "DEX / WIS / INT", "uses": "Ground vehicles", "cat": "General"}, {"name": "Piloting", "abilities": "DEX / INT / WIS", "uses": "Aircraft and flight systems", "cat": "General"}, {"name": "Initiative", "abilities": "DEX / DEX / WIS", "uses": "Act quickly in conflict", "cat": "General"}, {"name": "Unarmed", "abilities": "STR / DEX / CON", "uses": "Strikes, close control", "cat": "Combat"}, {"name": "Light Melee", "abilities": "DEX / DEX / STR", "uses": "Knives, batons, compact blades", "cat": "Combat"}, {"name": "Heavy Melee", "abilities": "STR / STR / CON", "uses": "Axes, clubs, long tools", "cat": "Combat"}, {"name": "Sidearms", "abilities": "DEX / DEX / WIS", "uses": "Pistols", "cat": "Combat"}, {"name": "Longarms", "abilities": "DEX / WIS / CON", "uses": "Rifles, carbines", "cat": "Combat"}, {"name": "Shotguns", "abilities": "DEX / CON / WIS", "uses": "Close-range shoulder weapons", "cat": "Combat"}, {"name": "Automatic Weapons", "abilities": "DEX / CON / STR", "uses": "Automatic fire, suppression", "cat": "Combat"}, {"name": "Precision Weapons", "abilities": "DEX / DEX / WIS", "uses": "Long-range deliberate fire", "cat": "Combat"}, {"name": "Heavy Weapons", "abilities": "STR / DEX / CON", "uses": "Launchers, crew-served systems", "cat": "Combat"}, {"name": "Thrown Weapons", "abilities": "DEX / STR / WIS", "uses": "Thrown weapons, tools, charges", "cat": "Combat"}, {"name": "Improvised Weapons", "abilities": "STR / DEX / INT", "uses": "Ordinary objects as weapons", "cat": "Combat"}, {"name": "Grappling", "abilities": "STR / STR / CON", "uses": "Grab, hold, restrain, shove", "cat": "Combat"}, {"name": "Disarming", "abilities": "DEX / STR / INT", "uses": "Remove or redirect held objects", "cat": "Combat"}, {"name": "Tactics", "abilities": "INT / WIS / CHA", "uses": "Positioning and coordination", "cat": "Combat"}, {"name": "Dodge", "abilities": "DEX / DEX / WIS", "uses": "Avoid aimed attacks", "cat": "Defense"}, {"name": "Reflex", "abilities": "DEX / WIS / CON", "uses": "Explosions, traps, sudden areas", "cat": "Defense"}, {"name": "Fortitude", "abilities": "CON / CON / STR", "uses": "Toxins, exhaustion, bodily shock", "cat": "Defense"}, {"name": "Will", "abilities": "WIS / WIS / CHA", "uses": "Fear, coercion, cognitive pressure", "cat": "Defense"}, {"name": "Recovery", "abilities": "CON / WIS / CON", "uses": "Stabilizing and recovery", "cat": "Defense"}], VAMS=[{"name": "Period Native", "bars": 2, "effect": "Choose one prepared period/culture. Routine etiquette, dress, slang, and institutions are treated as familiar and need no roll unless scrutiny, deception, or pressure makes the outcome uncertain. Ignore minor disadvantage caused only by period unfamiliarity."}, {"name": "Jury-Rigger", "bars": 2, "effect": "Engineering can create a temporary period-plausible substitute with materials"}, {"name": "Fast Draw", "bars": 2, "effect": "Once per round, ready accessible one-handed weapon for 0 AP"}, {"name": "Snap Shot", "bars": 2, "effect": "After Aim, the next trained ranged attack costs 0 AP; once per turn"}, {"name": "Cover Protocol", "bars": 2, "effect": "After Take Cover, d4 on first appropriate defense before next turn"}, {"name": "Counterintelligence", "bars": 4, "effect": "Once per scene after observing the situation, ask one: Are we being watched? What evidence looks planted? What part of our cover is compromised? The GM answers truthfully from evidence your Vector could detect."}, {"name": "Deep Cover", "bars": 4, "effect": "Prepared cover passes routine verification without a roll"}, {"name": "Overwatch", "bars": 4, "effect": "1 AP while Guarding a lane; Reaction may make one ranged weapon attack"}, {"name": "Suppressive Fire", "bars": 4, "effect": "2 AP Automatic Weapons vs Dodge or Will; inflict Suppressed"}, {"name": "Tactical Advance", "bars": 4, "effect": "Take Cover and Move in same turn; d4 next Dodge"}, {"name": "Combat Mobility", "bars": 4, "effect": "After successful melee/unarmed attack, Move short distance 0 AP once/turn"}, {"name": "Disarm Protocol", "bars": 4, "effect": "Disarm without damage; margin 8+ controls item destination"}, {"name": "Control Hold", "bars": 4, "effect": "On Unarmed win by 4+, forgo damage to Grapple"}, {"name": "Combat Rescue", "bars": 4, "effect": "Carry/drag adjacent ally without reducing normal Move"}, {"name": "Field Analysis", "bars": 6, "effect": "Solid Science success may improve scientific Carrier one step"}, {"name": "Field Fabrication", "bars": 6, "effect": "Engineering improvisation can last an operation"}, {"name": "Command Link", "bars": 6, "effect": "1 AP: ally gains d6 next tactical roll; once/round"}, {"name": "Breach Window", "bars": 6, "effect": "After breach, Move through 0 AP; allies may Reaction-follow"}, {"name": "Counter-Ambush", "bars": 6, "effect": "Allies gain d4 Initiative and ready accessible weapon 0 AP"}, {"name": "Precision Interdiction", "bars": 6, "effect": "Overwatch margin 4+: damage or halt movement"}, {"name": "Prepared Contingency", "bars": 6, "effect": "Once/mission, establish plausible earlier preparation"}, {"name": "Temporal Intuition", "bars": 8, "effect": "Once/mission, ask whether discovery connects to fulcrum"}, {"name": "Tactical Reposition", "bars": 8, "effect": "After enemy misses, Reaction Move short distance"}, {"name": "Zero-Window Entry", "bars": 8, "effect": "After team breach/ambush, take 1 AP before first turn"}, {"name": "Emergency Protocols", "bars": 8, "effect": "Once/full rest, remain conscious until end next turn at 0 HP"}, {"name": "Aletheian Intuition", "bars": 12, "effect": "Once/mission, request concise directional encoded insight"}, {"name": "Fine Motor Stabilizer", "bars": 2, "effect": "Ignore ordinary hand tremor, vibration, or stress instability when performing trained precision manual work. Severe interference can still require a roll or Disadvantage."}, {"name": "Balance Assist", "bars": 2, "effect": "Ordinary narrow footing, controlled landings, and unstable surfaces do not by themselves force a roll. Under meaningful danger you still roll normally."}, {"name": "Grip Assist", "bars": 2, "effect": "You may maintain an ordinary climb, hold, or tool grip with one hand when two would normally be required, provided the load is human-manageable. Contested or extreme loads still require a roll."}, {"name": "Breath Control", "bars": 2, "effect": "You can safely extend ordinary breath-holding and remain functional through brief smoke or oxygen stress without a roll. Extreme exposure still uses Fortitude."}, {"name": "Stress Governor", "bars": 2, "effect": "Ordinary fear, startle, and acute stress do not by themselves prevent deliberate action or force a Will roll. Extreme, supernatural, or sustained pressure still can."}, {"name": "Sensory Filter", "bars": 2, "effect": "Choose one distracting sensory channel such as glare, noise, odor, or crowd motion and filter it for the scene. That distraction alone does not impose Disadvantage; the VAM does not reveal hidden information."}, {"name": "Vocal Control", "bars": 2, "effect": "After hearing a voice pattern, you can maintain controlled cadence, volume, pacing, and accent features despite ordinary stress. This does not teach a language or guarantee impersonation."}, {"name": "Threat Focus", "bars": 2, "effect": "Choose one visible threat; gain d4 on the first appropriate defense against it before your next turn."}, {"name": "Motion Economy", "bars": 2, "effect": "Once per turn, Interact with a worn or immediately accessible item for 0 AP."}, {"name": "Steady Hands", "bars": 2, "effect": "Ignore ordinary hand tremor or stress-induced instability when using trained tools or weapons."}, {"name": "Microexpression Read", "bars": 4, "effect": "After a short face-to-face exchange, ask whether the target is primarily showing fear, anger, hesitation, guardedness, or relief. The GM answers from visible behavior; this does not reveal exact thoughts."}, {"name": "Pattern Index", "bars": 4, "effect": "Once per scene after assembling at least three relevant clues, ask which two are most likely connected or which one appears not to fit. The answer is limited to evidence the team has actually obtained."}, {"name": "Memory Cueing", "bars": 4, "effect": "Once per scene, recall one previously learned or personally observed name, route, procedure, fact, or detail without a roll when it was reasonably available to memory. Obscure or never-learned information still requires normal investigation."}, {"name": "Low-Light Adaptation", "bars": 4, "effect": "After a brief adjustment period, dim light alone does not impose Disadvantage on vision-based Perception. Total darkness still blocks normal vision."}, {"name": "Motion Prediction", "bars": 4, "effect": "d4 on Dodge against a visible moving attacker whose motion you can track."}, {"name": "Rapid Triage", "bars": 4, "effect": "Stabilize an adjacent living target for 1 AP instead of 2 AP when using Medicine and appropriate gear."}, {"name": "Adrenal Control", "bars": 4, "effect": "Once per scene, spend 1 AP to clear Stunned or Disoriented when the condition is physiological or shock-based."}, {"name": "Social Mirroring", "bars": 4, "effect": "After observing a target through a short exchange, choose rapport, calm, or belonging. Ordinary mannerism mismatch does not impose Disadvantage on the first appropriate social approach; hostility or suspicion still matters."}, {"name": "Chronometric Focus", "bars": 4, "effect": "Track several short intervals and event sequences with implant-grade precision without a separate timing tool. High-stakes interpretation still uses the relevant Skill."}, {"name": "Route Modeling", "bars": 4, "effect": "After surveying terrain you can perceive, ask for the fastest, safest, or least-observed plausible route among visible/known options. The GM answers from the information available to the Vector."}, {"name": "Protective Intercept", "bars": 4, "effect": "Reaction: move a short distance to become the eligible target of an attack aimed at an adjacent ally."}, {"name": "Weapon Stabilizer", "bars": 4, "effect": "Aim is not lost by a normal Move taken before the aimed attack, provided you keep the target in view."}, {"name": "Pain Compartmentalization", "bars": 6, "effect": "Once per scene, ignore one temporary injury-related disadvantage until the end of your next turn."}, {"name": "Multi-Track Attention", "bars": 6, "effect": "Maintain awareness of two active tasks or threats without the ordinary minor distraction penalty; does not add knowledge."}, {"name": "Thanatic Anchor", "bars": 4, "effect": "Maintains precision surveillance on a dying historical host and transmits a ninth-dimensional insertion lock to Aletheia. With mission authorization and continuous observation through the terminal window, Aletheia can place an implant into the host at the exact viable instant. The VAM does not select the host, guarantee access, or replace the surveillance requirement."}], TOOLS=[{"Item":"Period Intrusion Kit","Die":"d6","Tag":"Tool","Function":"Security against era-appropriate locks","Skill":"Security"},{"Item":"Forensic Kit","Die":"d6","Tag":"Tool","Function":"Investigation for evidence work","Skill":"Investigation"},{"Item":"Field Medical Kit","Die":"d8","Tag":"Tool","Function":"Medicine for stabilization and treatment","Skill":"Medicine"},{"Item":"Universal Interface Kit","Die":"d6","Tag":"Tool","Function":"Engineering diagnostics and adapters","Skill":"Engineering"},{"Item":"Precision Chronometer","Die":"d8","Tag":"Tool","Function":"Timing Science/Engineering","Skill":"Science"},{"Item":"Period Currency Kit","Die":"d4","Tag":"Tool","Function":"Influence/Culture transactions","Skill":"Influence"},{"Item":"Adaptive Camouflage Mantle","Die":"—","Tag":"Device / Severe","Function":"Visually difficult to perceive within limits"},{"Item":"Identity Mesh","Die":"—","Tag":"Device / Noticeable","Function":"Prepared facial appearance"},{"Item":"Voiceprint Modulator","Die":"—","Tag":"Device / Noticeable","Function":"Prepared sampled voice"},{"Item":"Microdrone Swarm","Die":"d8","Tag":"Device / Noticeable","Function":"Observe/map inaccessible spaces"},{"Item":"Signal Ghost","Die":"d8","Tag":"Device / Noticeable","Function":"Interact with electronics, mask ordinary traces"},{"Item":"Portable Fabricator","Die":"d8","Tag":"Device / Severe","Function":"Manufacture small designed parts"},{"Item":"Spectral Scanner","Die":"d8","Tag":"Device / Noticeable","Function":"Analyze composition and signatures"},{"Item":"Trauma Nanogel","Die":"—","Tag":"Device / Noticeable","Function":"1 AP: restore 6 HP to adjacent living target"},{"Item":"Environmental Skin","Die":"d8","Tag":"Device / Noticeable","Function":"Short environmental protection"},{"Item":"Gravitic Line","Die":"d8","Tag":"Device / Severe","Function":"Powered ascent, descent, retrieval"},{"Item":"Silent Breacher","Die":"d8","Tag":"Device / Noticeable","Function":"Defeat barriers with reduced noise"},{"Item":"Temporal Beacon","Die":"—","Tag":"Device / Severe","Function":"Create/strengthen extraction reference"},{"Item":"Chronometric Anchor","Die":"—","Tag":"Device / Severe","Function":"Detect instability and preserve reference"},{"Item":"Evidence Incinerator","Die":"—","Tag":"Device / Severe","Function":"2 AP: destroy small advanced-material cache"},{"Item":"Smartphone","Die":"—","Tag":"Period / No Exposure","Function":"Calls, messaging, maps, camera, ordinary apps, and period-plausible digital access.","Skill":"Culture"},{"Item":"Laptop / Tablet","Die":"d4","Tag":"Period / No Exposure","Function":"Computing or research when ordinary 2020s hardware is sufficient.","Skill":"Computing"},{"Item":"Encrypted Radio","Die":"d4","Tag":"Period / No Exposure","Function":"Team communications using ordinary contemporary radio hardware.","Skill":"Tactics"},{"Item":"Compact Binoculars","Die":"d4","Tag":"Period / No Exposure","Function":"Perception at distance when magnification is useful.","Skill":"Perception"},{"Item":"Digital Camera","Die":"d4","Tag":"Period / No Exposure","Function":"Document scenes, evidence, people, or locations with ordinary contemporary imaging.","Skill":"Investigation"},{"Item":"Flashlight","Die":"d4","Tag":"Period / No Exposure","Function":"Perception in darkness when visible illumination is acceptable.","Skill":"Perception"},{"Item":"Multitool","Die":"d4","Tag":"Period / No Exposure","Function":"Minor Engineering, repair, cutting, fastening, or improvised tool use.","Skill":"Engineering"},{"Item":"First Aid Pouch","Die":"d4","Tag":"Period / No Exposure","Function":"Medicine for ordinary first aid; less capable than a Field Medical Kit.","Skill":"Medicine"},{"Item":"Respirator","Die":"d4","Tag":"Period / No Exposure","Function":"Fortitude against smoke, dust, and ordinary airborne irritants.","Skill":"Fortitude"},{"Item":"Climbing Kit","Die":"d6","Tag":"Period / No Exposure","Function":"Athletics for rope work, ascent, descent, and safe anchoring.","Skill":"Athletics"},{"Item":"Evidence Bags & Swabs","Die":"d4","Tag":"Period / No Exposure","Function":"Investigation for preserving and collecting ordinary forensic evidence.","Skill":"Investigation"},{"Item":"Field Notebook","Die":"—","Tag":"Period / No Exposure","Function":"Notes, sketches, timelines, witness details, and ordinary paper records."},{"Item":"Civilian Backpack","Die":"—","Tag":"Period / No Exposure","Function":"Carry ordinary mission gear without appearing unusual."},{"Item":"Protective Vest","Die":"d4","Tag":"Period / No Exposure","Function":"Adds d4 to Dodge when worn and physically relevant to the attack.","Skill":"Dodge"},{"Item":"Plainclothes Concealment Rig","Die":"—","Tag":"Period / No Exposure","Function":"Conceal compact lawful or mission-authorized equipment under ordinary clothing."},{"Item":"Ballistic Vest","Die":"d6","Tag":"Period / No Exposure","Function":"Adds d6 to Dodge when worn and physically relevant to the attack.","Skill":"Dodge"},{"Item":"Tactical Armor","Die":"d8","Tag":"Period / No Exposure","Function":"Adds d8 to Dodge when worn and physically relevant to the attack.","Skill":"Dodge"},{"Item":"Period Communications Kit","Die":"d4","Tag":"Period / No Exposure","Function":"Era-appropriate communications, signaling, message handling, or access arrangements. Exact contents depend on the selected decade.","Skill":"Tactics","EraKey":"communications"},{"Item":"Period Imaging Kit","Die":"d4","Tag":"Period / No Exposure","Function":"Era-appropriate photography, recording, and scene documentation. Exact contents depend on the selected decade.","Skill":"Investigation","EraKey":"imaging"},{"Item":"Period Technical Kit","Die":"d6","Tag":"Period / No Exposure","Function":"Era-appropriate measurement, repair, diagnostics, and engineering hand tools.","Skill":"Engineering","EraKey":"technical"},{"Item":"Period Laboratory Kit","Die":"d6","Tag":"Period / No Exposure","Function":"Era-appropriate scientific sampling, testing, and field analysis tools.","Skill":"Science","EraKey":"laboratory"},{"Item":"Period Records & Reference Kit","Die":"d4","Tag":"Period / No Exposure","Function":"Era-appropriate directories, maps, manuals, archives, and reference materials.","Skill":"History","EraKey":"records"},{"Item":"Period Field Optics","Die":"d4","Tag":"Period / No Exposure","Function":"Era-appropriate magnification for distant observation.","Skill":"Perception","EraKey":"optics"},{"Item":"Period Navigation Kit","Die":"d4","Tag":"Period / No Exposure","Function":"Era-appropriate maps, compass, timetables, charts, or electronic navigation.","Skill":"Survival","EraKey":"navigation"},{"Item":"Period Medical Bag","Die":"d8","Tag":"Period / No Exposure","Function":"Professional era-appropriate medical supplies for treatment and stabilization.","Skill":"Medicine","EraKey":"medical"},{"Item":"Period Carry Kit","Die":"—","Tag":"Period / No Exposure","Function":"An era-appropriate satchel, valise, field pack, briefcase, or other ordinary way to carry mission gear.","EraKey":"carry"},{"Item":"Period Credentials & Stationery","Die":"d4","Tag":"Period / No Exposure","Function":"Era-appropriate letters, identification, forms, stationery, seals, badges, or access media used to support a legitimate role.","Skill":"Culture","EraKey":"credentials"},{"Item":"Period Breaching Kit","Die":"d6","Tag":"Period / No Exposure","Function":"Era-appropriate pry, cutting, drilling, and bypass tools for barriers and secured access.","Skill":"Security","EraKey":"breaching"},{"Item":"Period Computing Kit","Die":"d4","Tag":"Period / No Exposure","Function":"Era-appropriate portable or accessible computing/electronic data tools when the selected decade supports them.","Skill":"Computing","EraKey":"computing"}], WEAPONS=[{"Weapon":"Compact Pistol","Die":"d4","Skill":"Sidearms","Notes":"Concealable"},{"Weapon":"Service Pistol","Die":"d6","Skill":"Sidearms","Notes":"General-purpose"},{"Weapon":"Heavy Pistol","Die":"d8","Skill":"Sidearms","Notes":"Conspicuous"},{"Weapon":"Submachine Gun","Die":"d8","Skill":"Automatic Weapons","Notes":"Suppression eligible"},{"Weapon":"Carbine","Die":"d8","Skill":"Longarms","Notes":"General shoulder weapon"},{"Weapon":"Precision Rifle","Die":"d10","Skill":"Precision Weapons","Notes":"Stable position at long range"},{"Weapon":"Shotgun","Die":"d8","Skill":"Shotguns","Notes":"Very close may gain d6 advantage"},{"Weapon":"Machine Gun","Die":"d10","Skill":"Automatic Weapons","Notes":"Support/suppression"},{"Weapon":"Vector Coil Sidearm","Die":"d8","Skill":"Sidearms","Notes":"Severe if recovered"},{"Weapon":"Vector Coil Rifle","Die":"d10","Skill":"Longarms / Precision","Notes":"Severe if recovered"},{"Weapon":"Knife","Die":"d4","Skill":"Light Melee","Notes":"Concealable"},{"Weapon":"Baton","Die":"d6","Skill":"Light Melee","Notes":"Nonlethal appropriate"},{"Weapon":"Combat Blade","Die":"d6","Skill":"Light Melee","Notes":"Purpose-built"},{"Weapon":"Improvised Weapon","Die":"d4","Skill":"Improvised","Notes":"Ordinary object"},{"Weapon":"Pocket Revolver","Die":"d4","Skill":"Sidearms","Notes":"Concealable period sidearm; especially appropriate to early 20th-century loadouts"},{"Weapon":"Service Revolver","Die":"d6","Skill":"Sidearms","Notes":"General-purpose revolver for period police, military, security, or civilian contexts"},{"Weapon":"Service Rifle","Die":"d8","Skill":"Longarms","Notes":"Era-appropriate full-size military, police, or sporting longarm"},{"Weapon":"Scoped Rifle","Die":"d10","Skill":"Precision Weapons","Notes":"Deliberate precision rifle with period-appropriate optical sights; stable position at long range"}], CARRIERS=[{"Strength": "Fragile", "Meaning": "One person, one copy, one vulnerable object, or undocumented memory"}, {"Strength": "Established", "Meaning": "Multiple people/copies, professional record, institutional awareness, or repeatable demonstration"}, {"Strength": "Durable", "Meaning": "Distributed publication, independent replication, embedded process, multiple archives, or self-sustaining network"}], EXPOSURE=[{"Exposure": "0", "State": "Clean", "Meaning": "No durable anomalous evidence matters"}, {"Exposure": "1\u20132", "State": "Trace", "Meaning": "Witness, record, unexplained injury, or minor artifact persists"}, {"Exposure": "3\u20134", "State": "Interest", "Meaning": "Capable actors connect anomalies; investigation escalates"}, {"Exposure": "5\u20136", "State": "Breach", "Meaning": "Durable artifact, institutional file, or credible evidence exists"}, {"Exposure": "7+", "State": "Cascade", "Meaning": "Anomaly can alter technological, political, or scientific development"}], ACTIONS=[{"Action": "Attack", "AP": 1, "Effect": "Make one normal attack using the appropriate Combat Skill. This covers unarmed attacks and era-appropriate weapons from clubs, spears, bows, and slings through firearms, energy weapons, and other future attack systems. Add one primary weapon die when applicable. A specific weapon, VAM, or special attack may override the cost."}, {"Action": "Move", "AP": 1, "Effect": "Move up to 30 feet using the movement available in the scene. Spend additional AP to move up to 30 feet again for each AP spent."}, {"Action": "Interact", "AP": 1, "Effect": "Draw, stow, pick up, open, hand off, or perform one simple manipulation of an item or control. Complex loading, winding, priming, assembly, startup, or other preparation follows the item's own rule."}, {"Action": "Take Cover", "AP": 1, "Effect": "Enter or improve immediately available physical cover."}, {"Action": "Aim", "AP": 1, "Effect": "Gain d4 on the next deliberate ranged attack against one visible target before the end of the next turn."}, {"Action": "Assist", "AP": 1, "Effect": "Set up an ally; the normal Help rules apply."}, {"Action": "Brace", "AP": 1, "Effect": "Gain d4 on the next appropriate Fortitude or Reflex defense."}, {"Action": "Observe", "AP": 1, "Effect": "Make an appropriate roll when needed; on success gain one actionable detail."}, {"Action": "Guard", "AP": 1, "Effect": "Choose an adjacent ally, doorway, object, lane, or small area; your Reaction may answer an eligible event involving it."}, {"Action": "Ready Gear", "AP": 1, "Effect": "Bring stowed, sheathed, slung, packed, braced, powered-down, or otherwise unready gear into a usable state. A specific item's rule may override this."}, {"Action": "Stand", "AP": 1, "Effect": "Stand from Prone. Dropping Prone voluntarily is 0 AP."}, {"Action": "Withdraw", "AP": 1, "Effect": "Move a short distance out of immediate close engagement in a controlled way."}, {"Action": "Reconfigure Load", "AP": 1, "Effect": "Load, suspend, or swap known VAMs during action time. The whole legal field swap costs 1 AP."}, {"Action": "Stabilize", "AP": 2, "Effect": "Attempt the full stabilization procedure, normally Medicine vs DC 12; one primary era-appropriate medical item may add its gear die."}, {"Action": "Grapple", "AP": 2, "Effect": "Attempt the special opposed Grappling maneuver; on success establish or improve control instead of making a normal damage attack."}, {"Action": "Disarm", "AP": 2, "Effect": "Attempt the special opposed Disarming maneuver to remove, redirect, or knock free a held item."}], CONDITIONS=[{"Condition": "Prone", "Rule": "Standing costs 1 AP; distant ranged attacks may suffer disadvantage"}, {"Condition": "Grappled", "Rule": "Movement controlled by grappler; escape with Grappling, Unarmed, or Athletics"}, {"Condition": "Suppressed", "Rule": "Exposed movement/careful aim take d6 disadvantage until cover or 1 AP to steady"}, {"Condition": "Stunned", "Rule": "Lose Reaction; first next-turn action costs +1 AP"}, {"Condition": "Disoriented", "Rule": "d4 disadvantage on Perception and Initiative-like awareness"}, {"Condition": "Restrained", "Rule": "Cannot freely move; physical actions may be limited/disadvantaged"}];
+const VAM_CATEGORIES={"Precision Interdiction": "Combat", "Fast Draw": "Combat", "Disarm Protocol": "Combat", "Snap Shot": "Combat", "Control Hold": "Combat", "Weapon Stabilizer": "Combat", "Overwatch": "Combat", "Steady Hands": "Combat", "Suppressive Fire": "Combat", "Threat Focus": "Combat", "Stress Governor": "Defense & Mobility", "Emergency Protocols": "Defense & Mobility", "Breach Window": "Defense & Mobility", "Counter-Ambush": "Defense & Mobility", "Grip Assist": "Defense & Mobility", "Motion Economy": "Defense & Mobility", "Adrenal Control": "Defense & Mobility", "Balance Assist": "Defense & Mobility", "Combat Mobility": "Defense & Mobility", "Breath Control": "Defense & Mobility", "Protective Intercept": "Defense & Mobility", "Tactical Reposition": "Defense & Mobility", "Cover Protocol": "Defense & Mobility", "Tactical Advance": "Defense & Mobility", "Zero-Window Entry": "Defense & Mobility", "Combat Rescue": "Defense & Mobility", "Motion Prediction": "Defense & Mobility", "Pain Compartmentalization": "Defense & Mobility", "Low-Light Adaptation": "Recon & Investigation", "Memory Cueing": "Recon & Investigation", "Field Analysis": "Recon & Investigation", "Microexpression Read": "Recon & Investigation", "Route Modeling": "Recon & Investigation", "Sensory Filter": "Recon & Investigation", "Pattern Index": "Recon & Investigation", "Counterintelligence": "Recon & Investigation", "Multi-Track Attention": "Recon & Investigation", "Deep Cover": "Social & Cover", "Social Mirroring": "Social & Cover", "Prepared Contingency": "Social & Cover", "Period Native": "Social & Cover", "Vocal Control": "Social & Cover", "Chronometric Focus": "Technical & Medical", "Field Fabrication": "Technical & Medical", "Fine Motor Stabilizer": "Technical & Medical", "Jury-Rigger": "Technical & Medical", "Rapid Triage": "Technical & Medical", "Aletheian Intuition": "Command & Temporal", "Thanatic Anchor": "Command & Temporal", "Temporal Intuition": "Command & Temporal", "Command Link": "Command & Temporal"};
+const VAM_CATEGORY_ORDER=["Combat", "Defense & Mobility", "Recon & Investigation", "Social & Cover", "Technical & Medical", "Command & Temporal"];
+const VAM_PRESETS=[{"name": "Field Operator", "vams": ["Fast Draw", "Snap Shot", "Cover Protocol", "Threat Focus", "Motion Prediction"]}, {"name": "Infiltrator", "vams": ["Period Native", "Deep Cover", "Counterintelligence", "Fine Motor Stabilizer", "Sensory Filter"]}, {"name": "Investigator", "vams": ["Pattern Index", "Memory Cueing", "Microexpression Read", "Sensory Filter"]}, {"name": "Diplomat", "vams": ["Period Native", "Social Mirroring", "Vocal Control", "Stress Governor", "Memory Cueing"]}, {"name": "Engineer", "vams": ["Jury-Rigger", "Fine Motor Stabilizer", "Field Fabrication", "Chronometric Focus"]}, {"name": "Scientist", "vams": ["Field Analysis", "Chronometric Focus", "Pattern Index"]}, {"name": "Medic", "vams": ["Rapid Triage", "Fine Motor Stabilizer", "Stress Governor", "Breath Control", "Pain Compartmentalization"]}, {"name": "Recon", "vams": ["Sensory Filter", "Low-Light Adaptation", "Route Modeling", "Threat Focus", "Counterintelligence"]}, {"name": "Close Protection", "vams": ["Protective Intercept", "Combat Rescue", "Cover Protocol", "Stress Governor", "Threat Focus"]}, {"name": "Breacher", "vams": ["Breach Window", "Combat Mobility", "Grip Assist", "Adrenal Control"]}, {"name": "Control Specialist", "vams": ["Control Hold", "Disarm Protocol", "Grip Assist", "Motion Prediction"]}, {"name": "Command", "vams": ["Command Link", "Stress Governor", "Multi-Track Attention", "Threat Focus"]}, {"name": "Precision Shooter", "vams": ["Snap Shot", "Weapon Stabilizer", "Precision Interdiction", "Breath Control"]}, {"name": "Temporal Analyst", "vams": ["Temporal Intuition", "Pattern Index", "Memory Cueing"]}, {"name": "Flexible / Blank", "vams": []}];
+const ERA_GEAR_LOADOUTS={"1900s":{"Field Operator":["Service Revolver","Service Rifle","Period Communications Kit","Period Medical Bag","Flashlight","Period Field Optics","Period Carry Kit"],"Infiltrator":["Pocket Revolver","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Carry Kit"],"Investigator":["Pocket Revolver","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Period Carry Kit"],"Diplomat":["Pocket Revolver","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Engineer":["Pocket Revolver","Period Technical Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Carry Kit"],"Scientist":["Pocket Revolver","Period Laboratory Kit","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Medic":["Pocket Revolver","Period Medical Bag","First Aid Pouch","Period Communications Kit","Period Carry Kit"],"Recon":["Pocket Revolver","Service Rifle","Period Field Optics","Period Imaging Kit","Period Communications Kit","Period Navigation Kit","Climbing Kit","Period Carry Kit"],"Close Protection":["Service Revolver","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Period Carry Kit"],"Breacher":["Service Revolver","Shotgun","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Period Carry Kit"],"Control Specialist":["Pocket Revolver","Baton","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Period Carry Kit"],"Command":["Pocket Revolver","Period Communications Kit","Period Credentials & Stationery","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Precision Shooter":["Pocket Revolver","Scoped Rifle","Period Field Optics","Period Communications Kit","Period Navigation Kit","Period Carry Kit"],"Temporal Analyst":["Pocket Revolver","Period Records & Reference Kit","Period Imaging Kit","Field Notebook","Period Communications Kit","Period Carry Kit"],"Custom":["Pocket Revolver","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Period Carry Kit"]},"1910s":{"Field Operator":["Service Pistol","Service Rifle","Period Communications Kit","Period Medical Bag","Flashlight","Period Field Optics","Period Carry Kit"],"Infiltrator":["Pocket Revolver","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Carry Kit"],"Investigator":["Pocket Revolver","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Period Carry Kit"],"Diplomat":["Pocket Revolver","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Engineer":["Pocket Revolver","Period Technical Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Carry Kit"],"Scientist":["Pocket Revolver","Period Laboratory Kit","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Medic":["Pocket Revolver","Period Medical Bag","First Aid Pouch","Period Communications Kit","Period Carry Kit"],"Recon":["Pocket Revolver","Service Rifle","Period Field Optics","Period Imaging Kit","Period Communications Kit","Period Navigation Kit","Climbing Kit","Period Carry Kit"],"Close Protection":["Service Pistol","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Period Carry Kit"],"Breacher":["Service Pistol","Shotgun","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Period Carry Kit"],"Control Specialist":["Pocket Revolver","Baton","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Period Carry Kit"],"Command":["Pocket Revolver","Period Communications Kit","Period Credentials & Stationery","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Precision Shooter":["Pocket Revolver","Scoped Rifle","Period Field Optics","Period Communications Kit","Period Navigation Kit","Period Carry Kit"],"Temporal Analyst":["Pocket Revolver","Period Records & Reference Kit","Period Imaging Kit","Field Notebook","Period Communications Kit","Period Carry Kit"],"Custom":["Pocket Revolver","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Period Carry Kit"]},"1920s":{"Field Operator":["Service Pistol","Service Rifle","Period Communications Kit","Period Medical Bag","Flashlight","Period Field Optics","Period Carry Kit"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Carry Kit"],"Investigator":["Compact Pistol","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Period Carry Kit"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Engineer":["Compact Pistol","Period Technical Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Carry Kit"],"Scientist":["Compact Pistol","Period Laboratory Kit","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Medic":["Compact Pistol","Period Medical Bag","First Aid Pouch","Period Communications Kit","Period Carry Kit"],"Recon":["Compact Pistol","Service Rifle","Period Field Optics","Period Imaging Kit","Period Communications Kit","Period Navigation Kit","Climbing Kit","Period Carry Kit"],"Close Protection":["Service Pistol","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Period Carry Kit"],"Breacher":["Service Pistol","Shotgun","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Period Carry Kit"],"Control Specialist":["Compact Pistol","Baton","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Period Carry Kit"],"Command":["Compact Pistol","Period Communications Kit","Period Credentials & Stationery","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Precision Shooter":["Compact Pistol","Scoped Rifle","Period Field Optics","Period Communications Kit","Period Navigation Kit","Period Carry Kit"],"Temporal Analyst":["Compact Pistol","Period Records & Reference Kit","Period Imaging Kit","Field Notebook","Period Communications Kit","Period Carry Kit"],"Custom":["Compact Pistol","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Period Carry Kit"]},"1930s":{"Field Operator":["Service Pistol","Service Rifle","Period Communications Kit","Period Medical Bag","Flashlight","Period Field Optics","Period Carry Kit"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Carry Kit"],"Investigator":["Compact Pistol","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Period Carry Kit"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Engineer":["Compact Pistol","Period Technical Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Carry Kit"],"Scientist":["Compact Pistol","Period Laboratory Kit","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Medic":["Compact Pistol","Period Medical Bag","First Aid Pouch","Period Communications Kit","Period Carry Kit"],"Recon":["Compact Pistol","Service Rifle","Period Field Optics","Period Imaging Kit","Period Communications Kit","Period Navigation Kit","Climbing Kit","Period Carry Kit"],"Close Protection":["Service Pistol","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Period Carry Kit"],"Breacher":["Service Pistol","Shotgun","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Period Carry Kit"],"Control Specialist":["Compact Pistol","Baton","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Period Carry Kit"],"Command":["Compact Pistol","Period Communications Kit","Period Credentials & Stationery","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Precision Shooter":["Compact Pistol","Scoped Rifle","Period Field Optics","Period Communications Kit","Period Navigation Kit","Period Carry Kit"],"Temporal Analyst":["Compact Pistol","Period Records & Reference Kit","Period Imaging Kit","Field Notebook","Period Communications Kit","Period Carry Kit"],"Custom":["Compact Pistol","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Period Carry Kit"]},"1940s":{"Field Operator":["Service Pistol","Carbine","Protective Vest","Period Communications Kit","Period Medical Bag","Flashlight","Period Field Optics","Period Carry Kit"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Carry Kit"],"Investigator":["Compact Pistol","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Period Carry Kit"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Engineer":["Compact Pistol","Period Technical Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Carry Kit"],"Scientist":["Compact Pistol","Period Laboratory Kit","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Medic":["Compact Pistol","Period Medical Bag","First Aid Pouch","Protective Vest","Period Communications Kit","Period Carry Kit"],"Recon":["Compact Pistol","Carbine","Period Field Optics","Period Imaging Kit","Period Communications Kit","Period Navigation Kit","Climbing Kit","Protective Vest","Period Carry Kit"],"Close Protection":["Service Pistol","Protective Vest","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Period Carry Kit"],"Breacher":["Service Pistol","Shotgun","Protective Vest","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Period Carry Kit"],"Control Specialist":["Compact Pistol","Baton","Protective Vest","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Period Carry Kit"],"Command":["Compact Pistol","Protective Vest","Period Communications Kit","Period Credentials & Stationery","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Precision Shooter":["Compact Pistol","Scoped Rifle","Period Field Optics","Protective Vest","Period Communications Kit","Period Navigation Kit","Period Carry Kit"],"Temporal Analyst":["Compact Pistol","Period Records & Reference Kit","Period Imaging Kit","Field Notebook","Period Communications Kit","Period Carry Kit"],"Custom":["Compact Pistol","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Period Carry Kit"]},"1950s":{"Field Operator":["Service Pistol","Carbine","Protective Vest","Period Communications Kit","Period Medical Bag","Flashlight","Period Field Optics","Period Carry Kit"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Carry Kit"],"Investigator":["Compact Pistol","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Period Carry Kit"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Engineer":["Compact Pistol","Period Technical Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Carry Kit"],"Scientist":["Compact Pistol","Period Laboratory Kit","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Medic":["Compact Pistol","Period Medical Bag","First Aid Pouch","Protective Vest","Period Communications Kit","Period Carry Kit"],"Recon":["Compact Pistol","Carbine","Period Field Optics","Period Imaging Kit","Period Communications Kit","Period Navigation Kit","Climbing Kit","Protective Vest","Period Carry Kit"],"Close Protection":["Service Pistol","Protective Vest","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Period Carry Kit"],"Breacher":["Service Pistol","Shotgun","Protective Vest","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Period Carry Kit"],"Control Specialist":["Compact Pistol","Baton","Protective Vest","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Period Carry Kit"],"Command":["Compact Pistol","Protective Vest","Period Communications Kit","Period Credentials & Stationery","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Precision Shooter":["Compact Pistol","Scoped Rifle","Period Field Optics","Protective Vest","Period Communications Kit","Period Navigation Kit","Period Carry Kit"],"Temporal Analyst":["Compact Pistol","Period Records & Reference Kit","Period Imaging Kit","Field Notebook","Period Communications Kit","Period Carry Kit"],"Custom":["Compact Pistol","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Period Carry Kit"]},"1960s":{"Field Operator":["Service Pistol","Carbine","Protective Vest","Period Communications Kit","Period Medical Bag","Flashlight","Period Field Optics","Period Carry Kit"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Carry Kit"],"Investigator":["Compact Pistol","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Period Carry Kit"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Engineer":["Compact Pistol","Period Technical Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Carry Kit"],"Scientist":["Compact Pistol","Period Laboratory Kit","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Medic":["Compact Pistol","Period Medical Bag","First Aid Pouch","Protective Vest","Period Communications Kit","Period Carry Kit"],"Recon":["Compact Pistol","Carbine","Period Field Optics","Period Imaging Kit","Period Communications Kit","Period Navigation Kit","Climbing Kit","Protective Vest","Period Carry Kit"],"Close Protection":["Service Pistol","Protective Vest","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Period Carry Kit"],"Breacher":["Service Pistol","Shotgun","Protective Vest","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Period Carry Kit"],"Control Specialist":["Compact Pistol","Baton","Protective Vest","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Period Carry Kit"],"Command":["Compact Pistol","Protective Vest","Period Communications Kit","Period Credentials & Stationery","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Precision Shooter":["Compact Pistol","Precision Rifle","Period Field Optics","Protective Vest","Period Communications Kit","Period Navigation Kit","Period Carry Kit"],"Temporal Analyst":["Compact Pistol","Period Records & Reference Kit","Period Imaging Kit","Field Notebook","Period Communications Kit","Period Carry Kit"],"Custom":["Compact Pistol","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Period Carry Kit"]},"1970s":{"Field Operator":["Service Pistol","Carbine","Protective Vest","Period Communications Kit","Period Medical Bag","Flashlight","Period Field Optics","Period Carry Kit"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Carry Kit"],"Investigator":["Compact Pistol","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Period Carry Kit"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Engineer":["Compact Pistol","Period Technical Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Carry Kit"],"Scientist":["Compact Pistol","Period Laboratory Kit","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Medic":["Compact Pistol","Period Medical Bag","First Aid Pouch","Protective Vest","Period Communications Kit","Period Carry Kit"],"Recon":["Compact Pistol","Carbine","Period Field Optics","Period Imaging Kit","Period Communications Kit","Period Navigation Kit","Climbing Kit","Protective Vest","Period Carry Kit"],"Close Protection":["Service Pistol","Protective Vest","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Period Carry Kit"],"Breacher":["Service Pistol","Shotgun","Protective Vest","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Period Carry Kit"],"Control Specialist":["Compact Pistol","Baton","Protective Vest","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Period Carry Kit"],"Command":["Compact Pistol","Protective Vest","Period Communications Kit","Period Credentials & Stationery","Period Records & Reference Kit","Field Notebook","Period Carry Kit"],"Precision Shooter":["Compact Pistol","Precision Rifle","Period Field Optics","Protective Vest","Period Communications Kit","Period Navigation Kit","Period Carry Kit"],"Temporal Analyst":["Compact Pistol","Period Records & Reference Kit","Period Imaging Kit","Field Notebook","Period Communications Kit","Period Carry Kit"],"Custom":["Compact Pistol","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Period Carry Kit"]},"1980s":{"Field Operator":["Service Pistol","Carbine","Protective Vest","Period Communications Kit","Period Medical Bag","Flashlight","Period Field Optics","Civilian Backpack"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Computing Kit","Civilian Backpack"],"Investigator":["Compact Pistol","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Civilian Backpack"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Engineer":["Compact Pistol","Period Technical Kit","Period Computing Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Civilian Backpack"],"Scientist":["Compact Pistol","Period Laboratory Kit","Period Computing Kit","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Medic":["Compact Pistol","Period Medical Bag","First Aid Pouch","Protective Vest","Period Communications Kit","Civilian Backpack"],"Recon":["Compact Pistol","Carbine","Period Field Optics","Period Imaging Kit","Period Communications Kit","Period Navigation Kit","Climbing Kit","Protective Vest","Civilian Backpack"],"Close Protection":["Service Pistol","Protective Vest","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Civilian Backpack"],"Breacher":["Service Pistol","Shotgun","Protective Vest","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Civilian Backpack"],"Control Specialist":["Compact Pistol","Baton","Protective Vest","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Civilian Backpack"],"Command":["Compact Pistol","Protective Vest","Period Communications Kit","Period Credentials & Stationery","Period Computing Kit","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Precision Shooter":["Compact Pistol","Precision Rifle","Period Field Optics","Protective Vest","Period Communications Kit","Period Navigation Kit","Civilian Backpack"],"Temporal Analyst":["Compact Pistol","Period Records & Reference Kit","Period Imaging Kit","Field Notebook","Period Communications Kit","Period Computing Kit","Civilian Backpack"],"Custom":["Compact Pistol","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Civilian Backpack"]},"1990s":{"Field Operator":["Service Pistol","Carbine","Protective Vest","Period Communications Kit","Period Medical Bag","Flashlight","Period Field Optics","Civilian Backpack"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Computing Kit","Civilian Backpack"],"Investigator":["Compact Pistol","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Civilian Backpack"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Engineer":["Compact Pistol","Period Technical Kit","Period Computing Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Civilian Backpack"],"Scientist":["Compact Pistol","Period Laboratory Kit","Period Computing Kit","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Medic":["Compact Pistol","Period Medical Bag","First Aid Pouch","Protective Vest","Period Communications Kit","Civilian Backpack"],"Recon":["Compact Pistol","Carbine","Period Field Optics","Period Imaging Kit","Period Communications Kit","Period Navigation Kit","Climbing Kit","Protective Vest","Civilian Backpack"],"Close Protection":["Service Pistol","Protective Vest","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Civilian Backpack"],"Breacher":["Service Pistol","Shotgun","Protective Vest","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Civilian Backpack"],"Control Specialist":["Compact Pistol","Baton","Protective Vest","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Civilian Backpack"],"Command":["Compact Pistol","Protective Vest","Period Communications Kit","Period Credentials & Stationery","Period Computing Kit","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Precision Shooter":["Compact Pistol","Precision Rifle","Period Field Optics","Protective Vest","Period Communications Kit","Period Navigation Kit","Civilian Backpack"],"Temporal Analyst":["Compact Pistol","Period Records & Reference Kit","Period Imaging Kit","Field Notebook","Period Communications Kit","Period Computing Kit","Civilian Backpack"],"Custom":["Compact Pistol","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Civilian Backpack"]},"2000s":{"Field Operator":["Service Pistol","Carbine","Protective Vest","Period Communications Kit","Period Medical Bag","Flashlight","Compact Binoculars","Civilian Backpack"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Computing Kit","Civilian Backpack"],"Investigator":["Compact Pistol","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Period Communications Kit","Civilian Backpack"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Period Communications Kit","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Engineer":["Compact Pistol","Period Technical Kit","Period Computing Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Civilian Backpack"],"Scientist":["Compact Pistol","Period Laboratory Kit","Period Computing Kit","Digital Camera","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Medic":["Compact Pistol","Period Medical Bag","First Aid Pouch","Protective Vest","Period Communications Kit","Civilian Backpack"],"Recon":["Compact Pistol","Carbine","Compact Binoculars","Digital Camera","Period Communications Kit","Period Navigation Kit","Climbing Kit","Protective Vest","Civilian Backpack"],"Close Protection":["Service Pistol","Protective Vest","Period Communications Kit","Period Medical Bag","Plainclothes Concealment Rig","Civilian Backpack"],"Breacher":["Service Pistol","Shotgun","Protective Vest","Period Breaching Kit","Period Technical Kit","Period Communications Kit","Flashlight","Civilian Backpack"],"Control Specialist":["Compact Pistol","Baton","Protective Vest","Period Communications Kit","First Aid Pouch","Plainclothes Concealment Rig","Civilian Backpack"],"Command":["Compact Pistol","Protective Vest","Period Communications Kit","Period Credentials & Stationery","Period Computing Kit","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Precision Shooter":["Compact Pistol","Precision Rifle","Compact Binoculars","Protective Vest","Period Communications Kit","Period Navigation Kit","Civilian Backpack"],"Temporal Analyst":["Compact Pistol","Period Records & Reference Kit","Digital Camera","Field Notebook","Period Communications Kit","Period Computing Kit","Civilian Backpack"],"Custom":["Compact Pistol","Period Communications Kit","Flashlight","First Aid Pouch","Field Notebook","Civilian Backpack"]},"2010s":{"Field Operator":["Service Pistol","Carbine","Protective Vest","Encrypted Radio","Field Medical Kit","Flashlight","Compact Binoculars","Civilian Backpack"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Period Intrusion Kit","Period Credentials & Stationery","Period Currency Kit","Encrypted Radio","Laptop / Tablet","Civilian Backpack"],"Investigator":["Compact Pistol","Period Imaging Kit","Period Records & Reference Kit","Field Notebook","Flashlight","Encrypted Radio","Civilian Backpack"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Period Credentials & Stationery","Period Currency Kit","Encrypted Radio","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Engineer":["Compact Pistol","Multitool","Laptop / Tablet","Period Records & Reference Kit","Field Notebook","Flashlight","Civilian Backpack"],"Scientist":["Compact Pistol","Period Laboratory Kit","Laptop / Tablet","Digital Camera","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Medic":["Compact Pistol","Field Medical Kit","First Aid Pouch","Protective Vest","Encrypted Radio","Civilian Backpack"],"Recon":["Compact Pistol","Carbine","Compact Binoculars","Digital Camera","Encrypted Radio","Period Navigation Kit","Climbing Kit","Protective Vest","Civilian Backpack"],"Close Protection":["Service Pistol","Protective Vest","Encrypted Radio","Field Medical Kit","Plainclothes Concealment Rig","Civilian Backpack"],"Breacher":["Service Pistol","Shotgun","Protective Vest","Period Breaching Kit","Multitool","Encrypted Radio","Flashlight","Civilian Backpack"],"Control Specialist":["Compact Pistol","Baton","Protective Vest","Encrypted Radio","First Aid Pouch","Plainclothes Concealment Rig","Civilian Backpack"],"Command":["Compact Pistol","Protective Vest","Encrypted Radio","Period Credentials & Stationery","Laptop / Tablet","Period Records & Reference Kit","Field Notebook","Civilian Backpack"],"Precision Shooter":["Compact Pistol","Precision Rifle","Compact Binoculars","Protective Vest","Encrypted Radio","Period Navigation Kit","Civilian Backpack"],"Temporal Analyst":["Compact Pistol","Period Records & Reference Kit","Digital Camera","Field Notebook","Encrypted Radio","Laptop / Tablet","Civilian Backpack"],"Custom":["Compact Pistol","Encrypted Radio","Flashlight","First Aid Pouch","Field Notebook","Civilian Backpack"]},"2020s":{"Field Operator":["Service Pistol","Carbine","Protective Vest","Encrypted Radio","Smartphone","Field Medical Kit","Flashlight","Civilian Backpack"],"Infiltrator":["Compact Pistol","Plainclothes Concealment Rig","Smartphone","Period Intrusion Kit","Laptop / Tablet","Multitool","Period Currency Kit","Civilian Backpack"],"Investigator":["Compact Pistol","Forensic Kit","Evidence Bags & Swabs","Digital Camera","Smartphone","Field Notebook","Flashlight","Civilian Backpack"],"Diplomat":["Compact Pistol","Plainclothes Concealment Rig","Smartphone","Laptop / Tablet","Period Currency Kit","Field Notebook","Civilian Backpack"],"Engineer":["Compact Pistol","Universal Interface Kit","Laptop / Tablet","Multitool","Precision Chronometer","Flashlight","Civilian Backpack"],"Scientist":["Compact Pistol","Laptop / Tablet","Precision Chronometer","Digital Camera","Field Notebook","Evidence Bags & Swabs","Civilian Backpack"],"Medic":["Compact Pistol","Field Medical Kit","First Aid Pouch","Protective Vest","Smartphone","Encrypted Radio","Civilian Backpack"],"Recon":["Compact Pistol","Carbine","Compact Binoculars","Digital Camera","Encrypted Radio","Smartphone","Climbing Kit","Civilian Backpack"],"Close Protection":["Service Pistol","Protective Vest","Encrypted Radio","Smartphone","Field Medical Kit","Plainclothes Concealment Rig","Civilian Backpack"],"Breacher":["Service Pistol","Shotgun","Protective Vest","Period Intrusion Kit","Multitool","Encrypted Radio","Flashlight","Civilian Backpack"],"Control Specialist":["Compact Pistol","Baton","Protective Vest","Encrypted Radio","First Aid Pouch","Plainclothes Concealment Rig","Civilian Backpack"],"Command":["Compact Pistol","Protective Vest","Encrypted Radio","Smartphone","Laptop / Tablet","Field Notebook","Civilian Backpack"],"Precision Shooter":["Compact Pistol","Precision Rifle","Compact Binoculars","Protective Vest","Encrypted Radio","Smartphone","Civilian Backpack"],"Temporal Analyst":["Compact Pistol","Laptop / Tablet","Precision Chronometer","Digital Camera","Field Notebook","Smartphone","Civilian Backpack"],"Custom":["Compact Pistol","Smartphone","Flashlight","First Aid Pouch","Field Notebook","Civilian Backpack"]}};
+const ERA_ORDER=["1900s","1910s","1920s","1930s","1940s","1950s","1960s","1970s","1980s","1990s","2000s","2010s","2020s"];
+const ERA_PROFILES={"1900s":{"years":"1900-1909","summary":"Telegraph and landline telephone dominate long-distance coordination; records are paper-first; photography is film/plate based; automobiles exist but are not assumed everywhere.","communications":"telegraph forms, landline telephone access, coded messenger arrangements","imaging":"plate or roll-film camera, tripod, spare plates or film","technical":"measuring tape, calipers, hand tools, transit/level as appropriate","laboratory":"sample bottles, stains/reagents, hand lens or microscope access","records":"city directories, newspapers, ledgers, paper maps, rail and street timetables","optics":"field glasses","navigation":"paper street/rail maps, compass, printed timetables","medical":"doctor's bag, bandages, antiseptic supplies, splints","carry":"satchel, valise, carpetbag, or canvas haversack","credentials":"letters of introduction, calling cards, stationery, seals, ordinary forms","breaching":"pry bar, wedges, hand drill, saw, and period-appropriate cutting tools","computing":"not normally period-plausible as portable field equipment"},"1910s":{"years":"1910-1919","summary":"Telephone and telegraph remain dominant; field telephone and signal gear are plausible in military or institutional contexts; motor transport is increasingly common but uneven.","communications":"telephone/telegraph access, field telephone, signal lamp or coded messenger plan","imaging":"folding roll-film or plate camera and field accessories","technical":"precision hand tools, measuring instruments, slide rule, transit/level as appropriate","laboratory":"field reagents, sample containers, microscope access, notebooks","records":"directories, newspapers, paper maps, government or institutional ledgers","optics":"field glasses or compact binoculars","navigation":"paper maps, compass, rail schedules, road guides","medical":"doctor's or orderly's bag, dressings, antiseptic, splints","carry":"satchel, valise, canvas pack, or haversack","credentials":"letters, badges, stationery, seals, typed or handwritten forms","breaching":"pry tools, bolt cutters, hand drill, wedges, saw","computing":"not normally period-plausible as portable field equipment"},"1920s":{"years":"1920-1929","summary":"Landline telephone and telegram networks are mature in cities; radio exists but access depends heavily on role and location; portable photography is increasingly practical.","communications":"telephone/telegram access, coded messages, radio-station or field-set access where appropriate","imaging":"folding or compact film camera with flash equipment where available","technical":"precision hand tools, measuring instruments, slide rule, electrical test tools","laboratory":"field chemistry kit, sample containers, microscope access, notebooks","records":"directories, newspapers, office files, maps, timetables, card indexes","optics":"field glasses or compact binoculars","navigation":"paper maps, compass, road/rail guides","medical":"medical bag, sterile dressings, antiseptic, splints, basic instruments","carry":"briefcase, satchel, valise, or canvas pack","credentials":"typed letters, business cards, stationery, seals, ordinary forms","breaching":"pry tools, bolt cutters, hand drill, wedges, saw","computing":"not normally period-plausible as portable field equipment"},"1930s":{"years":"1930-1939","summary":"Telephone, telegraph, radio, paper filing systems, and portable film cameras define most field work; specialized radio sets are plausible for government, military, police, and technical teams.","communications":"telephone/telegraph access, portable or vehicle radio where role permits, coded message forms","imaging":"35mm, folding, or press camera with film and flash equipment","technical":"precision hand tools, electrical meters, slide rule, measuring instruments","laboratory":"field reagents, sample containers, microscope access, portable test instruments","records":"directories, newspapers, office files, maps, card indexes, technical manuals","optics":"field glasses or compact binoculars","navigation":"paper maps, compass, road/rail guides","medical":"medical bag, dressings, antiseptic, splints, basic diagnostic instruments","carry":"briefcase, satchel, suitcase, or canvas field pack","credentials":"typed credentials, badges, stationery, seals, official-looking forms","breaching":"pry tools, bolt cutters, hand drill, wedges, saw","computing":"not normally period-plausible as portable field equipment"},"1940s":{"years":"1940-1949","summary":"Wartime and institutional settings can support field radios, specialized protective gear, compact cameras, and sophisticated technical instruments; civilian access varies sharply by place and year.","communications":"field radio, telephone, telegraph, signal gear, coded message materials","imaging":"35mm or press camera, film, flash bulbs, compact documentation kit","technical":"multimeter/test meter, precision tools, slide rule, measuring instruments","laboratory":"field chemistry/medical testing kit, sample containers, microscope access","records":"technical manuals, maps, directories, military/civil files, card indexes","optics":"field glasses or military binoculars","navigation":"paper maps, compass, road/rail charts, military map tools where appropriate","medical":"field medical bag, dressings, antiseptic, splints, trauma instruments","carry":"briefcase, dispatch bag, canvas pack, or field haversack","credentials":"typed orders, badges, identification papers, stationery, stamps and seals","breaching":"pry tools, bolt cutters, sledge, hand drill, wedges, cutting tools","computing":"not normally portable; specialized electromechanical calculation or institutional machine access only"},"1950s":{"years":"1950-1959","summary":"Portable and vehicle radio become more accessible to professional teams; film cameras, tape recording, electronic test equipment, and early institutional computing coexist with paper records.","communications":"portable/vehicle radio, telephone, telegraph or teleprinter access","imaging":"35mm camera, flash unit, film, optional portable tape recorder for interviews","technical":"electronic test meter, precision tools, slide rule, measuring instruments","laboratory":"portable test kit, sample containers, reagents, microscope access","records":"technical manuals, directories, paper files, microfilm access, maps","optics":"compact binoculars or field glasses","navigation":"paper maps, compass, road atlases, rail/air schedules","medical":"field medical bag, sterile dressings, splints, diagnostic instruments","carry":"briefcase, shoulder bag, suitcase, or field pack","credentials":"laminated/printed identification, badges, typed orders, stationery, stamps","breaching":"pry tools, bolt cutters, sledge, drill, wedges, cutting tools","computing":"institutional computer access or electronic calculation tools; not normally a personal field computer"},"1960s":{"years":"1960-1969","summary":"Handheld/field radio, transistor electronics, 35mm photography, portable tape recording, and electronic test gear are increasingly practical; computing remains mainly institutional.","communications":"handheld or field radio, telephone, pager where specialized, coded message materials","imaging":"35mm camera, flash, film, portable tape recorder for interviews","technical":"electronic multimeter, precision tools, slide rule, measuring instruments","laboratory":"portable analytical kit, sample containers, reagents, microscope access","records":"technical manuals, directories, paper files, microfilm, maps","optics":"compact binoculars or field glasses","navigation":"paper maps, compass, road atlases, aviation/rail charts","medical":"field medical bag, dressings, splints, diagnostic instruments","carry":"briefcase, shoulder bag, suitcase, or field pack","credentials":"printed identification, badges, typed orders, official forms, stamps","breaching":"pry tools, bolt cutters, sledge, power drill where plausible, wedges","computing":"institutional mainframe/terminal access or electronic calculator; no routine portable computer"},"1970s":{"years":"1970-1979","summary":"Handheld radios, cassette recording, electronic calculators, 35mm cameras, and increasingly portable technical electronics are common professional tools; computing is still mostly institutional.","communications":"handheld radio, telephone, pager where appropriate, coded message materials","imaging":"35mm camera, flash, film, cassette recorder for interviews","technical":"digital/analog multimeter, precision tools, electronic calculator, measuring instruments","laboratory":"portable analytical kit, sample containers, reagents, field instruments","records":"technical manuals, directories, paper files, microfilm, maps and atlases","optics":"compact binoculars","navigation":"paper maps, compass, road atlas, aviation/rail charts","medical":"field medical bag, dressings, splints, diagnostic instruments","carry":"briefcase, shoulder bag, duffel, or backpack","credentials":"printed/laminated identification, badges, typed forms, stamps","breaching":"pry tools, bolt cutters, sledge, power drill, wedges","computing":"institutional terminal or specialized portable electronic calculator; personal computers are not yet a normal field assumption"},"1980s":{"years":"1980-1989","summary":"Handheld radio, pagers, portable computers in specialized roles, camcorders/35mm cameras, and electronic security tools become viable. Cellular access exists late in the decade but is not universal.","communications":"handheld radio, pager, landline, and cellular access where the exact year/location supports it","imaging":"35mm camera or camcorder, flash, film/tape, compact recorder","technical":"digital multimeter, precision tools, electronic calculator, portable diagnostics","laboratory":"portable analytical kit, sample containers, electronic field instruments","records":"directories, paper files, microfilm, technical manuals, early digital media","optics":"compact binoculars","navigation":"paper maps, compass, road atlas, specialized electronic navigation where available","medical":"field medical kit, modern dressings, splints, diagnostic instruments","carry":"briefcase, shoulder bag, duffel, or civilian backpack","credentials":"photo identification, badges, printed forms, access cards where plausible","breaching":"pry tools, bolt cutters, sledge, power drill, lock/bypass tools","computing":"portable computer or terminal access, floppy/removable media, electronic calculator"},"1990s":{"years":"1990-1999","summary":"Cellular phones, pagers, laptops, digital networks, GPS in specialized roles, 35mm and early digital photography, and modern radio gear coexist. Exact year matters substantially.","communications":"handheld radio, pager/cellular phone, fax/landline, early email access where plausible","imaging":"35mm camera or early digital camera depending year, compact recorder","technical":"digital multimeter, laptop-assisted diagnostics where plausible, precision tools","laboratory":"portable analytical kit, electronic field instruments, sample containers","records":"paper files, technical manuals, CD/floppy media, growing digital databases","optics":"compact binoculars","navigation":"paper maps plus GPS receiver where role/year supports it","medical":"field medical kit, modern dressings, splints, diagnostic instruments","carry":"briefcase, shoulder bag, duffel, or civilian backpack","credentials":"photo ID, badges, access cards, printed credentials and forms","breaching":"modern pry/cutting tools, bolt cutters, power drill, bypass tools","computing":"laptop/desktop access, modem/network connection, removable magnetic or optical media"},"2000s":{"years":"2000-2009","summary":"Feature phones, SMS, handheld radios, laptops, GPS receivers, digital cameras, removable media, and web access are ordinary professional tools, with smartphones emerging late in the decade.","communications":"feature phone, SMS, handheld radio, email/web access and ordinary encrypted services where plausible","imaging":"digital camera, compact video camera, digital voice recorder","technical":"digital multimeter, laptop diagnostics, modern precision tools","laboratory":"portable analytical kit, electronic field instruments, digital logging","records":"paper plus networked databases, optical/USB media, web research","optics":"compact binoculars","navigation":"paper maps plus handheld/vehicle GPS receiver","medical":"modern field medical kit, dressings, splints, diagnostic instruments","carry":"civilian backpack, laptop bag, briefcase, or duffel","credentials":"photo ID, access cards, printed credentials, ordinary digital records","breaching":"modern pry/cutting tools, bolt cutters, power drill, bypass tools","computing":"laptop/PDA, removable media, local networks and internet access"},"2010s":{"years":"2010-2019","summary":"Smartphones, laptops/tablets, digital cameras, GPS, encrypted radios, cloud/network access, and modern portable electronics are ordinary in many professional contexts.","communications":"smartphone, handheld/encrypted radio, secure messaging and ordinary cellular/network access","imaging":"digital camera, smartphone camera, action camera, digital recorder","technical":"digital multimeter, laptop/tablet diagnostics, modern precision tools","laboratory":"portable electronic analytical kit, digital logging, sample containers","records":"networked databases, cloud/local storage, paper records where context requires","optics":"compact binoculars or modern field optics","navigation":"smartphone/GPS receiver plus paper backup","medical":"modern field medical kit, trauma supplies, portable diagnostic tools","carry":"civilian backpack, laptop bag, briefcase, or duffel","credentials":"photo ID, access cards, printed/digital credentials","breaching":"modern pry/cutting tools, bolt cutters, power drill, bypass tools","computing":"laptop/tablet, smartphone, removable media, network/cloud access"},"2020s":{"years":"2020-2029","summary":"Smartphones, laptops/tablets, digital imaging, GPS, encrypted radio, secure messaging, and connected consumer/professional electronics are ordinary in many settings.","communications":"smartphone, encrypted radio, secure messaging, ordinary cellular/network access","imaging":"digital camera, smartphone camera, action camera, digital recorder","technical":"digital multimeter, laptop/tablet diagnostics, modern precision tools","laboratory":"portable electronic analytical kit, digital logging, sample containers","records":"networked/cloud/local databases plus paper records when institutionally required","optics":"compact binoculars or modern field optics","navigation":"smartphone/GPS receiver plus paper backup","medical":"modern field medical kit, trauma supplies, portable diagnostic tools","carry":"civilian backpack, laptop bag, briefcase, or duffel","credentials":"photo ID, access cards, printed/digital credentials","breaching":"modern pry/cutting tools, bolt cutters, power drill, bypass tools","computing":"laptop/tablet, smartphone, removable media, network/cloud access"}};
+const ERA_ITEM_KEYS={"Period Communications Kit":"communications","Period Imaging Kit":"imaging","Period Technical Kit":"technical","Period Laboratory Kit":"laboratory","Period Records & Reference Kit":"records","Period Field Optics":"optics","Period Navigation Kit":"navigation","Period Medical Bag":"medical","Period Carry Kit":"carry","Period Credentials & Stationery":"credentials","Period Breaching Kit":"breaching","Period Computing Kit":"computing"};
+
+const PRECONFIG_PACKAGES={"Field Operator": {"abilities": {"STR": 6, "DEX": 8, "CON": 8, "INT": 4, "WIS": 6, "CHA": 4}, "skills": {"Sidearms": 4, "Longarms": 4, "Tactics": 4, "Dodge": 4, "Initiative": 4}}, "Infiltrator": {"abilities": {"STR": 4, "DEX": 8, "CON": 4, "INT": 6, "WIS": 8, "CHA": 6}, "skills": {"Stealth": 4, "Security": 4, "Tradecraft": 4, "Deception": 4, "Dodge": 4}}, "Investigator": {"abilities": {"STR": 4, "DEX": 6, "CON": 4, "INT": 8, "WIS": 8, "CHA": 6}, "skills": {"Investigation": 6, "Perception": 4, "Tradecraft": 4, "Influence": 3, "Science": 3}}, "Diplomat": {"abilities": {"STR": 4, "DEX": 4, "CON": 6, "INT": 6, "WIS": 8, "CHA": 8}, "skills": {"Influence": 6, "Culture": 4, "Deception": 4, "Leadership": 3, "Tradecraft": 3}}, "Engineer": {"abilities": {"STR": 4, "DEX": 8, "CON": 6, "INT": 8, "WIS": 6, "CHA": 4}, "skills": {"Engineering": 6, "Computing": 4, "Security": 4, "Science": 3, "Perception": 3}}, "Scientist": {"abilities": {"STR": 4, "DEX": 6, "CON": 6, "INT": 8, "WIS": 8, "CHA": 4}, "skills": {"Science": 6, "Investigation": 4, "History": 4, "Perception": 3, "Computing": 3}}, "Medic": {"abilities": {"STR": 4, "DEX": 6, "CON": 6, "INT": 8, "WIS": 8, "CHA": 4}, "skills": {"Medicine": 6, "Science": 4, "Perception": 4, "Recovery": 3, "Will": 3}}, "Recon": {"abilities": {"STR": 4, "DEX": 8, "CON": 6, "INT": 6, "WIS": 8, "CHA": 4}, "skills": {"Stealth": 6, "Perception": 4, "Survival": 4, "Dodge": 3, "Longarms": 3}}, "Close Protection": {"abilities": {"STR": 6, "DEX": 6, "CON": 8, "INT": 4, "WIS": 8, "CHA": 4}, "skills": {"Dodge": 4, "Fortitude": 4, "Sidearms": 4, "Tactics": 4, "Perception": 4}}, "Breacher": {"abilities": {"STR": 8, "DEX": 6, "CON": 8, "INT": 4, "WIS": 6, "CHA": 4}, "skills": {"Shotguns": 4, "Athletics": 4, "Fortitude": 4, "Heavy Weapons": 4, "Dodge": 4}}, "Control Specialist": {"abilities": {"STR": 8, "DEX": 8, "CON": 6, "INT": 4, "WIS": 6, "CHA": 4}, "skills": {"Grappling": 6, "Disarming": 4, "Unarmed": 4, "Dodge": 3, "Fortitude": 3}}, "Command": {"abilities": {"STR": 4, "DEX": 4, "CON": 6, "INT": 6, "WIS": 8, "CHA": 8}, "skills": {"Leadership": 6, "Tactics": 4, "Influence": 4, "Will": 3, "Tradecraft": 3}}, "Precision Shooter": {"abilities": {"STR": 4, "DEX": 8, "CON": 6, "INT": 6, "WIS": 8, "CHA": 4}, "skills": {"Precision Weapons": 6, "Perception": 4, "Stealth": 4, "Dodge": 3, "Initiative": 3}}, "Temporal Analyst": {"abilities": {"STR": 4, "DEX": 4, "CON": 6, "INT": 8, "WIS": 8, "CHA": 6}, "skills": {"History": 6, "Investigation": 4, "Science": 4, "Culture": 3, "Tradecraft": 3}}};
+
+const PRECONFIG_RECOMMENDED_UNTRAINED={"Field Operator":["Perception","Athletics","Fortitude"],"Infiltrator":["Perception","Sidearms","Will"],"Investigator":["Dodge","Will","Security"],"Diplomat":["Perception","Will","Investigation"],"Engineer":["Dodge","Investigation","Fortitude"],"Scientist":["Medicine","Dodge","Will"],"Medic":["Dodge","Athletics","Investigation"],"Recon":["Fortitude","Athletics","Sidearms"],"Close Protection":["Athletics","Will","Recovery"],"Breacher":["Perception","Tactics","Will"],"Control Specialist":["Perception","Athletics","Will"],"Command":["Perception","Dodge","Deception"],"Precision Shooter":["Fortitude","Tactics","Survival"],"Temporal Analyst":["Perception","Will","Computing"]};
+const TABS=[["start","Start"],["play","Play"],["vector","Vector"],["abilities","Abilities"],["skills","Skills"],["vams","VAMs"],["gear","Gear"],["roller","Roller"],["mission","Mission"],["rules","Learn / Rules"],["save","Save"]];
+const STORE="protocol7_vector_v0187", LEGACY_STORES=["protocol7_vector_v0186","protocol7_vector_v0185","protocol7_vector_v0184","protocol7_vector_v0182","protocol7_vector_v0181","protocol7_vector_v0180","protocol7_vector_v178"];
+const abilityNames=["STR","DEX","CON","INT","WIS","CHA"];
+
+const ABILITY_HELP={
+ STR:["Strength","Physical force, lifting power, leverage, and muscular control. STR appears in pools where force or bodily power materially affects the outcome."],
+ DEX:["Dexterity","Coordination, precision, balance, speed of movement, and fine motor control. DEX appears in pools where accurate or agile physical action matters."],
+ CON:["Constitution","Endurance, resilience, stamina, and resistance to bodily stress. CON appears in pools involving exertion, injury, toxins, and physical shock."],
+ INT:["Intelligence","Analysis, technical reasoning, learned knowledge, planning, and problem solving. INT appears when understanding systems or working through information matters."],
+ WIS:["Wisdom","Awareness, judgment, intuition, composure, and reading situations. WIS appears in perception, survival, defense, and decisions made under pressure."],
+ CHA:["Charisma","Presence, communication, social control, confidence, and influence. CHA appears when persuading, deceiving, leading, or maintaining social composure matters."]
+};
+const TERM_HELP={
+ "HP":["Hit Points","Your current capacity to remain functional through injury and physical trauma. Maximum HP equals the Constitution die maximum multiplied by 3."],
+ "AP":["Action Points","The points spent to act during your turn. You normally begin a turn with 3 AP. Unspent AP remains available to pay for your normal Reaction until your next turn begins."],
+ "Reaction":["Reaction","A response to an eligible event outside your normal turn. You normally have one Reaction between turns. If it spends AP, use unspent AP first; only if none remains may it borrow 1 AP from the next turn."],
+ "BAR":["Biocognitive Augmentation Rating (BAR)","The standard measure of processing, integration, and neural-interface capacity required to operate VAMs. BAR measures capacity, not energy. A standard Vector implant supports 16 BAR of active VAMs."],
+ "VAM":["VAM","A future biocognitive augmentation module loaded through a Vector's implant. Each VAM has a BAR cost and provides a defined capability while loaded."],
+ "Exposure":["Exposure","A measure of durable anomalous evidence left in the era. Higher Exposure means witnesses, records, artifacts, or institutions are increasingly able to connect impossible events."],
+ "Initiative":["Initiative","A Skill used to determine how quickly a Vector acts when timing matters. Its normal pool is DEX + DEX + WIS + the Initiative Skill die."],
+ "Advantage":["Advantage","A favorable circumstance that adds a die to the pool: minor +d4, clear +d6, or major +d8."],
+ "Disadvantage":["Disadvantage","An unfavorable circumstance that removes a die from the pool: minor removes d4, clear removes d6, major removes d8. If that die is absent, remove the next-highest die present; if none is higher, remove the highest available."],
+ "Die Step Effect":["Die Step Effect","A modifier that changes a specific Ability die before the pool is built. The normal ladder is d4 → d6 → d8 → d10 → d12."],
+ "Primary Gear":["Primary Gear","The one weapon, tool, armor item, or other piece of equipment whose gear die is being used for a Skill roll. If several compatible items are equipped, choose one before rolling unless a rule explicitly allows combining gear."],
+
+ "Historical Carrier":["Historical Carrier","The person, copy, object, record, institution, process, or network that must transmit the mission-critical fact or consequence forward through history."],
+ "Protocol Dice":["Protocol Dice","Build one complete pool, roll once, treat 1-3 as blank, and add every 4+ at face value."],
+ "Gear Die":["Gear Die","The die from one primary relevant weapon, tool, or armor item. Compatible gear does not stack unless a rule explicitly permits it."],
+ "Vector":["Vector","A Protocol 7 field operative acting in a historical era under Aletheia mission authority."],
+ "Insertion":["Insertion","Aletheia places a Vector at a precise historical moment through temporal transit. Exceptional terminal-host insertion requires exact surveillance, authorization, and Thanatic Anchor."],
+ "Overwhelming Success":["Overwhelming Success","A success by a margin of 12 or more. In addition to succeeding, it grants one directly related extra mechanical benefit under the Overwhelming Success rules."]
+};
+function helpButton(type,key){
+  return `<button type="button" class="help-btn" aria-label="Help: ${key}" title="What is this?" onclick='showHelp(${JSON.stringify(type)},${JSON.stringify(key)})'>?</button>`;
+}
+function helpEscape(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function showHelp(type,key){
+  let title=key, body="", meta="";
+  if(type==="ability" && ABILITY_HELP[key]){
+    title=`${ABILITY_SYMBOLS[key]||""} ${key} — ${ABILITY_HELP[key][0]}`;
+    body=ABILITY_HELP[key][1];
+    const base=+S.abilities[key]||4, eff=effectiveAbilityDie(key);
+    meta=`Current die: d${eff}${eff!==base?` (base d${base})`:""}`;
+  }else if(type==="skill"){
+    const x=SKILLS.find(s=>s.name===key);
+    if(x){title=x.name;body=`${x.uses}.`;meta=`${x.cat} Skill • Pool Abilities: ${x.abilities} • Current Skill die: ${skillDie(S.skills[x.name]||0)}`;}
+  }else if(type==="vam"){
+    const x=VAMS.find(v=>v.name===key);
+    if(x){title=x.name;body=x.effect;meta=`${x.bars} BAR VAM • ${VAM_CATEGORIES[x.name]||"Utility"}`;}
+  }else if(type==="gear"){
+    const x=TOOLS.find(g=>g.Item===key);
+    if(x){title=x.Item;body=x.Function||"Mission equipment.";const era=S.gearEra||"2020s";const k=x.EraKey||ERA_ITEM_KEYS[x.Item];const ex=k&&ERA_PROFILES[era]?ERA_PROFILES[era][k]:"";if(ex)body+=` Current ${era} example: ${ex}.`;meta=`${x.Tag||"Gear"}${x.Die&&x.Die!=="—"?` • ${x.Die} gear die`:""}${x.Skill?` • Used with ${x.Skill}`:""}`;}
+  }else if(type==="weapon"){
+    const x=WEAPONS.find(w=>w.Weapon===key);
+    if(x){title=x.Weapon;body=x.Notes||"Weapon.";meta=`${x.Die} weapon die • ${x.Skill}`;}
+  }else if(type==="action"){
+    const x=ACTIONS.find(a=>a.Action===key);
+    if(x){title=x.Action;body=x.Effect;meta=`${x.AP} AP • Action`;}
+  }else if(type==="condition"){
+    const x=CONDITIONS.find(c=>c.Condition===key);
+    if(x){title=x.Condition;body=x.Rule;meta="Condition";}
+  }else if(type==="term" && TERM_HELP[key]){
+    title=TERM_HELP[key][0];body=TERM_HELP[key][1];meta="Game term";
+  }else{
+    body="No description has been entered for this item yet.";
+  }
+  $("helpTitle").textContent=title;
+  $("helpBody").innerHTML=`${meta?`<div class="help-meta">${helpEscape(meta)}</div>`:""}<p>${helpEscape(body)}</p>`;
+  $("helpModal").classList.add("open");
+}
+function closeHelp(ev){
+  if(ev && ev.target!==$("helpModal"))return;
+  $("helpModal").classList.remove("open");
+}
+
+const base=()=>({name:"",discipline:"",notes:"",abilities:{STR:0,DEX:0,CON:0,INT:0,WIS:0,CHA:0},abilitySteps:{STR:0,DEX:0,CON:0,INT:0,WIS:0,CHA:0},skills:{},pinnedSkills:[],vams:[],gear:[],gearChoices:{},hpMax:18,hp:18,ap:3,reaction:true,reactionAPDebt:0,exposure:0,carrierStrength:"Fragile",carrierRequired:"Established",exposureTarget:2,missionPhase:"Briefing",apocryphon:"",interpretation:"",keys:"",carrier:"",carrierRisk:"",containmentPlan:"",verificationNotes:"",otherGear:"",creationPreset:"",creationComplete:false,gearEra:"2020s"});
+let raw=localStorage.getItem(STORE);
+if(!raw){
+  for(const legacyKey of LEGACY_STORES){
+    const old=localStorage.getItem(legacyKey);
+    if(!old)continue;
+    try{
+      const migrated=JSON.parse(old);
+      raw=JSON.stringify(migrated);
+      break;
+    }catch(e){}
+  }
+}
+let S={...base(),...JSON.parse(raw||"{}")};
+S.abilities={...base().abilities,...(S.abilities||{})};S.abilitySteps={...base().abilitySteps,...(S.abilitySteps||{})};S.skills=S.skills||{};S.pinnedSkills=S.pinnedSkills||[];S.vams=S.vams||[];S.gear=S.gear||[];S.gearChoices=S.gearChoices||{};
+if(S.gearEra==="Late 20th Century")S.gearEra="1990s";if(!ERA_ORDER.includes(S.gearEra))S.gearEra="2020s";
+{const newMax=conHPMax();const oldMax=Number(S.hpMax)||0;const wasFull=oldMax>0&&Number(S.hp)===oldMax;const damage=oldMax>0?Math.max(0,oldMax-(Number(S.hp)||0)):0;S.hpMax=newMax;S.hp=wasFull||oldMax<=0?newMax:Math.max(0,newMax-damage);}
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem(STORE,JSON.stringify(S));$("saveStatus").textContent="saved";setTimeout(()=>$("saveStatus").textContent="autosaved",650)}
+function skillDie(r){r=+r||0;if(r>=45)return"d12+d12";if(r>=36)return"d12+d10";if(r>=28)return"d12+d8";if(r>=21)return"d12+d6";if(r>=15)return"d12+d4";if(r>=10)return"d12";if(r>=6)return"d10";if(r>=3)return"d8";if(r>=1)return"d6";return"d4"}function nextSkillBreakpoint(r){r=+r||0;const pts=[1,3,6,10,15,21,28,36,45];const n=pts.find(x=>x>r);return n?{at:n,need:n-r}:null}function skillProgressText(r){const n=nextSkillBreakpoint(r);return n?`${n.need} rank${n.need===1?"":"s"} to next Skill-die breakpoint`:"maximum listed Skill progression"}
+function diceFromText(t){return (t.match(/d(4|6|8|10|12)/g)||[]).map(x=>+x.slice(1))}
+const DIE_STEP_LADDER=[4,6,8,10,12];
+function stepDie(d,steps){
+  d=+d||4; steps=+steps||0;
+  let i=DIE_STEP_LADDER.indexOf(d);
+  if(i<0)i=0;
+  i=Math.max(0,Math.min(DIE_STEP_LADDER.length-1,i+steps));
+  return DIE_STEP_LADDER[i];
+}
+function effectiveAbilityDie(a){
+  return stepDie(+S.abilities[a]||4,+S.abilitySteps[a]||0);
+}
+function poolFor(sk){let ds=sk.abilities.split("/").map(x=>effectiveAbilityDie(x.trim()));ds.push(...diceFromText(skillDie(S.skills[sk.name]||0)));return ds}
+function poolText(ds){return ds.map(d=>`<span class="die">d${d}</span>`).join(" • ")}
+function roll(ds){let faces=ds.map(d=>1+Math.floor(Math.random()*d));let scored=faces.map(x=>x>=4?x:0);return{total:scored.reduce((a,b)=>a+b,0),faces,scored}}
+function showRoll(label,ds,target="rollResult"){let r=roll(ds);let el=$(target);if(el)el.innerHTML=`<div class="result">${r.total} — ${label}</div><div class="faces">${ds.map((d,i)=>`d${d}: ${r.faces[i]}${r.faces[i]<4?" (blank)":""}`).join(" • ")}</div>`;return r}
+
+function applyPreconfiguration(name){
+  const pkg=PRECONFIG_PACKAGES[name];
+  const vam=VAM_PRESETS.find(x=>x.name===name);
+  if(!pkg || !vam)return false;
+  S.creationPreset=name;
+  S.discipline=name;
+  S.abilities={...pkg.abilities};syncHPToCON(true);
+  S.skills={...pkg.skills};
+  S.pinnedSkills=[...(PRECONFIG_RECOMMENDED_UNTRAINED[name]||[])].filter(n=>!S.skills[n]);
+  S.vams=[...vam.vams];
+  S.hpMax=conHPMax();S.hp=S.hpMax;
+  return true;
+}
+function chooseStartingPreset(name){
+  if(!name){
+    S.creationPreset="";
+    S.pinnedSkills=[];
+    save();renderAll();return;
+  }
+  if(name==="Flexible / Blank"){
+    S.creationPreset="Flexible / Blank";
+    S.discipline="";
+    S.pinnedSkills=[];
+    S.vams=[];
+    save();renderAll();return;
+  }
+  applyPreconfiguration(name);
+  save();renderAll();
+}
+function renderStartPreset(){
+  const el=$("startPreset"); if(!el)return;
+  const options=[{name:"Build Character Myself",value:""},{name:"Flexible / Blank VAM Path",value:"Flexible / Blank"},...VAM_PRESETS.filter(p=>p.name!=="Flexible / Blank").map(p=>({name:p.name,value:p.name}))];
+  el.innerHTML=options.map(o=>`<option value="${o.value}" ${S.creationPreset===o.value?"selected":""}>${o.name}</option>`).join("");
+  const summary=$("startPresetSummary"); if(!summary)return;
+  if(!S.creationPreset){
+    summary.innerHTML="<b>Custom build:</b> you assign Abilities, buy all 20 Skill Ranks, and build your VAM loadout yourself.";
+    return;
+  }
+  if(S.creationPreset==="Flexible / Blank"){
+    summary.innerHTML="<b>Flexible / Blank:</b> you assign Abilities and Skills yourself and begin with no VAMs loaded.";
+    return;
+  }
+  const pkg=PRECONFIG_PACKAGES[S.creationPreset];
+  const vp=VAM_PRESETS.find(x=>x.name===S.creationPreset);
+  const abilityLine=["STR","DEX","CON","INT","WIS","CHA"].map(a=>`${a} d${pkg.abilities[a]}`).join(" • ");
+  const skillLine=Object.entries(pkg.skills).map(([n,r])=>`${n} ${r}`).join(" • ");
+  const vamBars=vp.vams.reduce((n,x)=>n+(VAMS.find(v=>v.name===x)?.bars||0),0);
+  const recPins=(PRECONFIG_RECOMMENDED_UNTRAINED[S.creationPreset]||[]).join(" • ");
+  summary.innerHTML=`<b>${S.creationPreset} complete preconfiguration</b><br><span class="small">${abilityLine}</span><br><span class="small"><b>20 Skill Ranks:</b> ${skillLine}</span><br><span class="small"><b>Recommended untrained on Play:</b> ${recPins||"None"}</span><br><span class="small"><b>VAMs:</b> ${vp.vams.length} loaded, ${vamBars} BAR.</span><br><span class="small"><b>Path:</b> ${S.creationPreset}</span>`;
+}
+function beginCreation(ev){
+  if(ev && ev.preventDefault)ev.preventDefault();
+
+  // Navigate first. Character creation must open even if a later refresh encounters a UI error.
+  showTab("abilities");
+
+  try{
+    if(S.creationPreset && S.creationPreset!=="Flexible / Blank" && PRECONFIG_PACKAGES[S.creationPreset]){
+      applyPreconfiguration(S.creationPreset);
+      save();
+    }
+
+    // Refresh the setup screens after the tab is already open.
+    renderAbilities();
+    renderSkills();
+    renderVams();
+    renderGear();
+    renderEraGear();
+    renderPlay();
+
+    const status=$("beginCreationStatus");
+    if(status)status.textContent="";
+  }catch(err){
+    console.error("Protocol 7 character creation refresh error:",err);
+    const status=$("beginCreationStatus");
+    if(status)status.textContent="Character creation opened. If a preconfiguration did not refresh correctly, select it again and continue.";
+  }
+  return false;
+}
+function nextAfterSkills(){
+  if(S.creationPreset && S.creationPreset!=="Flexible / Blank" && S.vams.length){showTab("gear")}
+  else showTab("vams");
+}
+function finishCharacter(ev){
+  if(ev && ev.preventDefault)ev.preventDefault();
+
+  S.creationComplete=true;
+  save();
+
+  // Navigation happens before any full refresh so a later rendering problem
+  // cannot strand the player on the Vector tab after saving.
+  showTab("play");
+
+  try{
+    renderPlay();
+    renderRules();
+    const fs=$("finishStatus");
+    if(fs)fs.textContent="Character saved.";
+  }catch(err){
+    console.error("Protocol 7 post-save Play refresh error:",err);
+  }
+  return false;
+}
+function skillIsTrained(sk){return +(S.skills[sk.name]||0)>0}
+function equippedGearForSkill(skillName){
+  return S.gear.map(name=>gearEntry(name)).filter(g=>{
+    if(!g || !g.Skill || !g.Die || g.Die==="—") return false;
+    return g.Skill.split("/").map(x=>x.trim()).includes(skillName);
+  });
+}
+function selectedGearForSkill(skillName){
+  const options=equippedGearForSkill(skillName);
+  if(!options.length)return [];
+  if(options.length===1)return [options[0]];
+  const chosen=S.gearChoices[skillName]||"";
+  const match=options.find(g=>(g.Item||g.Weapon)===chosen);
+  return match?[match]:[];
+}
+function setGearChoice(skillName,itemName){
+  S.gearChoices[skillName]=itemName||"";
+  save();
+  renderSkills();
+  renderPlay();
+}
+function gearChoiceControl(skillName,context="roller"){
+  const options=equippedGearForSkill(skillName);
+  if(options.length<=1)return "";
+  const current=S.gearChoices[skillName]||"";
+  const group=("gear_"+context+"_"+skillName).replace(/[^a-z0-9_]/gi,"_");
+  const radios=[
+    `<label class="gear-choice"><input type="radio" name="${group}" ${!current?"checked":""} onchange='setGearChoice(${JSON.stringify(skillName)},"")'><span>No gear</span></label>`,
+    ...options.map(g=>{
+      const n=g.Item||g.Weapon;
+      return `<label class="gear-choice"><input type="radio" name="${group}" ${current===n?"checked":""} onchange='setGearChoice(${JSON.stringify(skillName)},${JSON.stringify(n)})'><span>${n} ${g.Die}</span></label>`;
+    })
+  ];
+  return `<div class="gear-choice-wrap"><div class="small"><b>Choose gear for this roll:</b> one item only unless a rule explicitly allows combining gear.</div><div class="gear-choice-list">${radios.join("")}</div></div>`;
+}
+function gearDiceForSkill(skillName){return selectedGearForSkill(skillName).flatMap(g=>diceFromText(g.Die));}
+function gearLabelsForSkill(skillName){return selectedGearForSkill(skillName).map(g=>`${g.Item||g.Weapon} ${g.Die}`);}
+function completePoolForSkill(sk){
+  const ds=poolFor(sk);
+  ds.push(...gearDiceForSkill(sk.name));
+  return ds;
+}
+function completePoolLabel(sk){
+  const gear=gearLabelsForSkill(sk.name);
+  return gear.length?` (${gear.join(", ")})`:"";
+}
+const ABILITY_SYMBOLS={"STR": "◆", "DEX": "➤", "CON": "●", "INT": "■", "WIS": "✦", "CHA": "♥"};
+function dieChip(d,type,label){
+  const allowed=[4,6,8,10,12];
+  d=+d;
+  if(!allowed.includes(d)){
+    console.error("Invalid Protocol 7 die size blocked:",d,label||type);
+    d=4;
+  }
+  const cls={ability:"die-ability",skill:"die-skill",weapon:"die-weapon",tool:"die-tool"}[type]||"";
+  return `<span class="die-chip ${cls}" title="${label||type}">d${d}</span>`;
+}
+function semanticPool(sk){
+  const out=[];
+  sk.abilities.split("/").map(x=>x.trim()).forEach(a=>out.push({d:effectiveAbilityDie(a),type:"ability",label:`${ABILITY_SYMBOLS[a]} ${a}`,symbol:ABILITY_SYMBOLS[a]}));
+  diceFromText(skillDie(S.skills[sk.name]||0)).forEach(d=>{
+    out.push({d,type:"skill",label:sk.name+" Skill"});
+  });
+  selectedGearForSkill(sk.name).forEach(g=>{
+    diceFromText(g.Die).forEach(d=>out.push({d,type:g.Weapon?"weapon":"tool",label:g.Item||g.Weapon}));
+  });
+  return out;
+}
+function semanticPoolHTML(sk){
+  return semanticPool(sk).map(x=>{
+    if(x.type==="ability"){
+      const d=[4,6,8,10,12].includes(+x.d)?+x.d:4;
+      return `<span class="die-chip die-ability" title="${x.label}"><span class="ability-symbol">${x.symbol}</span> d${d}</span>`;
+    }
+    return dieChip(x.d,x.type,x.label);
+  }).join(" ");
+}
+
+function gearEntry(name){
+  return [...WEAPONS,...TOOLS].find(x=>(x.Item||x.Weapon)===name);
+}
+function vamDiceNote(v){
+  const t=v.effect||"";
+  const dice=(t.match(/d(4|6|8|10|12)/gi)||[]);
+  if(!dice.length)return "";
+  return dice.join(", ");
+}
+
+const RULE_SECTIONS=[
+  ["basics","Basics"],["pools","Pools"],["combat","Combat"],["conditions","Health"],["vams","VAMs"],
+  ["mission","Mission"],["exposure","Exposure"],["gear","Gear"],["quick","Quick Ref"]
+];
+let ruleView="basics";
+function setRuleView(id){ruleView=id;renderRules();}
+function rt(rows){return `<table class="rule-table">${rows.map((r,i)=>`<tr>${r.map(c=>i===0?`<th>${c}</th>`:`<td>${c}</td>`).join("")}</tr>`).join("")}</table>`;}
+function ref(t){return `<div class="rule-ref">Guidebook: ${t}</div>`;}
+function renderRules(){
+  const tabs=$("ruleSubtabs"), content=$("ruleContent"); if(!tabs||!content)return;
+  tabs.innerHTML=RULE_SECTIONS.map(([id,n])=>`<button type="button" class="rule-subtab ${ruleView===id?"active":""}" onclick="setRuleView('${id}')">${n}</button>`).join("");
+  const sections={
+  basics:`<div class="card"><h3>Protocol 7 in One Minute</h3><p class="small"><b>Define the scope first.</b> Say what the Vector is trying to accomplish and how. Choose the Skill; that Skill supplies its three associated Ability dice. Add the Skill die, one primary relevant gear die, then Help/Advantage/VAM/cover/circumstance dice and apply Disadvantage. Roll once. Results 1-3 are blank; every 4+ scores its face value.</p><p class="small"><b>Roll only when uncertainty and consequences matter.</b> Failure changes time, position, safety, evidence, progress, or Exposure; it does not erase the only path forward.</p></div><div class="card"><h3>Core Terms</h3><p class="small"><b>Ability:</b> STR, DEX, CON, INT, WIS, CHA. <b>Skill:</b> learned expertise and the source of the three Ability dice. <b>Gear Die:</b> one primary relevant equipment die. <b>VAM:</b> augmentation capability occupying BAR. <b>Historical Carrier:</b> what must transmit forward through history. <b>Exposure:</b> anomalous evidence that may also survive.</p></div>`,
+  pools:`<div class="card"><h3>Complete Pool Procedure</h3><div class="rule-step"><b>1.</b> Define the exact scope and stakes.</div><div class="rule-step"><b>2.</b> Choose the Skill.</div><div class="rule-step"><b>3.</b> Add its three associated Ability dice after Die Step Effects; repeated Abilities are repeated.</div><div class="rule-step"><b>4.</b> Add the Skill die; untrained is d4.</div><div class="rule-step"><b>5.</b> Choose one primary relevant gear item and add its die.</div><div class="rule-step"><b>6.</b> Add Help, Advantage, VAM, cover, and circumstances; apply Disadvantage.</div><div class="rule-step"><b>7.</b> Roll once; 1-3 blank, 4+ scores face value.</div><p class="small"><b>DCs:</b> 8 easy under pressure, 12 moderate, 16 hard, 20 very hard, 24+ extreme. <b>Margins:</b> 1-3 Narrow, 4-7 Solid, 8-11 Powerful, 12+ Overwhelming.</p></div><div class="card"><h3>Advantage / Disadvantage</h3><p class="small">Advantage adds d4/d6/d8 for minor/clear/major. Disadvantage removes d4/d6/d8. If the exact die is absent, remove the next-highest die present; if none is higher, remove the highest available. Never reduce below one die.</p></div>`,
+  combat:`<div class="card"><h3>Turns and Reactions</h3><p class="small">A Vector normally has <b>3 AP</b> per turn and <b>one Reaction</b> between turns. A normal Attack costs <b>1 AP</b>. Move costs <b>1 AP for up to 30 feet</b> and may be repeated. There is <b>no universal Run action</b>.</p><p class="small"><b>Reaction AP:</b> if the Reaction spends AP, use unspent AP from the turn that just ended first. Only when none remains may the Reaction borrow 1 AP from the next turn. Borrowed AP makes the next turn begin with 2 AP. Any unused banked AP expires when the next turn begins.</p></div><div class="card"><h3>Attack</h3><p class="small">State target/method, pay 1 AP, build the complete attack pool, defender chooses a legal defense, both roll, tie favors defender, and damage normally equals winning margin. Armor contributes its listed die to an appropriate defense when it can physically protect the Vector; it does not also reduce damage by default.</p></div>`,
+  conditions:`<div class="card"><h3>HP and Dying</h3><p class="small"><b>Maximum HP = CON die maximum x 3.</b> d4 12, d6 18, d8 24, d10 30, d12 36. At 0 HP, normally fall unconscious and begin dying. At each turn start roll Fortitude vs DC 12: success marks Recovery, failure marks Danger; 3 Recoveries stabilize, 3 Dangers mean death. Further damage marks 1 Danger.</p></div><div class="card"><h3>Die Step Effects</h3><p class="small">A Step changes a specific Ability die before pool construction on d4 → d6 → d8 → d10 → d12. If the Ability occurs twice in the Skill, both copies use the stepped value. Injuries, exhaustion, toxins, concussion, trauma, restricted movement, and augmentation can create Step Effects when the fiction specifically impairs or improves that Ability.</p></div>`,
+  vams:`<div class="card"><h3>VAMs and BAR</h3><p class="small">BAR is capacity, not energy. A standard implant supports <b>16 BAR</b> active. Loading a known VAM into unused capacity is free. Replacing one or more loaded VAMs during action time costs <b>1 AP for the whole legal field swap</b>.</p><p class="small">VAMs are not downloaded professions. The v0.180 design direction favors permission, information, action economy, reactions, and decision-space changes over routine extra dice. Some narrow modifier VAMs remain intentionally.</p></div>`,
+  mission:`<div class="card"><h3>Protocol 7 Mission Loop</h3>${MISSION_PHASES.map((p,i)=>`<div class="rule-step"><b>${i+1}. ${p.phase}.</b> ${p.purpose}</div>`).join("")}</div><div class="card"><h3>Apocrypha</h3><p class="small">Players interpret the Apocryphon. Skills investigate hypotheses and acquire evidence. Confirmation Keys validate theories; no Skill simply solves the puzzle.</p></div>`,
+  exposure:`<div class="card"><h3>Historical Carriers</h3><p class="small"><b>Fragile:</b> one vulnerable person/copy/object/memory. <b>Established:</b> multiple people/copies, a professional record, institutional awareness, or repeatable demonstration. <b>Durable:</b> distributed publication, independent replication, embedded process, multiple archives, or a self-sustaining network.</p><p class="small">Improve a Carrier only when the fiction creates/protects another independent transmission route. Weaken it when a route is destroyed, discredited, severed, or suppressed. An Overwhelming success may improve one directly affected Carrier one step when that benefit follows from the action.</p><p class="small"><b>Tradeoff:</b> strengthening the Carrier through publicity, institutional filing, extra witnesses, or impossible technology may also increase Exposure.</p></div><div class="card"><h3>Mission Outcomes</h3><p class="small"><b>Clean Success:</b> Carrier requirement met, Exposure within target. <b>Exposed Success:</b> Carrier met, Exposure too high. <b>Contained Failure:</b> Carrier missed, Exposure contained. <b>Exposed Failure:</b> Carrier missed and anomalous evidence survives.</p></div>`,
+  gear:`<div class="card"><h3>Gear Rule</h3><p class="small">One primary relevant gear item normally contributes to a Skill roll. If several equipped items support the same Skill, choose one or choose No gear. Armor has one normal mechanical job: add its listed gear die to an appropriate defense when it can physically protect the Vector.</p></div><div class="card"><h3>Era-Neutral Templates</h3><p class="small"><b>Concealable Weapon:</b> easy to hide/carry. <b>Melee Weapon:</b> close engagement/control. <b>Service Ranged Weapon:</b> general-purpose ranged. <b>Precision Weapon:</b> deliberate long range. <b>Area/Automatic Weapon:</b> suppression/area permissions when specified. <b>Heavy Weapon:</b> setup/carry/sourcing burden. <b>Protective Armor:</b> defense die. <b>Specialist Tool:</b> one relevant tool die.</p><p class="small">The template is the mechanical grammar; the era-specific object supplies the fiction, legality, loading, concealment, and Exposure implications.</p></div>`,
+  quick:`<div class="card"><h3>Player Quick Reference</h3><div class="rule-step"><b>Core roll:</b> scope → Skill → three Ability dice → Skill die → one primary gear die → circumstances → Disadvantage → roll once. Results 1-3 are blank; every 4+ scores face value.</div><div class="rule-step"><b>DCs:</b> 8 easy under pressure, 12 moderate, 16 hard, 20 very hard, 24+ extreme.</div><div class="rule-step"><b>Turns:</b> 3 AP. Normal Attack 1 AP. Move 1 AP for up to 30 feet and may be repeated.</div><div class="rule-step"><b>Reaction:</b> one normal Reaction between turns. Spend unspent AP first; if none remains, borrow at most 1 AP from the next turn.</div><div class="rule-step"><b>HP:</b> CON die maximum × 3. Armor adds its listed die to an appropriate defense when it can physically protect you.</div><div class="rule-step"><b>Mission:</b> establish the required Historical Carrier, keep Exposure within tolerance, and extract.</div></div>`};
+  content.innerHTML=sections[ruleView]||sections.basics;
+}
+function renderTabs(){$("tabs").innerHTML=TABS.map(([id,n],i)=>`<button class="${i==0?"active":""}" data-tab="${id}" onclick="showTab('${id}')">${n}</button>`).join("")}
+function showTab(id){document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.id==="tab-"+id));document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active",x.dataset.tab===id));window.scrollTo({top:0,behavior:"smooth"})}
+const ABILITY_INFO={"STR": {"name": "Strength", "desc": "Force, leverage, endurance under load, and physical control."}, "DEX": {"name": "Dexterity", "desc": "Coordination, speed, fine manipulation, balance, and precise movement."}, "CON": {"name": "Constitution", "desc": "Stamina, toughness, recovery, and bodily resistance."}, "INT": {"name": "Intelligence", "desc": "Analysis, technical reasoning, memory, and deduction."}, "WIS": {"name": "Wisdom", "desc": "Awareness, judgment, intuition, and composure."}, "CHA": {"name": "Charisma", "desc": "Presence, rapport, persuasion, deception, and command."}};
+const STARTING_ABILITY_DICE={4:2,6:2,8:2};
+function abilityCounts(){
+  const used={4:0,6:0,8:0};
+  abilityNames.forEach(a=>{const d=+S.abilities[a]||0;if(used[d]!==undefined)used[d]++;});
+  return used;
+}
+function assignAbility(a,d){
+  d=+d;
+  const current=+S.abilities[a]||0;
+  if(current===d){S.abilities[a]=0;save();renderAll();return;}
+  const used=abilityCounts();
+  if((used[d]||0)>=STARTING_ABILITY_DICE[d]){alert(`Both d${d} Ability dice are already assigned. Unassign or move one first.`);return;}
+  S.abilities[a]=d;save();renderAll();
+}
+function clearAbilities(){
+  S.abilities={STR:0,DEX:0,CON:0,INT:0,WIS:0,CHA:0};save();renderAll();
+}
+function renderAbilities(){
+  const used=abilityCounts();
+  $("abilityTray").innerHTML=[8,6,4].map(d=>{
+    const left=STARTING_ABILITY_DICE[d]-(used[d]||0);
+    return `<div class="traydie"><b>d${d} × ${left}</b><span>remaining</span></div>`;
+  }).join("");
+  $("abilities").innerHTML=abilityNames.map(a=>{
+    const info=ABILITY_INFO[a], current=+S.abilities[a]||0;
+    return `<div class="ability-card">
+      <div>
+        <div class="ability-title">${info.name} <span>(${a})</span>${helpButton("ability",a)}${current?` <span class="pill">d${current}</span>`:""}</div>
+        <div class="ability-desc">${info.desc}</div>
+        <div class="ability-picker">
+          ${[8,6,4].map(d=>{
+            const unavailable=current!==d && (used[d]||0)>=STARTING_ABILITY_DICE[d];
+            return `<button class="btn ${current===d?"chosen":""} ${unavailable?"unavailable":""}" aria-label="Assign d${d} to ${info.name}" onclick="assignAbility('${a}',${d})">${current===d?"✓ ":""}d${d}</button>`;
+          }).join("")}
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+  const assigned=abilityNames.filter(a=>+S.abilities[a]>0).length;
+  $("abilityCheck").innerHTML=assigned===6
+    ? '<span class="ok"><b>Ability assignment complete.</b> You used two d8s, two d6s, and two d4s. Next: buy Skills.</span><br><button class="btn primary" style="width:100%;margin-top:8px" onclick="showTab(\'skills\')">NEXT: BUY SKILLS</button>'
+    : `<span class="warn"><b>${6-assigned} Ability ${6-assigned===1?"die remains":"dice remain"} to assign.</b> Tap d8, d6, or d4 under each Ability.</span>`;
+}
+function adjustSkill(name,delta){
+  const current=+(S.skills[name]||0);
+  const spent=Object.values(S.skills).reduce((a,b)=>a+(+b||0),0);
+  if(delta>0 && spent>=20){alert("You have spent all 20 starting Skill Ranks.");return}
+  const next=Math.max(0,current+delta);
+  S.skills[name]=next;
+  save();renderAll();
+}
+let skillView="General";
+function setSkillView(cat){skillView=cat;renderSkills();}
+function skillBasePreview(sk){
+  const parts=sk.abilities.split("/").map(a=>a.trim());
+  const abilityText=parts.map(a=>`${a} d${S.abilities[a]||"—"}`).join(" + ");
+  return `${abilityText} + Skill ${skillDie(+(S.skills[sk.name]||0))}`;
+}
+
+function isSkillPinned(name){return S.pinnedSkills.includes(name)}
+function toggleSkillPin(name,on){
+  if(on && !S.pinnedSkills.includes(name))S.pinnedSkills.push(name);
+  if(!on)S.pinnedSkills=S.pinnedSkills.filter(x=>x!==name);
+  save();renderAll();
+}
+function rollSkillFromSkillsTab(name){
+  const sk=SKILLS.find(s=>s.name===name);
+  if(!sk)return;
+  const ds=completePoolForSkill(sk);
+  showRoll(sk.name,ds,"skillsRollResult");
+}
+function renderSkills(){
+  const cats=["General","Combat","Defense"];
+  $("skillSubtabs").innerHTML=cats.map(cat=>`<button class="skill-subtab ${skillView===cat?"active":""}" onclick="setSkillView('${cat}')">${cat}</button>`).join("");
+  let html=`<div class="card"><h3>${skillView} Skills</h3>`;
+  SKILLS.filter(s=>s.cat===skillView).forEach(sk=>{
+    let r=+(S.skills[sk.name]||0);
+    const trained=r>0;
+    const pinned=isSkillPinned(sk.name);
+    html+=`<div class="skill">
+      <div>
+        <div class="skill-name">${sk.name}${helpButton("skill",sk.name)}</div>
+        <div class="skill-use">${sk.uses}</div>
+        <div class="skill-pool-preview"><b>Current base pool:</b><br>${skillBasePreview(sk)}</div>
+        ${gearChoiceControl(sk.name,"skills")}
+        <div class="skill-actions">
+          <button class="btn" onclick='rollSkillFromSkillsTab(${JSON.stringify(sk.name)})'>ROLL</button>
+          ${!trained?`<label class="pin-skill"><input type="checkbox" ${pinned?"checked":""} onchange='toggleSkillPin(${JSON.stringify(sk.name)},this.checked)'> Pin to Roller</label>`:`<span class="pill">On Play</span>`}
+        </div>
+      </div>
+      <div>
+        <div class="skill-buy">
+          <button class="btn" aria-label="Remove one rank from ${sk.name}" onclick='adjustSkill(${JSON.stringify(sk.name)},-1)'>−</button>
+          <div><div class="skill-ranks">${r} rank${r===1?"":"s"}</div><div class="skill-die">Skill ${skillDie(r)}</div></div>
+          <button class="btn gold" aria-label="Buy one rank in ${sk.name}" onclick='adjustSkill(${JSON.stringify(sk.name)},1)'>+</button>
+        </div>
+        <div class="skill-cap">${trained?"Trained":"Untrained = d4"} • ${skillProgressText(r)}</div>
+      </div>
+    </div>`;
+  });
+  html+="</div>";
+  $("skills").innerHTML=html;
+  let spent=Object.values(S.skills).reduce((a,b)=>a+(+b||0),0);
+  $("skillSpent").textContent=spent;$("skillRemain").textContent=20-spent;$("skillRemain").className=spent>20?"warn":"ok";
+  const hint=$("skillsNextHint");
+  if(hint){
+    if(S.creationPreset && S.creationPreset!=="Flexible / Blank" && S.vams.length) hint.textContent=`Your ${S.creationPreset} VAM configuration is already loaded. Continue to Gear.`;
+    else hint.textContent="No VAM preconfiguration is loaded. Continue to the VAM tab to build your loadout.";
+  }
+}
+function bars(){return S.vams.reduce((n,x)=>n+(VAMS.find(v=>v.name===x)?.bars||0),0)}
+function loadPreset(name){const p=VAM_PRESETS.find(x=>x.name===name);if(!p)return;S.vams=[...p.vams];S.creationPreset=name;save();renderAll();}
+function renderPresetMenu(){const el=$("vamPreset");if(!el)return;const exact=VAM_PRESETS.find(p=>p.vams.length===S.vams.length&&p.vams.every(n=>S.vams.includes(n)));el.innerHTML=VAM_PRESETS.map(p=>`<option value="${p.name}" ${exact&&exact.name===p.name?"selected":""}>${p.name} — ${p.vams.reduce((n,x)=>n+(VAMS.find(v=>v.name===x)?.bars||0),0)} BAR</option>`).join("");if(!exact)el.insertAdjacentHTML("afterbegin",'<option value="" selected>Custom loadout</option>');}
+let vamView="All";
+function setVamView(cat){
+  vamView=cat||"All";
+  renderVams();
+}
+function setVamViewFromButton(btn){
+  if(!btn)return;
+  setVamView(btn.dataset.vamCategory||"All");
+}
+function jumpVamTier(bars){
+  const el=document.getElementById(`vam-tier-${bars}`);
+  if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function renderVams(){
+  renderPresetMenu();
+  let used=bars();
+  $("barsUsed").textContent=`${used} / 16 BAR`;
+  $("barsUsed").className=used>16?"over":"";
+  $("barMeter").innerHTML=Array.from({length:16},(_,i)=>`<span class="bar ${i<used?"on":""}"></span>`).join("");
+
+  const cats=["All",...VAM_CATEGORY_ORDER];
+  $("vamCategoryTabs").innerHTML=cats.map(cat=>`<button type="button" class="vam-category-tab ${vamView===cat?"active":""}" data-vam-category="${cat.replace(/&/g,"&amp;").replace(/"/g,"&quot;")}" onclick="setVamViewFromButton(this)">${cat}</button>`).join("");
+
+  const visible=VAMS.filter(v=>vamView==="All" || VAM_CATEGORIES[v.name]===vamView);
+  const tiers=[...new Set(visible.map(v=>+v.bars))].sort((a,b)=>a-b);
+  $("vamBarJumps").innerHTML=tiers.map(b=>`<button type="button" class="vam-bar-jump" onclick="jumpVamTier(${b})">${b} BAR</button>`).join("");
+
+  let html="";
+  tiers.forEach(b=>{
+    const group=visible.filter(v=>+v.bars===b);
+    html+=`<div class="vam-tier" id="vam-tier-${b}">
+      <div class="vam-tier-header">${b} BAR VAMs <span class="vam-count">${group.length} option${group.length===1?"":"s"}</span><div class="small">${vamView==="All"?"All categories":vamView}</div></div>`;
+    group.forEach(v=>{
+      html+=`<label class="check"><input type="checkbox" ${S.vams.includes(v.name)?"checked":""} onchange="toggleVam(${JSON.stringify(v.name)},this.checked)">
+        <span><b>${v.name} — ${v.bars} BAR</b>${helpButton("vam",v.name)}<div class="small">${VAM_CATEGORIES[v.name]||"Utility"} • ${v.effect}</div></span></label>`;
+    });
+    html+="</div>";
+  });
+  $("vams").innerHTML=html || '<div class="card"><p class="small">No VAMs in this category.</p></div>';
+}
+function toggleVam(n,on){if(on&&!S.vams.includes(n))S.vams.push(n);if(!on)S.vams=S.vams.filter(x=>x!==n);save();renderAll()}
+function clearVams(){S.vams=[];save();renderAll()}
+
+function currentGearConfiguration(){
+  return (S.creationPreset && PRECONFIG_PACKAGES[S.creationPreset]) ? S.creationPreset : "Custom";
+}
+function setGearEra(era){
+  S.gearEra=ERA_ORDER.includes(era)?era:"2020s"; save(); renderAll();
+}
+function eraProfile(era){return ERA_PROFILES[era]||ERA_PROFILES["2020s"];}
+function periodItemExample(item,era){const k=ERA_ITEM_KEYS[item];const p=eraProfile(era);return k&&p[k]?p[k]:"";}
+function eraItemSummary(item,era){const ex=periodItemExample(item,era);return ex?`${item}: ${ex}`:item;}
+function eraGearList(){
+  const era=S.gearEra||"2020s";
+  const config=currentGearConfiguration();
+  const sets=ERA_GEAR_LOADOUTS[era]||{};
+  return sets[config]||sets.Custom||[];
+}
+function loadEraGear(){
+  const list=eraGearList();
+  if(!list.length){
+    alert("No preconfigured gear set exists for that era/configuration. Choose individual period-appropriate gear instead.");
+    return;
+  }
+  S.gear=[...list];
+  save(); renderAll();
+}
+function renderEraGear(){
+  const era=ERA_ORDER.includes(S.gearEra)?S.gearEra:"2020s";
+  const config=(S.creationPreset && S.creationPreset!=="Flexible / Blank")?S.creationPreset:"Custom";
+  const ge=$("gearEra"); if(ge)ge.value=era;
+  const profile=eraProfile(era), profileEl=$("gearEraProfile");
+  if(profileEl)profileEl.innerHTML=`<div class="era-profile-note"><b>${era} (${profile.years})</b><br>${profile.summary}<br><span class="small"><b>Preset rule:</b> representative baseline only; exact mission year/place/access can justify substitutions.</span></div>`;
+  const summary=$("eraLoadoutSummary"), btn=$("eraLoadBtn");
+  const list=eraGearList();
+  if(summary&&btn&&list.length){
+    summary.innerHTML=`<b>${era} ${config} loadout:</b><div class="era-load-list">${list.map(x=>`<div class="era-load-item">${eraItemSummary(x,era)}</div>`).join("")}</div>`;
+    btn.disabled=false; btn.textContent=`LOAD ${era.toUpperCase()} ${config.toUpperCase()} GEAR`;
+  }else if(summary&&btn){
+    summary.innerHTML=`<b>${era}:</b> no preconfigured ${config} loadout is available. Choose individual period-appropriate gear below.`;
+    btn.disabled=true; btn.textContent="LOADOUT NOT AVAILABLE";
+  }
+}
+let gearView="armor";
+const ARMOR_NAMES=["Protective Vest","Ballistic Vest","Tactical Armor"];
+function setGearViewFromButton(btn){
+  if(!btn)return;
+  setGearView(btn.dataset.gearView||"armor");
+}
+function setGearView(view){
+  gearView=view;
+  ["armor","weapons","tools","loadout"].forEach(v=>{
+    const panel=$("gear"+v.charAt(0).toUpperCase()+v.slice(1)+"View");
+    const tab=$("gear"+v.charAt(0).toUpperCase()+v.slice(1)+"Tab");
+    if(panel)panel.style.display=v===view?"block":"none";
+    if(tab)tab.classList.toggle("active",v===view);
+  });
+  if(view==="loadout")renderGearLoadout();
+}
+function gearCheckHTML(x,type){
+  const name=x.Item||x.Weapon;
+  const meta=x.Die?`${x.Die}${x.Skill?" • "+x.Skill:""}${x.Tag?" • "+x.Tag:""}`:"";
+  const desc=x.Function||x.Notes||"";
+  return `<label class="check"><input type="checkbox" ${S.gear.includes(name)?"checked":""} onchange="toggleGear(${JSON.stringify(name)},this.checked)"><span><b>${name}</b>${helpButton(type,name)} <span class="pill">${meta}</span><div class="small">${desc}</div></span></label>`;
+}
+function renderGearLoadout(){
+  const el=$("gearLoadout"); if(!el)return;
+  const all=[...WEAPONS.map(x=>({x,type:"weapon"})),...TOOLS.map(x=>({x,type:"gear"}))];
+  const selected=all.filter(o=>S.gear.includes(o.x.Item||o.x.Weapon));
+  if(!selected.length){el.innerHTML='<div class="small">No gear is currently selected.</div>';return;}
+  const groups=[
+    ["Armor",selected.filter(o=>ARMOR_NAMES.includes(o.x.Item||o.x.Weapon))],
+    ["Weapons",selected.filter(o=>o.type==="weapon")],
+    ["Tools & Devices",selected.filter(o=>o.type==="gear"&&!ARMOR_NAMES.includes(o.x.Item||o.x.Weapon))]
+  ];
+  el.innerHTML=groups.filter(g=>g[1].length).map(([label,items])=>`<div class="skill-group"><h4>${label}</h4>${items.map(o=>gearCheckHTML(o.x,o.type)).join("")}</div>`).join("");
+}
+function renderGear(){
+  const armor=TOOLS.filter(x=>ARMOR_NAMES.includes(x.Item));
+  const toolItems=TOOLS.filter(x=>!ARMOR_NAMES.includes(x.Item));
+  $("armor").innerHTML=armor.map(x=>gearCheckHTML(x,"gear")).join("");
+  $("weapons").innerHTML=WEAPONS.map(x=>gearCheckHTML(x,"weapon")).join("");
+  $("tools").innerHTML=toolItems.map(x=>gearCheckHTML(x,"gear")).join("");
+  renderGearLoadout();
+}
+function toggleGear(n,on){if(on&&!S.gear.includes(n))S.gear.push(n);if(!on)S.gear=S.gear.filter(x=>x!==n);save();renderAll()}
+function adjustAbilityStep(a,delta){
+  S.abilitySteps[a]=Math.max(-4,Math.min(4,(+S.abilitySteps[a]||0)+delta));
+  save();renderAll();
+}
+function clearAbilitySteps(){
+  S.abilitySteps={STR:0,DEX:0,CON:0,INT:0,WIS:0,CHA:0};
+  save();renderAll();
+}
+function renderAbilitySteps(){
+  const el=$("abilityStepControls"); if(!el)return;
+  el.innerHTML=abilityNames.map(a=>{
+    const baseDie=+S.abilities[a]||4;
+    const steps=+S.abilitySteps[a]||0;
+    const eff=effectiveAbilityDie(a);
+    const sign=steps>0?`+${steps}`:`${steps}`;
+    return `<div class="step-row"><div>
+      <b><span class="ability-symbol">${ABILITY_SYMBOLS[a]}</span> ${a}</b>${helpButton("ability",a)}
+      <div class="step-effect">Base d${baseDie} ${steps?`→ <span class="step-active">d${eff} (${sign} step${Math.abs(steps)===1?"":"s"})</span>`:"→ d"+eff}</div>
+    </div><div class="step-buttons">
+      <button class="btn" onclick="adjustAbilityStep('${a}',-1)">− Step</button>
+      <button class="btn" onclick="adjustAbilityStep('${a}',1)">+ Step</button>
+    </div></div>`;
+  }).join("");
+}
+let rollerView="quick";
+function setRollerView(view){
+  rollerView=view;
+  const q=$("rollerQuickView"),c=$("rollerCustomView"),qb=$("rollerQuickTab"),cb=$("rollerCustomTab");
+  if(q)q.style.display=view==="quick"?"block":"none";
+  if(c)c.style.display=view==="custom"?"block":"none";
+  if(qb)qb.classList.toggle("active",view==="quick");
+  if(cb)cb.classList.toggle("active",view==="custom");
+}
+function rollQuickPool(label,ds,key){
+  const r=roll(ds),el=$("quickResult_"+key);
+  if(el)el.innerHTML=`<div class="inline-total">${r.total}</div><div class="inline-faces">${r.faces.map((v,i)=>`d${ds[i]}:${v}${v<4?"·":""}`).join(" ")}</div>`;
+  return r;
+}
+function renderPlay(){
+  const wornArmor=TOOLS.filter(x=>ARMOR_NAMES.includes(x.Item)&&S.gear.includes(x.Item));
+  const armorSummary=$("playArmorSummary");
+  if(armorSummary)armorSummary.innerHTML=wornArmor.length?`<b>Armor:</b> ${wornArmor.map(x=>`${x.Item} • ${x.Die}${x.Skill?" • "+x.Skill:""}`).join(" / ")}`:"<b>Armor:</b> none selected";
+  if(Number(S.hpMax)!==conHPMax())syncHPToCON(false);
+  $("mBuild").textContent=`${abilityNames.filter(a=>+S.abilities[a]>0).length}/6`;
+  $("playName").textContent=S.name||"Unnamed Vector";
+
+  // Initiative is rendered once as the special top quick-roll entry.
+  const trained=SKILLS.filter(sk=>sk.name!=="Initiative" && skillIsTrained(sk));
+  const pinnedUntrained=SKILLS.filter(sk=>sk.name!=="Initiative" && !skillIsTrained(sk) && isSkillPinned(sk.name));
+  const init={name:"Initiative",abilities:"DEX / DEX / WIS",uses:"",cat:"Initiative"};
+  const all=[init,...trained,...pinnedUntrained];
+  const groups=[
+    ["Initiative",all.filter(sk=>sk.name==="Initiative")],
+    ["Defense",all.filter(sk=>sk.name!=="Initiative" && sk.cat==="Defense")],
+    ["Combat",all.filter(sk=>sk.name!=="Initiative" && sk.cat==="Combat")],
+    ["General",all.filter(sk=>sk.name!=="Initiative" && sk.cat==="General")]
+  ];
+  const poolRow=sk=>{
+    const ds=sk.name==="Initiative"?poolFor(sk):completePoolForSkill(sk);
+    const gearNote=sk.name==="Initiative"?"":completePoolLabel(sk);
+    const count=`<span class="pill ${ds.length>=5?"":"warn"}">${ds.length} dice</span>`;
+    const trainingNote=(sk.name!=="Initiative" && !skillIsTrained(sk))?'<span class="pill">Untrained d4</span>':"";
+    const gearChooser=sk.name==="Initiative"?"":gearChoiceControl(sk.name,"roller");
+    return `<div class="action"><div><b>${sk.name}${gearNote}</b> ${count} ${trainingNote}
+      ${gearChooser}
+      <div class="pool">${sk.name==="Initiative"?[
+        `<span class="die-chip die-ability" title="${ABILITY_SYMBOLS.DEX} DEX"><span class="ability-symbol">${ABILITY_SYMBOLS.DEX}</span> d${effectiveAbilityDie("DEX")}</span>`,
+        `<span class="die-chip die-ability" title="${ABILITY_SYMBOLS.DEX} DEX"><span class="ability-symbol">${ABILITY_SYMBOLS.DEX}</span> d${effectiveAbilityDie("DEX")}</span>`,
+        `<span class="die-chip die-ability" title="${ABILITY_SYMBOLS.WIS} WIS"><span class="ability-symbol">${ABILITY_SYMBOLS.WIS}</span> d${effectiveAbilityDie("WIS")}</span>`,
+        dieChip(diceFromText(skillDie(S.skills["Initiative"]||0))[0]||4,"skill","Initiative Skill")
+      ].join(" "):semanticPoolHTML(sk)}</div>
+      ${sk.name!=="Initiative"&&!gearNote?(equippedGearForSkill(sk.name).length>1?'<div class="small">Multiple equipped items can support this Skill. Select one above, or roll with no gear.</div>':'<div class="small">No equipped gear die is currently adding to this pool.</div>'):""}
+    </div><div class="pool-roll-controls"><button class="btn" onclick='rollQuickPool(${JSON.stringify(sk.name)},${JSON.stringify(ds)},${JSON.stringify(sk.name.replace(/[^a-z0-9]/gi,"_"))})'>Roll</button><div class="inline-roll-result" id="quickResult_${sk.name.replace(/[^a-z0-9]/gi,"_")}"><div class="inline-total">—</div><div class="inline-faces">result</div></div></div></div>`;
+  };
+  $("playPools").innerHTML=groups.filter(([,items])=>items.length).map(([label,items])=>`<div class="play-section-title">${label}</div>${items.map(poolRow).join("")}`).join("") || '<div class="small">No quick pools yet. Trained Skills appear automatically; untrained Skills can be pinned from Skills.</div>';
+
+  $("playVams").innerHTML=S.vams.length?S.vams.map(name=>{const v=VAMS.find(x=>x.name===name);if(!v)return "";const dn=vamDiceNote(v);return `<div class="play-item"><b>${v.name}</b> <span class="pill">${v.bars} BAR</span>${dn?` <span class="pill">${dn}</span>`:""}<div class="small">${v.effect}</div></div>`;}).join(""):'<div class="small">No VAMs loaded.</div>';
+  $("playGear").innerHTML=S.gear.length?S.gear.map(name=>{const g=gearEntry(name);if(!g)return `<div class="play-item"><b>${name}</b></div>`;const die=g.Die?`<span class="pill">${g.Die}</span>`:"";const skill=g.Skill?`<span class="pill">${g.Skill}</span>`:"";const tag=g.Tag?`<span class="pill">${g.Tag}</span>`:"";return `<div class="play-item"><b>${name}</b> ${die} ${skill} ${tag}<div class="small">${g.Function||g.Notes||""}</div></div>`;}).join(""):'<div class="small">No gear selected.</div>';
+
+  S.ap=Math.max(0,Math.min(3,Number.isFinite(+S.ap)?+S.ap:3));
+  $("mHP").textContent=S.hpMax?`${S.hp}/${S.hpMax}`:"—";$("mAP").textContent=S.ap;$("mBars").textContent=`${bars()}/16`;$("mExp").textContent=S.exposure;
+  const tca=$("turnCurrentAP");if(tca)tca.textContent=S.ap;
+  $("reactionBtn").textContent=S.reaction?"Use Reaction":"Reaction Used";$("reactionBtn").className="btn "+(S.reaction?"":"danger");
+  if(S.reactionAPDebt==null)S.reactionAPDebt=0;
+  $("reactionDebtNote").innerHTML=S.reactionAPDebt>0?`<b>1 AP borrowed from next turn.</b> Next turn begins with 2 AP.`:`${S.ap} unspent AP currently available; a Reaction that spends AP uses this first. If none remains, it may borrow 1 AP from next turn.`;
+  const prs=$("playReactionState");if(prs)prs.textContent=S.reaction?"Ready":"Used";
+  const trs=$("turnReactionState");if(trs)trs.textContent=S.reaction?"Ready":"Used";
+  const nextAP=Math.max(0,3-S.reactionAPDebt);
+  const pna=$("playNextAP");if(pna)pna.textContent=nextAP;
+  const tna=$("turnNextAP");if(tna)tna.textContent=nextAP;
+  const ppc=$("playPoolCount");if(ppc)ppc.textContent=all.length;
+  const fs=$("finishStatus");if(fs)fs.textContent=S.creationComplete?"Character saved.":"When the character is ready, save it here and the sheet will open Play.";
+  const ps=$("pathSource");if(ps)ps.innerHTML=(S.creationPreset&&PRECONFIG_PACKAGES[S.creationPreset])?`Preconfigured path: <b>${S.creationPreset}</b>`:"Custom path.";
+}
+function conHPMax(){const con=Number((S.abilities||{}).CON)||4;return Math.max(12,con*3)}
+function syncHPToCON(healToFull=false){const oldMax=Number(S.hpMax)||0,newMax=conHPMax();if(healToFull||oldMax<=0){S.hpMax=newMax;S.hp=newMax}else{const damage=Math.max(0,oldMax-(Number(S.hp)||0));S.hpMax=newMax;S.hp=Math.max(0,newMax-damage)}}
+function hp(d){if(!S.hpMax)return;S.hp=Math.max(0,Math.min(S.hpMax,(+S.hp||0)+(+d||0)));save();renderAll()}
+function adjustAP(delta){
+  const current=Number.isFinite(+S.ap)?+S.ap:3;
+  S.ap=Math.max(0,Math.min(3,current+(+delta||0)));
+  save();
+  renderPlay();
+}
+function useReaction(){
+  if(!S.reaction){alert("Your normal Reaction has already been used. An ability must explicitly grant another Reaction.");return;}
+  S.reaction=false;save();renderAll();
+}
+function useReactionAP(){
+  if(!S.reaction){alert("Your normal Reaction has already been used. An ability must explicitly grant another Reaction.");return;}
+  S.reaction=false;
+  const banked=Math.max(0,Number.isFinite(+S.ap)?+S.ap:0);
+  if(banked>0){S.ap=banked-1;}
+  else{S.reactionAPDebt=1;}
+  save();renderAll();
+}
+function startNextTurn(){
+  const debt=Math.max(0,S.reactionAPDebt||0);
+  S.ap=Math.max(0,3-debt);
+  S.reactionAPDebt=0;
+  S.reaction=true;
+  save();renderAll();
+}
+function rollCustom(){let ds=[];[4,6,8,10,12].forEach(d=>{let n=+$( "pd"+d).value||0;for(let i=0;i<n;i++)ds.push(d)});if(!ds.length)return;showRoll("Custom Pool",ds,"rollResult")}
+function exposure(d){S.exposure=Math.max(0,S.exposure+d);save();renderAll()}
+
+const MISSION_PHASES=[{"phase": "Briefing", "purpose": "Interpret the Apocryphon, identify what is known, and define the mission constraint without pretending the answer is already solved."}, {"phase": "Insertion", "purpose": "Enter at the authorized time/place and account for arrival signatures, witnesses, and immediate safety."}, {"phase": "Establish Cover", "purpose": "Acquire a plausible identity, role, equipment posture, and reason to be where the mission requires."}, {"phase": "Investigate", "purpose": "Gather people, records, artifacts, and context. Essential clues are never locked behind a single success."}, {"phase": "Identify Leverage", "purpose": "Determine what person, decision, object, institution, or transmission route can actually change the Carrier."}, {"phase": "Intervene", "purpose": "Act on the leverage point. Resolve the immediate obstacle while tracking consequences."}, {"phase": "Establish Carrier", "purpose": "Create, strengthen, or protect the required Historical Carrier through independent transmission routes."}, {"phase": "Contain Exposure", "purpose": "Remove, explain, discredit, retrieve, or isolate anomalous evidence without erasing the Carrier."}, {"phase": "Extract", "purpose": "Reach the extraction condition without abandoning the required Carrier or creating avoidable evidence."}, {"phase": "Historical Verification", "purpose": "Aletheia checks whether the required Carrier survived and what Exposure propagated into the resulting history."}];
+const CARRIER_ORDER=["Fragile","Established","Durable"];
+function setMissionPhase(phase){S.missionPhase=phase;save();renderMission();}
+function adjustCarrier(delta){let i=CARRIER_ORDER.indexOf(S.carrierStrength);if(i<0)i=0;i=Math.max(0,Math.min(2,i+(+delta||0)));S.carrierStrength=CARRIER_ORDER[i];save();renderAll();}
+function carrierMeetsRequirement(){return CARRIER_ORDER.indexOf(S.carrierStrength)>=CARRIER_ORDER.indexOf(S.carrierRequired||"Established");}
+function renderMissionOutcome(){
+  const el=$("missionOutcome");if(!el)return;
+  const met=carrierMeetsRequirement(), within=(+S.exposure||0)<=Math.max(0,+S.exposureTarget||0);
+  let title,body,cls;
+  if(met&&within){title="CLEAN SUCCESS";body="Required history survives and Exposure remains within mission tolerance.";cls="good";}
+  else if(met){title="EXPOSED SUCCESS";body="The required Carrier survives, but anomalous evidence exceeds the mission tolerance.";cls="warn";}
+  else if(within){title="CONTAINED FAILURE";body="The required Carrier is not strong enough, but temporal contamination remains contained.";cls="warn";}
+  else{title="EXPOSED FAILURE";body="The Carrier fails and anomalous evidence also survives. This is the most dangerous outcome.";cls="bad";}
+  el.className="mission-outcome "+cls;el.innerHTML=`<b>${title}</b><div class="small">${body}</div><div class="small">Carrier: ${S.carrierStrength} / required ${S.carrierRequired||"Established"} • Exposure: ${S.exposure} / target ${S.exposureTarget}</div>`;
+}
+function renderMission(){
+  let e=+S.exposure||0, row=EXPOSURE.find(x=>{let v=x.Exposure;if(v.includes("+"))return e>=parseInt(v);if(v.includes("–")){let[a,b]=v.split("–").map(Number);return e>=a&&e<=b}return e==+v})||EXPOSURE[0];
+  $("expBig").textContent=`${e} — ${row.State}`;$("expHelp").textContent=row.Meaning;
+  let c=CARRIERS.find(x=>x.Strength===S.carrierStrength);$("carrierHelp").textContent=c?`${c.Meaning} Required strength: ${S.carrierRequired||"Established"}.`:"";
+  const tabs=$("missionPhaseTabs");if(tabs)tabs.innerHTML=MISSION_PHASES.map((p,i)=>`<button type="button" class="mission-phase ${S.missionPhase===p.phase?"active":""}" onclick='setMissionPhase(${JSON.stringify(p.phase)})'>${i+1}. ${p.phase}</button>`).join("");
+  const ph=MISSION_PHASES.find(p=>p.phase===S.missionPhase)||MISSION_PHASES[0];const help=$("missionPhaseHelp");if(help)help.innerHTML=`<b>${ph.phase}:</b> ${ph.purpose}`;
+  renderMissionOutcome();
+}
+function renderActions(){$("actions").innerHTML=ACTIONS.map(a=>`<div class="action"><div><b>${a.Action}</b><div class="small">${a.Effect}</div></div><span class="pill">${a.AP} AP</span></div>`).join("")}
+function renderConditions(){const el=$("conditions");if(!el)return;el.innerHTML=CONDITIONS.map(c=>`<div class="action"><div><b>${c.Condition}</b><div class="small">${c.Rule}</div></div></div>`).join("")}
+function bind(){document.querySelectorAll("[data-key]").forEach(el=>{let k=el.dataset.key;el.value=S[k]??"";el.oninput=()=>{S[k]=el.value;save();renderAll()}});$("jsonFile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{S={...base(),...JSON.parse(r.result)};save();location.reload()}catch{alert("Could not load that character file.")}};r.readAsText(f)}}
+
+
+
+function downloadJSON(){let b=new Blob([JSON.stringify(S,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=(S.name||"protocol-7-vector").replace(/[^a-z0-9_-]+/gi,"_")+".json";a.click();URL.revokeObjectURL(a.href)}
+function resetAll(){if(confirm("Clear the current character? This permanently erases the character stored on this device and starts a blank Vector.")){localStorage.removeItem(STORE);S=base();save();location.reload()}}
+function renderAll(){renderStartPreset();renderAbilities();renderSkills();renderVams();renderGear();renderEraGear();renderAbilitySteps();renderPlay();renderRules();renderMission();renderActions();renderConditions();document.querySelectorAll("[data-key]").forEach(el=>{let k=el.dataset.key;if(document.activeElement!==el)el.value=S[k]??""})}
+renderTabs();bind();renderAll();setRollerView("quick");document.addEventListener("keydown",e=>{if(e.key==="Escape")closeHelp();});
+const beginBtn=$("beginCreationBtn");
+if(beginBtn){
+  beginBtn.addEventListener("click",function(e){
+    // Inline handler normally handles this. If it has already changed tabs, do nothing;
+    // otherwise use the same navigation path.
+    if(!document.getElementById("tab-abilities").classList.contains("active")) beginCreation(e);
+  });
+}
+const finishBtn=$("finishCharacterBtn");
+if(finishBtn){
+  finishBtn.addEventListener("click",function(e){
+    if(!document.getElementById("tab-play").classList.contains("active")) finishCharacter(e);
+  });
+}
+</script><div id="helpModal" class="help-modal" onclick="closeHelp(event)">
+  <div class="help-sheet" role="dialog" aria-modal="true" aria-labelledby="helpTitle" onclick="event.stopPropagation()">
+    <div class="row"><h2 id="helpTitle" style="margin:0"></h2><button class="btn" onclick="closeHelp()">CLOSE</button></div>
+    <div id="helpBody" class="help-body"></div>
+  </div>
+</div>
+</body></html>
