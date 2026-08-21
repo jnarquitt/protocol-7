@@ -1,0 +1,93 @@
+{
+  "version": "0.187",
+  "status": "PRE-BETA",
+  "canonical_scope": "Audited frozen mechanical baseline",
+  "supersedes": "Protocol_7_v0.181_CANONICAL_RULES_SOURCE.json",
+  "promotion_date": "2026-08-21",
+  "promotion_basis": "Direct comparison of the v0.187 live app, interactive rules guide, and printable rulebook against the v0.181 canonical mechanical baseline. Frozen mechanics were verified as preserved; no balance redesign was introduced by this promotion.",
+  "engine": {
+    "blank_faces": [1, 2, 3],
+    "scoring_minimum": 4,
+    "difficulty": {
+      "Easy under pressure": 8,
+      "Moderate": 12,
+      "Hard": 16,
+      "Very hard": 20,
+      "Extreme": 24
+    },
+    "margin": {
+      "Narrow": "1-3",
+      "Solid": "4-7",
+      "Powerful": "8-11",
+      "Overwhelming": "12+"
+    },
+    "pool_rule": "Build one complete pool, roll once, treat 1-3 as blank, and add every 4+ at face value."
+  },
+  "character_creation": {
+    "ability_dice": [8, 8, 6, 6, 4, 4],
+    "starting_skill_ranks": 20,
+    "hp_formula": "CON die maximum x 3",
+    "hp_by_con": {"d4":12,"d6":18,"d8":24,"d10":30,"d12":36},
+    "ap_per_turn": 3,
+    "normal_reactions": 1,
+    "bar_capacity": 16
+  },
+  "skill_progression": {
+    "0":"d4","1":"d6","3":"d8","6":"d10","10":"d12","15":"d12+d4","21":"d12+d6","28":"d12+d8","36":"d12+d10","45":"d12+d12",
+    "interpretation": "Ranks between breakpoints are Progress Ranks. They count toward the next breakpoint but do not change the current Skill die until that breakpoint is reached."
+  },
+  "pool_order": [
+    "Define the scope",
+    "Choose the Skill",
+    "Add the Skill's three associated Ability dice after Die Step Effects",
+    "Add the Skill die; untrained is d4",
+    "Choose one primary relevant gear item and add its gear die",
+    "Apply Help, Advantage, VAM, cover, circumstance, and Disadvantage",
+    "Roll once; 1-3 are blank and every 4+ scores at face value"
+  ],
+  "gear": {"default":"One primary gear die per roll; compatible gear does not stack unless a rule explicitly permits it."},
+  "armor": {"rule":"Armor contributes its listed gear die to an appropriate defense pool when it can physically protect the Vector. Armor does not also subtract damage unless a specific item or rule explicitly says it does."},
+  "combat": {
+    "attack_ap": 1,
+    "move_ap": 1,
+    "move_distance_feet": 30,
+    "universal_run_action": false,
+    "damage": "Winning margin. Armor is normally in the defense pool, not a second mitigation step.",
+    "attack_rule": "A normal attack costs 1 AP. A Vector may make multiple normal attacks in a turn by paying 1 AP for each, unless a specific rule overrides or limits the attack."
+  },
+  "reaction": {
+    "normal_limit": 1,
+    "reaction_ap": 1,
+    "unspent_ap_rule": "When a turn ends, unspent AP remains available for the Vector's Reaction until the beginning of the next turn.",
+    "spending_order": "Spend unspent AP from the turn that just ended first. Only if none remains may the Reaction borrow 1 AP from the next turn.",
+    "borrowed_ap": "Borrowed AP reduces the AP available when the next turn begins.",
+    "expiration": "Any unspent AP that was not used for a Reaction expires when the next turn begins."
+  },
+  "vam_bar": {
+    "bar_definition": "Biocognitive Augmentation Rating is capacity, not energy.",
+    "standard_capacity": 16,
+    "load_into_unused_capacity": "Free when no replacement is required.",
+    "field_swap": "Replacing/unloading already-loaded VAMs during action time costs 1 AP for the whole field reconfiguration unless a specific rule says otherwise."
+  },
+  "historical_carrier_rules": {
+    "states": ["Fragile","Established","Durable"],
+    "exposure_tradeoff": "Stronger Carrier and lower Exposure are intentionally competing goals.",
+    "mission_requirement": "Each operation states the minimum Carrier strength that must survive Historical Verification."
+  },
+  "mission_outcome_matrix": [
+    {"carrier_met":true,"exposure_within_target":true,"result":"Clean Success"},
+    {"carrier_met":true,"exposure_within_target":false,"result":"Exposed Success"},
+    {"carrier_met":false,"exposure_within_target":true,"result":"Contained Failure"},
+    {"carrier_met":false,"exposure_within_target":false,"result":"Exposed Failure"}
+  ],
+  "mission_procedure": ["Briefing","Insertion","Establish Cover","Investigate","Identify Leverage","Intervene","Establish Carrier","Contain Exposure","Extract","Historical Verification"],
+  "adventure_compatibility": {
+    "P7-AP01-M01": "The Ash Ledger r001 retains historical Rules Target v0.180 until that Adventure is specifically audited/revised. Core promotion does not relabel it."
+  },
+  "audit_artifacts": {
+    "Protocol_7_v0.187_Interactive_Mobile_Character_Sheet.html": "d588ed4360659787fefd948693bb57d4bab6872121f0c856e5db4bef396f0bac",
+    "Protocol_7_v0.187_Interactive_Rules_Guide.html": "5bdf3b05d2344772f36e3749a853a4edd047768d8bb2eff86c2e8283d719e16b",
+    "Protocol_7_v0.187_Complete_Rulebook_Printable_Edition.pdf": "e08d3b99aebbd15b6f00adf42a190d2b767934da5035a03738aba8513755e335"
+  },
+  "audit_note": "This successor records the verified frozen mechanical baseline. Content catalogs such as individual gear entries, VAM listings, and configurations remain governed by the latest approved live artifacts unless explicitly added to a later canonical data source."
+}
