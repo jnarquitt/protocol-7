@@ -33,9 +33,9 @@ Current promoted revisions:
 - **M01 — The Ash Ledger r003**
 - **M02 — The Winter Relay r001**
 - **M03 — The Paper Harbor r002**
+- **M04 — The Quiet Machine r002**
 
 Current first drafts:
-- **M04 — The Quiet Machine r001**
 - **M05 — The Last Water Map r001**
 - **M06 — Seven Copies r001**
 
@@ -44,8 +44,9 @@ The stable public current-review manifest is `continuance-files/current.html`. A
 ## Ecosystem audit state
 
 **Audit A completed:** 2026-08-23.  
-**Result:** AMBER at discovery due to project-control documentation drift; synchronization corrections applied without changing frozen mechanics.  
-**Next full checkpoint:** Audit B after M04 promotion.
+**Audit B completed:** 2026-08-23 after M04 r002 promotion.  
+**Audit B result:** AMBER-GREEN; core mechanics coherent, M04 compatible/playtest-ready, project-control synchronization applied without changing frozen mechanics.  
+**Next full checkpoint:** Audit C after M06 promotion. Mission-level synchronization still occurs after M05 promotion.
 
 ## Product separation
 Protocol Dice Engine remains a separate developing product line with an independent version sequence.
