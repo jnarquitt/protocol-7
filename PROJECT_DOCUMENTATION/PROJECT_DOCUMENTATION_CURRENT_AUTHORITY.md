@@ -16,6 +16,7 @@ Use these as the current Protocol 7 project-control set:
 - `03_CURRENT_STATE_SNAPSHOT_v0.187.md`
 - `RESOURCE_AUTHORITY_AND_CONFLICT_RULES_v0.187.md`
 - `P7_ECOSYSTEM_AUDIT_A_2026-08-23.md`
+- `P7_ECOSYSTEM_AUDIT_B_2026-08-23.md`
 
 These documents supersede older Protocol 7 current-state, canonical-lock, and authority files for present work.
 
@@ -34,10 +35,15 @@ Current promoted mission revisions:
 - `P7-AP01-M01 — The Ash Ledger r003`
 - `P7-AP01-M02 — The Winter Relay r001`
 - `P7-AP01-M03 — The Paper Harbor r002`
+- `P7-AP01-M04 — The Quiet Machine r002`
 
-M04–M06 remain first drafts until individually revised, simulated, and promoted.
+M05–M06 remain first drafts until individually revised, simulated, and promoted.
 
 The canonical public Adventure review manifest is `continuance-files/current.html`. Adventure revisions advance independently from the Protocol 7 core version. Current promoted Adventure work is audited against the v0.187 canonical mechanical baseline unless a mission explicitly records another approved target.
+
+## Campaign Architecture Note
+
+`P7-AP01_The_Continuance_Files_CAMPAIGN_ARCHITECTURE_r001.md` remains the design authority for the campaign spine, continuity themes, mystery ladder, and mission functions. It is not the current mission manifest. M04 r002 deliberately uses Antikythera/Athens 1900–1902 rather than the architecture's originally proposed mid-century frame while preserving M04's assigned reproducible-process function. That divergence is recorded by Ecosystem Audit B and does not itself require an architecture rewrite.
 
 ## Protocol Dice Engine
 
@@ -46,7 +52,8 @@ Protocol Dice Engine is a separate developing product line with an independent v
 ## Ecosystem Audit Rhythm
 
 - Mission-level synchronization check after every promoted Adventure revision.
-- Ecosystem Audit B after M04 promotion.
+- Ecosystem Audit A completed 2026-08-23.
+- Ecosystem Audit B completed 2026-08-23 after M04 r002 promotion.
 - Ecosystem Audit C after M06 promotion.
 - Final Release Audit before Adventure Path release packaging.
 
