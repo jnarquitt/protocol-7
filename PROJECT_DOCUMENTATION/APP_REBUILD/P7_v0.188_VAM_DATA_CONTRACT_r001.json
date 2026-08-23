@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "p7-v0.188-vam-data-contract-r001",
+  "title": "Protocol 7 v0.188 VAM Definition",
+  "type": "object",
+  "required": ["id","name","family","bar_cost","authorization_level","authorization_name","rules_text","effects","tags"],
+  "properties": {
+    "id": {"type":"string","pattern":"^vam_[a-z0-9_]+$"},
+    "name": {"type":"string","minLength":1},
+    "family": {"enum":["combat","defense_mobility","recon_investigation","social_cover","technical_medical","command_temporal"]},
+    "bar_cost": {"type":"integer","minimum":1,"maximum":30},
+    "authorization_level": {"type":"integer","minimum":1,"maximum":6},
+    "authorization_name": {"enum":["Standard","Advanced I","High Integration","Advanced II / Mastery","Elite","Continuance"]},
+    "rules_text": {"type":"string","minLength":1},
+    "requires": {
+      "type":"object",
+      "properties": {
+        "mastery_required": {"type":"boolean"},
+        "mastered_skill_ids": {"type":"array","items":{"type":"string"}},
+        "mastered_skill_tags": {"type":"array","items":{"type":"string"}},
+        "other_vam_ids": {"type":"array","items":{"type":"string"}},
+        "gear_tags": {"type":"array","items":{"type":"string"}},
+        "fictional_permission": {"type":["string","null"]}
+      },
+      "additionalProperties": false
+    },
+    "effects": {
+      "type":"array",
+      "items": {
+        "type":"object",
+        "required":["type"],
+        "properties": {
+          "type": {"enum":["ordinary_bonus_die","mastery_access","ap_cost_override","free_action","reaction_permission","movement_permission","condition_permission","information_permission","automatic_permission","field_swap_modifier","timing_permission","other_bounded"]},
+          "die": {"enum":["d4","d6","d8","d10","d12"]},
+          "skill_ids": {"type":"array","items":{"type":"string"}},
+          "skill_tags": {"type":"array","items":{"type":"string"}},
+          "once_per": {"enum":["roll","turn","round","scene","session","mission",null]},
+          "ap_cost": {"type":["integer","null"],"minimum":0,"maximum":3},
+          "uses_reaction": {"type":"boolean"},
+          "notes": {"type":"string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "tags": {"type":"array","uniqueItems":true,"items":{"type":"string"}},
+    "deprecated_ids": {"type":"array","items":{"type":"string"}}
+  },
+  "additionalProperties": false
+}
