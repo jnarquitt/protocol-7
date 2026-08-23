@@ -1,0 +1,14 @@
+{
+  "rules_version":"0.188-candidate",
+  "schema_version":"p7-condition-registry-r001",
+  "authority_note":"Initial structured migration of the six active v0.187 conditions. No new conditions are invented in this pass. Numeric pool modifiers in legacy prose are represented as typed disadvantage effects, not generic bonus/penalty dice.",
+  "conditions":[
+    {"id":"COND-PRONE","name":"Prone","effects":[{"type":"AP_COST","action":"Stand","ap":1},{"type":"CONDITIONAL_DISADVANTAGE","scope":"distant ranged attacks against or involving the prone position","adjudication":"GM","legacy_strength":null}],"removal":[{"type":"ACTION","action":"Stand","ap":1}],"notes":"Voluntarily dropping Prone remains governed by the action rules."},
+    {"id":"COND-GRAPPLED","name":"Grappled","effects":[{"type":"MOVEMENT_CONTROLLED_BY_SOURCE"}],"removal":[{"type":"OPPOSED_CHECK","skills":["SKL-GRAPPLING","SKL-UNARMED","SKL-ATHLETICS"]}],"notes":"Exact opposed resolution remains governed by the Grapple action authority."},
+    {"id":"COND-SUPPRESSED","name":"Suppressed","effects":[{"type":"IMPOSE_DISADVANTAGE","die":"d6","scope":["exposed movement","careful aim"],"source":"condition"}],"removal":[{"type":"TAKE_COVER"},{"type":"ACTION","name":"Steady","ap":1}],"notes":"d6 is a named Disadvantage die from the condition; it is not a generic penalty die."},
+    {"id":"COND-STUNNED","name":"Stunned","effects":[{"type":"REMOVE_REACTION"},{"type":"AP_COST_INCREASE","amount":1,"scope":"first action on next turn"}],"removal":[{"type":"AFTER_EFFECT_RESOLVES"}],"notes":"Physiological/shock-based Stunned may interact with explicit VAM removal effects."},
+    {"id":"COND-DISORIENTED","name":"Disoriented","effects":[{"type":"IMPOSE_DISADVANTAGE","die":"d4","skills":["SKL-PERCEPTION","SKL-INITIATIVE"],"scope":"awareness checks","source":"condition"}],"removal":[{"type":"SOURCE_DEFINED"}],"notes":"d4 is a named Disadvantage die from the condition; it is not a generic penalty die."},
+    {"id":"COND-RESTRAINED","name":"Restrained","effects":[{"type":"PREVENT_FREE_MOVEMENT"},{"type":"CONDITIONAL_DISADVANTAGE","scope":"physical actions materially hindered by the restraint","adjudication":"GM","legacy_strength":null}],"removal":[{"type":"SOURCE_DEFINED"}],"notes":"The exact escape mechanism depends on the source of restraint."}
+  ],
+  "validation":{"expected_count":6,"generic_bonus_or_penalty_slot":false,"all_dice_pool_changes_require_named_source":true}
+}
