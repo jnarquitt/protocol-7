@@ -1,0 +1,101 @@
+name: Protocol 7 Navigation Guard
+
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'continuance-files/**/*.html'
+      - '.github/workflows/navigation-guard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce navigation chain
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          MARK = 'data-p7-global-nav="1"'
+
+          def bar(links):
+              anchors = ''.join(f'<a href="{href}">{label}</a>' for label, href in links)
+              return (
+                  '<style id="p7-global-nav-style">'
+                  '.p7-global-nav{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;'
+                  'padding:.6rem max(1rem,calc((100% - 1100px)/2));background:#090909;'
+                  'border-bottom:1px solid #55472f;font-family:Arial,sans-serif;position:relative;z-index:1000}'
+                  '.p7-global-nav a{display:inline-block;padding:.5rem .7rem;border:1px solid #5f5138;'
+                  'border-radius:8px;background:#1b1916;color:#ead18a!important;text-decoration:none!important;'
+                  'font-size:.82rem;font-weight:800;line-height:1.1}'
+                  '.p7-global-nav a:hover,.p7-global-nav a:focus{background:#2a261f;color:#fff!important}'
+                  '@media(max-width:560px){.p7-global-nav{padding:.5rem}.p7-global-nav a{flex:1 1 auto;text-align:center}}'
+                  '@media print{.p7-global-nav{display:none!important}}'
+                  '</style>'
+                  f'<nav class="p7-global-nav" {MARK} aria-label="Project navigation">{anchors}</nav>'
+              )
+
+          def inject(path, links):
+              text = path.read_text(encoding='utf-8')
+              if MARK in text:
+                  return False
+              m = re.search(r'<body\b[^>]*>', text, flags=re.I)
+              if not m:
+                  return False
+              nav = bar(links)
+              text = text[:m.end()] + nav + text[m.end():]
+              path.write_text(text, encoding='utf-8')
+              return True
+
+          changed = []
+
+          root = Path('index.html')
+          if root.exists() and inject(root, [('Jade Lion Studios','https://jnarquitt.github.io/')]):
+              changed.append(str(root))
+
+          cf = Path('continuance-files')
+          if cf.exists():
+              for p in sorted(cf.glob('*.html')):
+                  if inject(p, [('Protocol 7 Home','../index.html'),('Jade Lion Studios','https://jnarquitt.github.io/')]):
+                      changed.append(str(p))
+
+              for folder in ('GM_FILES','PLAYER_FILES'):
+                  d = cf / folder
+                  if not d.exists():
+                      continue
+                  for p in sorted(d.glob('*.html')):
+                      links = [
+                          ('Adventure Path Home','../current.html'),
+                          ('Protocol 7 Home','../../index.html'),
+                          ('Jade Lion Studios','https://jnarquitt.github.io/'),
+                      ]
+                      if inject(p, links):
+                          changed.append(str(p))
+
+          print('Navigation updated in', len(changed), 'files')
+          for p in changed:
+              print(' -', p)
+          PY
+
+      - name: Commit navigation fixes
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "Navigation already compliant."
+            exit 0
+          fi
+          git config user.name "Protocol 7 Navigation Guard"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html continuance-files
+          git commit -m "Synchronize Protocol 7 navigation chain"
+          git push
