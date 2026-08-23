@@ -5,11 +5,12 @@
 **Historical frame:** Petra, 363 CE, immediately after the major earthquake  
 **Continuity form:** Distributed civic operational knowledge  
 **Core baseline:** Protocol 7 v0.187  
-**Campaign baseline:** M01 r003, M02 r001, M03 r002, M04 r002
+**Campaign baseline:** M01 r003, M02 r001, M03 r002, M04 r002  
+**Intended party tier:** Protocol 7 Level 5
 
 # Run-It-In-Your-Head Summary
 
-Petra has survived in an arid landscape because water is not merely stored in one place. Springs, channels, ceramic and lead piping, settling systems, cisterns, reservoirs, overflow routes, and generations of practical local knowledge form a network. The 363 CE earthquake breaks parts of that network and, more dangerously, breaks the human connections that explain how its pieces fit together.
+Petra has survived in an arid landscape because water is not merely stored in one place. Springs, channels, piping, cisterns, reservoirs, overflow routes, and generations of practical local knowledge form a network. The 363 CE earthquake breaks parts of that network and, more dangerously, breaks the human connections that explain how its pieces fit together.
 
 The Vectors initially believe they are looking for the last authoritative map of Petra's water system. They eventually discover that no such map can save the city. The true Carrier is distributed operational knowledge: which channels still run, which cisterns are contaminated or intact, which bypasses work, which neighborhoods depend on which sources, and which people know how to repair or reroute each section.
 
@@ -17,7 +18,7 @@ The mission escalates the Adventure Path from preserving information to preservi
 
 # Historical Foundation
 
-Petra's water system historically exploited multiple water sources and combined reservoir storage with continuous-flow pipelines and channels. Archaeological research describes sophisticated hydraulic design, including settling basins, piping, channels, cisterns, and systems intended to maintain stable water supply in an arid environment. Excavation evidence at the Great Temple documents major destruction in the 363 CE earthquake and later repairs/reconfigurations, including water installations and areas where plumbing interfaces appear to have been destroyed or altered.
+Petra's documented water infrastructure included a broad network of channels, tunnels, diversion dams, cisterns and reservoirs that conserved seasonal rain and supported settlement in an arid landscape. Archaeological work at the Great Temple documents major destruction in the 363 CE earthquake and subsequent repair/reconfiguration, including changes to water installations.
 
 The adventure must not claim that one fictional map or Vector intervention historically 'saved Petra.' The historical city continued after 363 and underwent repair, adaptation, reuse, and later decline. Protocol 7 operates inside uncertainty and lost local practice rather than replacing known history.
 
@@ -27,12 +28,12 @@ Petra, 363 CE is substantially less familiar to most tables than San Francisco 1
 
 The final GM guide must contain strong read-aloud passages for at least:
 - first insertion and first view of earthquake-damaged Petra;
-- movement through the Siq or another narrow rock-cut approach/route where appropriate to the insertion;
+- movement through the Siq or another narrow rock-cut approach where appropriate;
 - the inhabited city center after the quake;
 - first encounter with the water network as visible infrastructure rather than abstract lore;
 - entry into or work around a cistern, channel, reservoir, or damaged conduit;
 - a crowded water-distribution point where civic stakes become human;
-- a night or low-light scene that emphasizes unfamiliar ancient urban life;
+- a night or low-light scene emphasizing unfamiliar ancient urban life;
 - the final city-scale realization that no single map contains the Carrier.
 
 Read-aloud must orient as well as evoke. It should quietly answer: What do I see? What are people doing? What technology is normal here? Where is the water? What has the earthquake changed? What immediate choices are visible?
@@ -63,6 +64,24 @@ It consists of overlapping pieces:
 
 The Carrier becomes Durable when enough independent people and records can reconstruct essential relationships even if one expert, map, district, or institution is lost.
 
+# Level 5 Design Target
+
+M05 is the first mission explicitly designed around veteran-Vector scope.
+
+The campaign advancement target is M01 Level 1, M02 Level 2, M03 Level 3, M04 Level 4, M05 Level 5, M06 Level 6. Across the full path, Protocol 7 Levels 1–6 should deliver approximately the felt campaign-growth span of Levels 1–12 in a typical d20 RPG without copying d20 mathematics.
+
+M05 should therefore demonstrate that Level 5 Vectors are dramatically more capable than the team that entered M01. Hazards that once dominated a scene can now be handled while the team also manages civic, investigative, and moral problems.
+
+Do not balance this by simply increasing target numbers or hit points. Balance veteran capability through **scope and simultaneity**:
+- several districts need help at once;
+- information nodes disagree;
+- physical rescue and Carrier work overlap;
+- period-safe solutions take time;
+- future capabilities can solve extraordinary problems but create Exposure;
+- the team can accomplish more than at Level 1, but cannot personally solve an entire city's crisis cleanly.
+
+The full first-pass Style & Balance Audit must compare the Level 5 experience here against M01 Level 1 and M06 Level 6, including Skill growth, Ability improvements, HP, VAM/BAR choices, tactical breadth, specialist/generalist balance, dead levels, and power spikes.
+
 # Human-Scale Story
 
 The city-scale premise must never become an abstract infrastructure exercise. Build the mission around several people who each know only part of the truth.
@@ -73,10 +92,10 @@ Working fictional roles:
 Knows how several central distribution points relate but not the entire city. She initially wants the Last Water Map because she believes it can settle arguments between districts. Her arc is realizing that the map is already obsolete in places and that people must annotate, copy, and teach what changed.
 
 ## Diodoros — aging conduit repairer
-Knows buried and rock-cut routes by memory and physical landmarks. Distrusts administrative maps because previous repairs were never recorded accurately. Physically capable enough to matter but injured by the earthquake, preventing the adventure from becoming 'follow the expert everywhere.'
+Knows buried and rock-cut routes by memory and physical landmarks. Distrusts administrative maps because previous repairs were never recorded accurately. Injured by the earthquake, preventing the adventure from becoming 'follow the expert everywhere.'
 
 ## Nadiya — household/cistern organizer
-Knows which neighborhood stores remain potable, which families have access, and where people are already drawing unsafe water. She represents knowledge that official infrastructure records do not contain.
+Knows which neighborhood stores remain potable, which families have access, and where people are already drawing unsafe water. She represents knowledge official infrastructure records do not contain.
 
 ## Marcellus — civic clerk/record keeper
 Protects the Last Water Map and believes central custody prevents panic and theft. He is not foolish; a single authoritative record is extremely useful in normal conditions.
@@ -88,16 +107,14 @@ Argues that distributing infrastructure knowledge is an ancestor of systematized
 
 **At what scale does refusing to interfere become its own intervention?**
 
-A secondary question should be felt rather than lectured:
-
-**Who owns the knowledge required to keep a city alive?**
+Secondary question: **Who owns the knowledge required to keep a city alive?**
 
 # Revelation Ladder
 
 1. The Last Water Map exists and could materially help emergency response.
 2. The earthquake has made portions of the map wrong.
 3. No living person knows the entire network.
-4. People dismissed as 'local' or 'unofficial' hold information absent from central records.
+4. People dismissed as local or unofficial hold information absent from central records.
 5. The map becomes more useful when it stops being authoritative and becomes a shared reconstruction surface.
 6. Saving the city-scale Carrier requires distribution, teaching, and visible intervention; a perfectly Clean solution is unlikely.
 7. When the reconstructed relationships are compared, the seven-stroke pattern maps onto continuity links rather than behaving like a mere signature.
@@ -108,9 +125,9 @@ M05 must deliberately broaden the style mix before the post-first-pass audit.
 
 Target modes:
 - **Exploration:** Petra's physical geography and water infrastructure must be traversed and understood.
-- **Disaster action:** rescue, unstable structures, damaged channels, flooding/runoff where plausible, hazardous access, crowd pressure, urgent repair.
+- **Disaster action:** rescue, unstable structures, damaged channels, hazardous access, crowd pressure, urgent repair.
 - **Investigation:** reconstructing the network from contradictory partial knowledge.
-- **Social negotiation:** districts/households/civic authorities disagree about scarce water and information.
+- **Social negotiation:** districts, households, and civic authorities disagree about scarce water and information.
 - **Technical problem solving:** routing and repair decisions without requiring players to be hydraulic engineers.
 - **Potential combat:** available if Covenant intervention or human conflict escalates, but not the default climax.
 
@@ -131,13 +148,13 @@ Reach Marcellus and the surviving central plan. It appears to be the obvious Car
 A mapped route is broken, rerouted, contaminated, or no longer connected as the map claims. Diodoros or physical exploration proves that the document is already historical rather than operational.
 
 ## 5. The People Who Know Pieces
-Players must choose which local knowledge nodes to reach under pressure. No checklist: present multiple simultaneous needs and let route choice matter.
+Players choose which local knowledge nodes to reach under pressure. No checklist: present multiple simultaneous needs and let route choice matter.
 
 ## 6. Reconstruction
 The Vectors combine map, memory, physical evidence, and local records. The emerging network is better than the original map because it records post-quake reality.
 
 ## 7. Covenant Threshold
-The Covenant offers a narrow solution: use the reconstructed knowledge to handle the immediate emergency, then prevent broad copying/teaching. Their argument is that a city-wide legible infrastructure network is precisely the kind of governance architecture Aletheia later absorbs.
+The Covenant offers a narrow solution: use reconstructed knowledge to handle the immediate emergency, then prevent broad copying/teaching. Their argument is that a city-wide legible infrastructure network is precisely the kind of governance architecture Aletheia later absorbs.
 
 ## 8. City-Scale Crisis
 A major distribution choice forces action: a route can be reopened, redirected, or temporarily sacrificed; people may need evacuation or rationing; multiple neighborhoods cannot all receive the easiest solution at once.
@@ -146,7 +163,7 @@ A major distribution choice forces action: a route can be reopened, redirected, 
 Players decide who receives copies, training, annotations, or responsibility. The goal is not merely copying a map but creating independent reconstructive capacity.
 
 ## 10. Verification
-Aletheia maps the prior mission evidence against the new network. The seven-stroke marks align with relationships among independent continuity nodes. The team can now conclude the strokes encode or indicate transmission relationships, not just authorship.
+Aletheia maps prior mission evidence against the new network. The seven-stroke marks align with relationships among independent continuity nodes. The team can now conclude the strokes encode or indicate transmission relationships, not just authorship.
 
 # Action and Exploration Requirements
 
@@ -163,15 +180,7 @@ If combat occurs, it must have an objective beyond defeating opponents: hold a r
 
 No failed roll can erase the only route to the Carrier.
 
-Failure can:
-- consume time;
-- worsen local water access;
-- injure or separate an NPC;
-- destroy one information node;
-- force a riskier route;
-- increase Exposure;
-- make one district distrust the team;
-- require choosing which problem remains unresolved.
+Failure can consume time, worsen local water access, injure or separate an NPC, destroy one information node, force a riskier route, increase Exposure, make one district distrust the team, or require choosing which problem remains unresolved.
 
 At city scale, failure should increasingly become **triage** rather than simple delay.
 
@@ -187,27 +196,17 @@ Durable should almost certainly produce more historical footprint than Fragile. 
 
 # Campaign Callbacks
 
-M05 must acknowledge at least two prior mission outcomes in play.
+M05 must acknowledge at least two prior mission outcomes in play. Callbacks should primarily reward player learning and campaign memory, not inject impossible historical artifacts into 363 CE.
 
-Possible ordinary advantages:
-- M01 knowledge continuity contributes a small structural/repair insight preserved through later engineering tradition only if historically plausible to the insertion logic.
-- M02 communications continuity may influence how Aletheia understands distributed redundancy conceptually, but must not introduce anachronistic radio practice into Petra.
-- M03 compartmentation lesson can help the players recognize that no one record needs to contain the whole network.
-- M04 evidence/provenance lesson can help distinguish observed post-quake conditions from inherited assumptions.
-
-Callbacks should primarily reward player learning and campaign memory, not inject impossible historical artifacts into 363 CE.
+M03's compartmentation lesson can help the players recognize that no one record needs to contain the whole network. M04's evidence/provenance lesson can help distinguish observed post-quake conditions from inherited assumptions. Earlier Durable Carriers may create small historically ordinary advantages only where causally plausible.
 
 # Covenant Escalation
 
 M05 is where the Covenant argument should be hardest to dismiss.
 
-They can truthfully argue:
-- distributed water knowledge saves lives;
-- making infrastructure legible also makes populations and dependencies legible;
-- emergency coordination can become permanent administrative power;
-- Aletheia's future authority depends on exactly this kind of interoperable civic knowledge.
+They can truthfully argue that distributed water knowledge saves lives; making infrastructure legible also makes populations and dependencies legible; emergency coordination can become permanent administrative power; and Aletheia's future authority depends on exactly this kind of interoperable civic knowledge.
 
-But they must face the immediate moral cost of containment: people are thirsty now. If the Covenant's doctrine requires allowing preventable deaths merely to keep history cleaner, individual Covenant operatives should disagree.
+But they must face the immediate moral cost of containment: people are thirsty now. If doctrine requires allowing preventable deaths merely to keep history cleaner, individual Covenant operatives should disagree.
 
 # Historical Safety Rules
 
@@ -215,7 +214,7 @@ But they must face the immediate moral cost of containment: people are thirsty n
 - Do not invent a single historically documented master water map and present it as fact. The Last Water Map is explicitly fictional.
 - Do not overstate certainty about exact 363 routing conditions.
 - Use archaeology to ground the kinds of infrastructure present, while keeping fictional local relationships clearly fictional.
-- Do not make the Vectors the secret inventors of Nabataean hydraulic engineering; that sophistication long predates them.
+- Do not make the Vectors secret inventors of Nabataean hydraulic engineering; that sophistication long predates them.
 
 # Required Simulation Profiles
 
@@ -227,17 +226,33 @@ Before promotion, run:
 - lateral-thinking;
 - bad-luck;
 - high-Exposure;
-- Covenant-sympathetic/anti-Aletheia.
+- Covenant-sympathetic/anti-Aletheia;
+- **infrastructure-blind table** with no assumed understanding of ancient water systems.
 
-Add one M05-specific stress test: **infrastructure-blind table** — players with no intuitive understanding of ancient water systems. The mission passes only if read-aloud, diagrams/GM explanation, and scene design let them make meaningful choices without prior hydraulic or archaeological knowledge.
+The infrastructure-blind simulation is a hard gate. The mission passes only if read-aloud, GM explanation, and scene design let those players understand the city, water problem, and meaningful choices without prior hydraulic or archaeological knowledge.
+
+# Post-First-Pass Style & Balance Audit
+
+After M06 completes the first pass, the Adventure Path receives a dedicated Style & Balance Audit before release polishing. It will examine:
+
+- action/combat versus investigation, exploration, social play, survival/disaster, and technical problem solving;
+- repeated scene structures and repeated moral dilemmas;
+- historical and sensory variety;
+- GM workload and quick-review coherence;
+- spotlight opportunities for different Vector builds;
+- mechanical difficulty and action-economy pressure across Levels 1–6;
+- advancement rewards and whether each level feels consequential;
+- whether Protocol 7 Level 1→6 produces the intended approximate felt growth of a typical d20 Level 1→12 campaign;
+- whether M06 feels like a genuine veteran-Vector capstone rather than merely another mission.
 
 # Promotion Gate
 
 M05 does not promote until:
 - the full GM Field Guide exists;
-- player briefing exists;
+- Player Briefing exists;
 - strong unfamiliar-era read-aloud is present throughout;
 - eight standard simulations plus the infrastructure-blind test pass;
 - Carrier/Exposure outcomes are clear;
+- Level 5 spotlight and scope pressure are tested;
 - M05's action/exploration content is measurably distinct from M03/M04;
 - current landing pages are synchronized.
