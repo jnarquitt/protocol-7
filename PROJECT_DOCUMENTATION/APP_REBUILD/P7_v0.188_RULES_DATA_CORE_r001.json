@@ -1,0 +1,61 @@
+{
+  "rules_version": "0.188-candidate",
+  "schema_version": "p7-rules-core-r001",
+  "abilities": {
+    "ids": ["STR","DEX","CON","INT","WIS","CHA"],
+    "starting_multiset": ["d8","d8","d6","d6","d4","d4"],
+    "die_ladder": ["d4","d6","d8","d10","d12"],
+    "ceiling": "d12",
+    "growth_levels": [3,5]
+  },
+  "skills": {
+    "starting_ranks": 20,
+    "ranks_per_level_after_1": 4,
+    "breakpoints": [
+      {"ranks":0,"dice":["d4"]},
+      {"ranks":1,"dice":["d6"]},
+      {"ranks":3,"dice":["d8"]},
+      {"ranks":6,"dice":["d10"]},
+      {"ranks":10,"dice":["d12"]},
+      {"ranks":15,"dice":["d12","d4"]},
+      {"ranks":21,"dice":["d12","d6"]},
+      {"ranks":28,"dice":["d12","d8"]},
+      {"ranks":36,"dice":["d12","d10"]},
+      {"ranks":45,"dice":["d12","d12"]}
+    ]
+  },
+  "vitality": {
+    "base_hp": 18,
+    "ordinary_min_starting_hp": 22,
+    "ordinary_max_starting_hp": 26,
+    "all_blanks_starting_hp": 28,
+    "hp_per_level_after_1": 4,
+    "blank_faces": [1,2,3]
+  },
+  "levels": {
+    "1": {"bar":16,"authorization":"Standard","edge_slots":0,"ability_growth_slots":0,"mastery_slots":0},
+    "2": {"bar":18,"authorization":"Advanced I","edge_slots":1,"ability_growth_slots":0,"mastery_slots":0},
+    "3": {"bar":21,"authorization":"High Integration","edge_slots":1,"ability_growth_slots":1,"mastery_slots":0},
+    "4": {"bar":24,"authorization":"Advanced II / Mastery","edge_slots":1,"ability_growth_slots":1,"mastery_slots":1},
+    "5": {"bar":27,"authorization":"Elite","edge_slots":1,"ability_growth_slots":2,"mastery_slots":1},
+    "6": {"bar":30,"authorization":"Continuance","edge_slots":1,"ability_growth_slots":2,"mastery_slots":2}
+  },
+  "edges": [
+    {"id":"driven","name":"Driven","kind":"session","usage_max":1,"effect_type":"reroll_one_die_keep_new"},
+    {"id":"inspired","name":"Inspired","kind":"session","usage_max":1,"effect_type":"ordinary_bonus_die","die":"d4"},
+    {"id":"prepared","name":"Prepared","kind":"session","usage_max":1,"effect_type":"bounded_preparation_permission"},
+    {"id":"connected","name":"Connected","kind":"session","usage_max":1,"effect_type":"bounded_contact_permission"},
+    {"id":"durable","name":"Durable","kind":"persistent","max_hp_add":5}
+  ],
+  "action_economy": {"ap_max":3,"normal_reactions":1,"run_ap_cost":3,"run_move_multiplier":2},
+  "dice_sources": {
+    "ordinary_bonus_limit": 1,
+    "mastery_is_separate_source": true,
+    "routine_seven_plus_dice_allowed": false
+  },
+  "vam": {
+    "field_swap_ap_cost": 1,
+    "load_into_unused_capacity_ap_cost": 0
+  },
+  "matched_blanks": {"release_state":"unresolved","enabled":false}
+}
