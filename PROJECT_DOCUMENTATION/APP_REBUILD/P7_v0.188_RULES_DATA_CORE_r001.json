@@ -11,17 +11,14 @@
   "skills": {
     "starting_ranks": 20,
     "ranks_per_level_after_1": 4,
+    "ordinary_die_ceiling": "d12",
+    "post_d12_progression": "superseded_by_skill_mastery_in_v0.188",
     "breakpoints": [
       {"ranks":0,"dice":["d4"]},
       {"ranks":1,"dice":["d6"]},
       {"ranks":3,"dice":["d8"]},
       {"ranks":6,"dice":["d10"]},
-      {"ranks":10,"dice":["d12"]},
-      {"ranks":15,"dice":["d12","d4"]},
-      {"ranks":21,"dice":["d12","d6"]},
-      {"ranks":28,"dice":["d12","d8"]},
-      {"ranks":36,"dice":["d12","d10"]},
-      {"ranks":45,"dice":["d12","d12"]}
+      {"ranks":10,"dice":["d12"]}
     ]
   },
   "vitality": {
