@@ -39,16 +39,20 @@
   },
   "edges": [
     {"id":"driven","name":"Driven","kind":"session","usage_max":1,"effect_type":"reroll_one_die_keep_new"},
-    {"id":"inspired","name":"Inspired","kind":"session","usage_max":1,"effect_type":"ordinary_bonus_die","die":"d4"},
+    {"id":"inspired","name":"Inspired","kind":"session","usage_max":1,"effect_type":"REQUIRES_REDESIGN_NO_GENERIC_BONUS_DIE"},
     {"id":"prepared","name":"Prepared","kind":"session","usage_max":1,"effect_type":"bounded_preparation_permission"},
     {"id":"connected","name":"Connected","kind":"session","usage_max":1,"effect_type":"bounded_contact_permission"},
     {"id":"durable","name":"Durable","kind":"persistent","max_hp_add":5}
   ],
   "action_economy": {"ap_max":3,"normal_reactions":1,"run_ap_cost":3,"run_move_multiplier":2},
   "dice_sources": {
-    "ordinary_bonus_limit": 1,
-    "mastery_is_separate_source": true,
-    "routine_seven_plus_dice_allowed": false
+    "generic_bonus_die_slot": false,
+    "core_pool": ["skill","abilities"],
+    "gear": {"default_primary_relevant_limit":1,"separate_source":true},
+    "vam": {"adds_dice_only_when_explicit":true,"separate_source":true},
+    "advantage_disadvantage": {"separate_source":true,"gm_situational_or_explicit_trigger":true},
+    "mastery": {"separate_source":true,"requires_mastered_skill_and_explicit_access":true},
+    "all_pool_changes_require_named_source": true
   },
   "vam": {
     "field_swap_ap_cost": 1,
