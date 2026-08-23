@@ -1,0 +1,24 @@
+{
+  "rules_version": "0.188-candidate",
+  "catalog_revision": "r001",
+  "expected_total_entries": 84,
+  "expected_entries_per_family": 14,
+  "families": [
+    {"id":"combat","file":"P7_v0.188_VAMS_COMBAT_r001.json","count":14},
+    {"id":"defense_mobility","file":"P7_v0.188_VAMS_DEFENSE_MOBILITY_r001.json","count":14},
+    {"id":"recon_investigation","file":"P7_v0.188_VAMS_RECON_INVESTIGATION_r001.json","count":14},
+    {"id":"social_cover","file":"P7_v0.188_VAMS_SOCIAL_COVER_r001.json","count":14},
+    {"id":"technical_medical","file":"P7_v0.188_VAMS_TECHNICAL_MEDICAL_r001.json","count":14},
+    {"id":"command_temporal","file":"P7_v0.188_VAMS_COMMAND_TEMPORAL_r001.json","count":14}
+  ],
+  "expected_level_distribution": {"1":24,"2":18,"3":12,"4":12,"5":12,"6":6},
+  "dice_source_policy": {
+    "generic_bonus_die_slot": false,
+    "gear_dice": "separate source",
+    "vam_dice": "only where individual VAM data explicitly adds a die",
+    "advantage_disadvantage": "separate situational or rule-triggered pool adjustment",
+    "mastery": "separate source requiring Mastered Skill plus explicit access"
+  },
+  "human_rules_authority": "PROJECT_DOCUMENTATION/P7_v0.188_REBUILT_VAM_CATALOG_FINAL_CANDIDATE_r001.md",
+  "known_sync_note": "The human-readable catalog still contains legacy 'ordinary Bonus Die' wording in several entries. The machine files encode those as explicit VAM dice under the later v0.188 dice-source decision; prose synchronization is required before promotion."
+}
