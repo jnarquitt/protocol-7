@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "p7-v0.188-character-state-r001",
+  "title": "Protocol 7 v0.188 Character State",
+  "type": "object",
+  "required": ["schema_version","rules_version","identity","progression","abilities","vitality","skills","vams","gear","play","mission","meta"],
+  "properties": {
+    "schema_version": {"const": "p7-character-r001"},
+    "rules_version": {"const": "0.188-candidate"},
+    "identity": {
+      "type": "object",
+      "required": ["character_name","player_name","concept","notes"],
+      "properties": {
+        "character_name": {"type": "string"},
+        "player_name": {"type": "string"},
+        "concept": {"type": "string"},
+        "notes": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "progression": {
+      "type": "object",
+      "required": ["level","edge_id","ability_growth","mastered_skill_ids","advancement_log"],
+      "properties": {
+        "level": {"type": "integer","minimum": 1,"maximum": 6},
+        "edge_id": {"type": ["string","null"]},
+        "ability_growth": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["level","ability_id"],
+            "properties": {
+              "level": {"enum": [3,5]},
+              "ability_id": {"enum": ["STR","DEX","CON","INT","WIS","CHA"]}
+            },
+            "additionalProperties": false
+          }
+        },
+        "mastered_skill_ids": {"type": "array","maxItems": 2,"uniqueItems": true,"items": {"type": "string"}},
+        "advancement_log": {"type": "array","items": {"type": "object"}}
+      },
+      "additionalProperties": false
+    },
+    "abilities": {
+      "type": "object",
+      "required": ["STR","DEX","CON","INT","WIS","CHA"],
+      "properties": {
+        "STR": {"$ref": "#/$defs/ability"},
+        "DEX": {"$ref": "#/$defs/ability"},
+        "CON": {"$ref": "#/$defs/ability"},
+        "INT": {"$ref": "#/$defs/ability"},
+        "WIS": {"$ref": "#/$defs/ability"},
+        "CHA": {"$ref": "#/$defs/ability"}
+      },
+      "additionalProperties": false
+    },
+    "vitality": {
+      "type": "object",
+      "required": ["faces","origin_ability_id","all_blanks_exception"],
+      "properties": {
+        "faces": {
+          "type": "object",
+          "required": ["STR","DEX","CON","INT","WIS","CHA"],
+          "properties": {
+            "STR": {"type": ["integer","null"],"minimum": 1,"maximum": 12},
+            "DEX": {"type": ["integer","null"],"minimum": 1,"maximum": 12},
+            "CON": {"type": ["integer","null"],"minimum": 1,"maximum": 12},
+            "INT": {"type": ["integer","null"],"minimum": 1,"maximum": 12},
+            "WIS": {"type": ["integer","null"],"minimum": 1,"maximum": 12},
+            "CHA": {"type": ["integer","null"],"minimum": 1,"maximum": 12}
+          },
+          "additionalProperties": false
+        },
+        "origin_ability_id": {"type": ["string","null"],"enum": ["STR","DEX","CON","INT","WIS","CHA",null]},
+        "all_blanks_exception": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "skills": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["ranks","notes"],
+        "properties": {
+          "ranks": {"type": "integer","minimum": 0},
+          "notes": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "vams": {
+      "type": "object",
+      "required": ["loaded_ids","active_preset_id"],
+      "properties": {
+        "loaded_ids": {"type": "array","uniqueItems": true,"items": {"type": "string"}},
+        "active_preset_id": {"type": ["string","null"]}
+      },
+      "additionalProperties": false
+    },
+    "gear": {
+      "type": "object",
+      "required": ["equipped_ids","inventory","notes"],
+      "properties": {
+        "equipped_ids": {"type": "array","uniqueItems": true,"items": {"type": "string"}},
+        "inventory": {"type": "array","items": {"type": "object"}},
+        "notes": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "play": {
+      "type": "object",
+      "required": ["current_hp","current_ap","reaction_available","conditions","edge_used","field_swap_active"],
+      "properties": {
+        "current_hp": {"type": "integer","minimum": 0},
+        "current_ap": {"type": "integer","minimum": 0,"maximum": 3},
+        "reaction_available": {"type": "boolean"},
+        "conditions": {"type": "array","items": {"type": "string"}},
+        "edge_used": {"type": "boolean"},
+        "field_swap_active": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "mission": {
+      "type": "object",
+      "required": ["exposure","carrier_state","notes"],
+      "properties": {
+        "exposure": {"type": "integer","minimum": 0},
+        "carrier_state": {"enum": ["Fragile","Established","Durable",null]},
+        "notes": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "meta": {
+      "type": "object",
+      "required": ["created_at","updated_at"],
+      "properties": {
+        "created_at": {"type": "string"},
+        "updated_at": {"type": "string"},
+        "source_preset_id": {"type": ["string","null"]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "ability": {
+      "type": "object",
+      "required": ["base_die"],
+      "properties": {
+        "base_die": {"enum": ["d4","d6","d8","d10","d12"]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
