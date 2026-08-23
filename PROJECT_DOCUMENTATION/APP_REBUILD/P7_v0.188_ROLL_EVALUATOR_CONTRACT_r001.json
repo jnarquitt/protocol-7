@@ -1,0 +1,23 @@
+{
+  "rules_version":"0.188-candidate",
+  "schema_version":"p7-roll-evaluator-r001",
+  "status":"implementation-contract",
+  "purpose":"Deterministically construct an explainable Protocol 7 roll pool without a generic bonus-die channel.",
+  "input":{"skill_id":"SKL-*","skill_ranks":"integer >= 0","ability_dice":"three dice resolved from skill registry and character state","gear_sources":"0..n candidate gear objects","vam_sources":"0..n explicit active effects","advantage_sources":"0..n named sources","disadvantage_sources":"0..n named sources","mastery":{"skill_mastered":"boolean","access_granted":"boolean","source_id":"nullable"},"conditions":"0..n condition IDs"},
+  "pipeline":[
+    {"step":1,"operation":"RESOLVE_SKILL","rule":"Convert ranks to exactly one ordinary Skill die using core breakpoints; never progress beyond d12."},
+    {"step":2,"operation":"RESOLVE_ABILITIES","rule":"Add the three Ability dice named by the canonical Skill record, preserving duplicate Ability references."},
+    {"step":3,"operation":"RESOLVE_GEAR","rule":"Add only legal relevant Gear dice. Default primary relevant gear limit is one unless an explicit rule overrides it."},
+    {"step":4,"operation":"RESOLVE_VAM","rule":"Apply only explicit VAM operations. VAM-added dice retain source_type=vam and are not renamed Advantage."},
+    {"step":5,"operation":"RESOLVE_CONDITIONS","rule":"Expand active Condition effects into named restrictions and/or Disadvantage sources."},
+    {"step":6,"operation":"RESOLVE_ADV_DISADV","rule":"Collect every named Advantage and Disadvantage source. Until the interaction rule is locked, do not silently cancel or stack multiple sources; mark GM_RESOLUTION_REQUIRED when interaction is ambiguous."},
+    {"step":7,"operation":"RESOLVE_MASTERY","rule":"If and only if the Skill is Mastered and an explicit legal access mechanism grants access, add one Mastery die equal to the current ordinary Skill die."},
+    {"step":8,"operation":"VALIDATE_POOL","rule":"Every die must have source_type, source_id/reason, die size, and mechanical role. Reject unexplained dice and numeric +N modifiers."},
+    {"step":9,"operation":"PRESENT_POOL","rule":"Show the player every die grouped by Skill, Ability, Gear, VAM, Advantage, Disadvantage, and Mastery with a human-readable reason."}
+  ],
+  "skill_die_breakpoints":[{"min_ranks":0,"die":"d4"},{"min_ranks":1,"die":"d6"},{"min_ranks":3,"die":"d8"},{"min_ranks":6,"die":"d10"},{"min_ranks":10,"die":"d12"}],
+  "source_types":["skill","ability","gear","vam","advantage","disadvantage","mastery"],
+  "output":{"pool":[{"source_type":"enum","source_id":"string","label":"string","die":"d4|d6|d8|d10|d12","reason":"string"}],"restrictions":[],"warnings":[],"requires_gm_resolution":"boolean","explanation":"string"},
+  "hard_failures":["unknown skill ID","invalid Ability die","Skill die above d12","Mastery without mastered Skill","Mastery without explicit access","unidentified die source","numeric +N pool modifier","gear die with no relevant gear source"],
+  "audit_note":"The evaluator deliberately does not invent the unresolved multi-source Advantage/Disadvantage interaction rule. It can be implemented now and will surface that case instead of guessing."
+}
