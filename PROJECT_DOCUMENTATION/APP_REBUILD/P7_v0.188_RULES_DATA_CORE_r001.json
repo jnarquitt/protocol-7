@@ -39,7 +39,7 @@
   },
   "edges": [
     {"id":"driven","name":"Driven","kind":"session","usage_max":1,"effect_type":"reroll_one_die_keep_new"},
-    {"id":"inspired","name":"Inspired","kind":"session","usage_max":1,"effect_type":"REQUIRES_REDESIGN_NO_GENERIC_BONUS_DIE"},
+    {"id":"inspired","name":"Inspired","kind":"session","usage_max":1,"effect_type":"grant_advantage","timing":"once_per_session","note":"Advantage is a named pool-adjustment mechanism, not a generic bonus die."},
     {"id":"prepared","name":"Prepared","kind":"session","usage_max":1,"effect_type":"bounded_preparation_permission"},
     {"id":"connected","name":"Connected","kind":"session","usage_max":1,"effect_type":"bounded_contact_permission"},
     {"id":"durable","name":"Durable","kind":"persistent","max_hp_add":5}
@@ -50,7 +50,7 @@
     "core_pool": ["skill","abilities"],
     "gear": {"default_primary_relevant_limit":1,"separate_source":true},
     "vam": {"adds_dice_only_when_explicit":true,"separate_source":true},
-    "advantage_disadvantage": {"separate_source":true,"gm_situational_or_explicit_trigger":true},
+    "advantage_disadvantage": {"separate_source":true,"gm_situational_or_explicit_trigger":true,"players_encouraged_to_create_advantage_through_tactics_preparation_teamwork_resources_and_knowledge":true},
     "mastery": {"separate_source":true,"requires_mastered_skill_and_explicit_access":true},
     "all_pool_changes_require_named_source": true
   },
