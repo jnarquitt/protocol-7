@@ -31,4 +31,4 @@ These rules were audited against the v0.187 live player build and remain frozen 
 Do not rebalance these from a single anecdote. Record observations first and classify them as blocker, major, minor, or polish. If a proposed change touches a frozen mechanic, identify the lock and obtain explicit owner direction to unlock that exact rule before changing it.
 
 ## Adventure boundary
-P7-AP01-M01 — The Ash Ledger remains r001 with its historical Rules Target v0.180 until the Adventure itself is specifically audited/revised.
+Adventure revisions advance independently from the Protocol 7 core version. Promoted P7-AP01 missions must be audited for compatibility with this v0.187 mechanical baseline unless an explicitly approved mission record establishes another Rules Target. Updating an Adventure revision does not itself unlock or alter any frozen mechanic above.
