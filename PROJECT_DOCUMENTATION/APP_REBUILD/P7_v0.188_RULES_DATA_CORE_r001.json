@@ -1,6 +1,6 @@
 {
   "rules_version": "0.188-candidate",
-  "schema_version": "p7-rules-core-r001",
+  "schema_version": "p7-rules-core-r002",
   "abilities": {
     "ids": ["STR","DEX","CON","INT","WIS","CHA"],
     "starting_multiset": ["d8","d8","d6","d6","d4","d4"],
@@ -44,7 +44,18 @@
     {"id":"connected","name":"Connected","kind":"session","usage_max":1,"effect_type":"bounded_contact_permission"},
     {"id":"durable","name":"Durable","kind":"persistent","max_hp_add":5}
   ],
-  "action_economy": {"ap_max":3,"normal_reactions":1,"run_ap_cost":3,"run_move_multiplier":2},
+  "action_economy": {
+    "ap_max": 3,
+    "normal_reactions": 1,
+    "movement": {
+      "ap_cost_per_move": 1,
+      "feet_per_ap": 30,
+      "repeatable": true,
+      "max_normal_movement_per_turn_feet": 90
+    },
+    "universal_run_action": false,
+    "obsolete_rule_prohibited": "Do not implement or describe a universal Run action costing 3 AP or multiplying movement. Movement is 30 feet for each AP spent."
+  },
   "dice_sources": {
     "generic_bonus_die_slot": false,
     "core_pool": ["skill","abilities"],
