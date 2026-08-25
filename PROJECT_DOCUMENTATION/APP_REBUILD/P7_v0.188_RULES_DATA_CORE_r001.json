@@ -1,99 +1,24 @@
 {
-  "rules_version": "0.188-playtest-r001",
-  "schema_version": "p7-rules-core-r003",
-  "authority": "PROJECT_DOCUMENTATION/P7_v0.188_PLAYTEST_RULES_SOURCE_r001.md",
-  "abilities": {
-    "ids": ["STR","DEX","CON","INT","WIS","CHA"],
-    "starting_multiset": ["d8","d8","d6","d6","d4","d4"],
-    "die_ladder": ["d4","d6","d8","d10","d12"],
-    "ceiling": "d12",
-    "growth_levels": [3,5]
-  },
-  "protocol_dice": {
-    "blank_faces": [1,2,3],
-    "scoring": "faces_4_or_higher_contribute_visible_face_value",
-    "matched_blanks_enabled": false
-  },
-  "skills": {
-    "starting_ranks": 20,
-    "ranks_per_level_after_1": 4,
-    "ordinary_die_ceiling": "d12",
-    "post_d12_progression": "skill_mastery",
-    "breakpoints": [
-      {"min_ranks":0,"max_ranks":0,"die":"d4"},
-      {"min_ranks":1,"max_ranks":2,"die":"d6"},
-      {"min_ranks":3,"max_ranks":5,"die":"d8"},
-      {"min_ranks":6,"max_ranks":9,"die":"d10"},
-      {"min_ranks":10,"max_ranks":null,"die":"d12"}
-    ]
-  },
-  "mastery": {
-    "slots_by_level":{"1":0,"2":0,"3":0,"4":1,"5":1,"6":2},
-    "die_equals_current_skill_die":true,
-    "requires_mastered_skill":true,
-    "requires_explicit_access":true,
-    "max_mastery_dice_per_roll":1,
-    "separate_source":true
-  },
-  "vitality": {
-    "base_hp": 18,
-    "ritual_rolls_each_assigned_ability_once": true,
-    "blank_faces": [1,2,3],
-    "ordinary_formula": "18 + highest face of 4 or higher",
-    "ordinary_min_starting_hp": 22,
-    "ordinary_max_starting_hp": 26,
-    "all_six_blank_exception_starting_hp": 28,
-    "tied_highest_choose_vitality_origin": true,
-    "hp_per_level_after_1": 4
-  },
-  "levels": {
-    "1": {"bar":16,"edge_slots":0,"ability_growth_slots":0,"mastery_slots":0},
-    "2": {"bar":18,"edge_slots":1,"ability_growth_slots":0,"mastery_slots":0},
-    "3": {"bar":21,"edge_slots":1,"ability_growth_slots":1,"mastery_slots":0},
-    "4": {"bar":24,"edge_slots":1,"ability_growth_slots":1,"mastery_slots":1},
-    "5": {"bar":27,"edge_slots":1,"ability_growth_slots":2,"mastery_slots":1},
-    "6": {"bar":30,"edge_slots":1,"ability_growth_slots":2,"mastery_slots":2}
-  },
-  "edges": [
-    {"id":"driven","name":"Driven","kind":"session","usage_max":1,"effect":"After rolling, reroll one die and keep the new result."},
-    {"id":"inspired","name":"Inspired","kind":"session","usage_max":1,"effect":"Before a roll, gain Advantage for that roll."},
-    {"id":"prepared","name":"Prepared","kind":"session","usage_max":1,"effect":"Declare one reasonable ordinary preparation the Vector could plausibly have arranged; GM may narrow declarations that exceed the fiction."},
-    {"id":"connected","name":"Connected","kind":"session","usage_max":1,"effect":"Establish one plausible useful contact, introduction, or ordinary piece of social access; creates opportunity rather than automatic resolution."},
-    {"id":"durable","name":"Durable","kind":"persistent","max_hp_add":5}
-  ],
-  "action_economy": {
-    "ap_max": 3,
-    "normal_reactions": 1,
-    "ordinary_attack_ap_cost":1,
-    "movement": {
-      "ap_cost_per_move": 1,
-      "feet_per_ap": 30,
-      "repeatable": true,
-      "max_normal_movement_per_turn_feet": 90
-    },
-    "universal_run_action": false
-  },
-  "dice_sources": {
-    "generic_bonus_die_slot": false,
-    "routine_flat_numeric_modifiers": false,
-    "core_pool": ["skill","ability_1","ability_2","ability_3"],
-    "gear": {"default_primary_relevant_limit":1,"separate_source":true},
-    "vam": {"adds_dice_only_when_explicit":true,"separate_source":true},
-    "mastery": {"separate_source":true,"requires_mastered_skill_and_explicit_access":true},
-    "advantage_disadvantage": {
-      "separate_source":true,
-      "gm_situational_or_explicit_trigger":true,
-      "players_encouraged_to_create_advantage":true,
-      "advantage":{"operation":"add_die","die":"d6","effective_cap":1},
-      "disadvantage":{"operation":"remove_smallest_ability_die","effective_cap":1},
-      "both":"cancel_one_for_one_then_apply_remaining_side_once",
-      "multiple_same_side":"do_not_stack_without_explicit_rule"
-    },
-    "all_pool_changes_require_named_source": true
-  },
-  "vam": {
-    "field_swap_ap_cost": 1,
-    "load_into_unused_capacity_ap_cost": 0
-  },
-  "matched_blanks": {"release_state":"deferred","enabled":false}
+  "rules_version":"0.188-playtest-publication-candidate",
+  "schema_version":"p7-rules-core-r004",
+  "authority":"PROJECT_DOCUMENTATION/P7_v0.188_PLAYTEST_RULES_SOURCE_r001.md",
+  "protocol_dice":{"blank_faces":[1,2,3],"scoring":"faces_4_or_higher_contribute_visible_face_value","matched_blanks_enabled":false},
+  "difficulty":{"easy_under_pressure":8,"moderate":12,"hard":16,"very_hard":20,"extreme":24},
+  "margin_bands":[{"min":1,"max":3,"label":"Narrow"},{"min":4,"max":7,"label":"Solid"},{"min":8,"max":11,"label":"Powerful"},{"min":12,"max":null,"label":"Overwhelming"}],
+  "abilities":{"ids":["STR","DEX","CON","INT","WIS","CHA"],"starting_multiset":["d8","d8","d6","d6","d4","d4"],"die_ladder":["d4","d6","d8","d10","d12"],"ceiling":"d12","growth_levels":[3,5]},
+  "skills":{"registry":"P7_v0.188_SKILL_CANONICAL_REGISTRY_r001.json","starting_ranks":20,"ranks_per_level_after_1":4,"ordinary_die_ceiling":"d12","post_d12_progression":"skill_mastery","breakpoints":[{"min_ranks":0,"max_ranks":0,"die":"d4"},{"min_ranks":1,"max_ranks":2,"die":"d6"},{"min_ranks":3,"max_ranks":5,"die":"d8"},{"min_ranks":6,"max_ranks":9,"die":"d10"},{"min_ranks":10,"max_ranks":null,"die":"d12"}]},
+  "mastery":{"slots_by_level":{"1":0,"2":0,"3":0,"4":1,"5":1,"6":2},"die_equals_current_skill_die":true,"requires_mastered_skill":true,"requires_explicit_access":true,"max_mastery_dice_per_roll":1,"separate_source":true},
+  "vitality":{"base_hp":18,"ritual_rolls_each_assigned_ability_once":true,"blank_faces":[1,2,3],"ordinary_formula":"18 + highest face of 4 or higher","ordinary_min_starting_hp":22,"ordinary_max_starting_hp":26,"all_six_blank_exception_starting_hp":28,"tied_highest_choose_vitality_origin":true,"hp_per_level_after_1":4},
+  "levels":{"1":{"bar":16,"edge_slots":0,"ability_growth_slots":0,"mastery_slots":0},"2":{"bar":18,"edge_slots":1,"ability_growth_slots":0,"mastery_slots":0},"3":{"bar":21,"edge_slots":1,"ability_growth_slots":1,"mastery_slots":0},"4":{"bar":24,"edge_slots":1,"ability_growth_slots":1,"mastery_slots":1},"5":{"bar":27,"edge_slots":1,"ability_growth_slots":2,"mastery_slots":1},"6":{"bar":30,"edge_slots":1,"ability_growth_slots":2,"mastery_slots":2}},
+  "edges":[{"id":"driven","name":"Driven","kind":"session","usage_max":1,"effect":"After rolling, reroll one die and keep the new result."},{"id":"inspired","name":"Inspired","kind":"session","usage_max":1,"effect":"Before a roll, gain Advantage for that roll."},{"id":"prepared","name":"Prepared","kind":"session","usage_max":1,"effect":"Declare one reasonable ordinary preparation the Vector could plausibly have arranged; GM may narrow declarations that exceed the fiction."},{"id":"connected","name":"Connected","kind":"session","usage_max":1,"effect":"Establish one plausible useful contact, introduction, or ordinary piece of social access; creates opportunity rather than automatic resolution."},{"id":"durable","name":"Durable","kind":"persistent","max_hp_add":5}],
+  "action_economy":{"ap_max":3,"ordinary_attack_ap_cost":1,"movement":{"ap_cost_per_move":1,"feet_per_ap":30,"repeatable":true,"max_normal_movement_per_turn_feet":90},"universal_run_action":false},
+  "reaction":{"normal_reactions_between_turns":1,"uses_banked_ap_first":true,"borrow_from_next_turn_only_if_no_banked_ap":true,"max_borrowed_ap":1,"unused_banked_ap_expires_at_next_turn":true},
+  "dice_sources":{"generic_bonus_die_slot":false,"routine_flat_numeric_modifiers":false,"core_pool":["skill","ability_1","ability_2","ability_3"],"gear":{"default_primary_relevant_limit":1,"separate_source":true},"vam":{"adds_dice_only_when_explicit":true,"separate_source":true},"mastery":{"separate_source":true,"requires_mastered_skill_and_explicit_access":true},"advantage_disadvantage":{"separate_source":true,"gm_situational_or_explicit_trigger":true,"players_encouraged_to_create_advantage":true,"advantage":{"operation":"add_die","die":"d6","effective_cap":1},"disadvantage":{"operation":"remove_smallest_ability_die","effective_cap":1},"both":"cancel_one_for_one_then_apply_remaining_side_once","multiple_same_side":"do_not_stack_without_explicit_rule"},"all_pool_changes_require_named_source":true},
+  "combat":{"active_defense":true,"successful_attack":"attacker_total > defender_total","normal_damage":"attacker_total - defender_total","universal_critical_subsystem":false,"armor":{"adds_relevant_gear_die_to_active_defense":true,"normally_reduces_damage_afterward":false}},
+  "vam":{"registry":"P7_v0.188_VAM_CANONICAL_DATABASE_r001.json","field_swap_ap_cost":1,"load_into_unused_capacity_ap_cost":0,"short_move_feet":30},
+  "gear":{"registry":"P7_v0.188_GEAR_CANONICAL_DATABASE_r001.json","purpose_built_for_v0188":true,"ordinary_primary_relevant_limit":1,"weapons_add_separate_damage_die":false},
+  "conditions":{"registry":"P7_v0.188_CONDITION_CANONICAL_REGISTRY_r001.json","count":6},
+  "historical_operations":{"carrier_states":["Fragile","Established","Durable"],"carrier_and_exposure_are_competing_objectives":true,"outcomes":["Clean Success","Exposed Success","Contained Failure","Exposed Failure"],"procedure":["Briefing","Insertion","Establish Cover","Investigate","Identify Leverage","Intervene","Establish Carrier","Contain Exposure","Extract","Historical Verification"]},
+  "matched_blanks":{"release_state":"deferred","enabled":false},
+  "publication":{"status":"candidate","remaining_blockers":["player-facing rulebook/guide generation","mobile app synchronization","Auditor regression review"]}
 }
