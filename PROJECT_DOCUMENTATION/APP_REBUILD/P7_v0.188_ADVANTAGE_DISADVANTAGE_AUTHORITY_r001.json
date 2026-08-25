@@ -1,7 +1,8 @@
 {
-  "rules_version":"0.188-candidate",
-  "schema_version":"p7-adv-disadv-r001",
-  "status":"candidate-authority",
+  "rules_version":"0.188-playtest-r001",
+  "schema_version":"p7-adv-disadv-r002",
+  "status":"active-playtest-authority",
+  "parent_authority":"PROJECT_DOCUMENTATION/P7_v0.188_PLAYTEST_RULES_SOURCE_r001.md",
   "principles":{
     "separate_mechanism":true,
     "generic_bonus_die_exists":false,
@@ -14,20 +15,21 @@
     "source_tracking_required":true
   },
   "pool_effect":{
-    "advantage":{"operation":"ADD_DIE","source_type":"advantage","die":"SOURCE_DEFINED_OR_RULE_DEFINED"},
-    "disadvantage":{"operation":"ADD_BLANK_PRESSURE_DIE","source_type":"disadvantage","die":"SOURCE_DEFINED_OR_RULE_DEFINED"},
-    "note":"This authority preserves existing d4/d6 Advantage/Disadvantage references without inventing a universal die size. The final interaction rule for multiple simultaneous Advantage/Disadvantage sources remains unresolved until explicitly locked."
+    "advantage":{"operation":"ADD_DIE","source_type":"advantage","die":"d6","effective_cap":1},
+    "disadvantage":{"operation":"REMOVE_SMALLEST_ABILITY_DIE","source_type":"disadvantage","effective_cap":1},
+    "expected_protocol_contribution":{"d4":1.0,"d6":2.5,"d8":3.75,"d10":4.9,"d12":5.8333333333},
+    "playtest_note":"Adding d6 Advantage contributes 2.5 expected Protocol points. Removing a smallest d6 is exactly symmetric in expectation; removal is milder when the smallest Ability is d4 and stronger when all relevant Abilities have grown beyond d6. This scaling is intentional for v0.188 playtest observation."
   },
   "interaction":{
-    "multiple_sources":"UNRESOLVED",
-    "cancellation":"UNRESOLVED",
-    "stacking":"UNRESOLVED",
-    "evaluator_behavior_until_locked":"Collect and display every named source separately; do not silently cancel, merge, or manufacture dice. If more than one Advantage/Disadvantage source would affect a roll and no explicit rule resolves the interaction, require GM resolution before rolling."
+    "multiple_same_side":"Multiple reasons do not stack additional effective A/D unless an explicit rule says otherwise.",
+    "cancellation":"Advantage and Disadvantage cancel one-for-one. After cancellation, if reasons remain on only one side, apply that side once.",
+    "stacking":"Default effective cap is one Advantage or one Disadvantage per roll.",
+    "source_display":"The app/GM may display all fictional reasons even though the mechanical effect caps at one."
   },
-  "prohibitions":["Do not label Gear dice as Advantage.","Do not label VAM-added dice as Advantage unless the VAM explicitly grants Advantage.","Do not label Mastery as Advantage.","Do not convert a situational judgment into a numeric +N modifier.","Do not create an unexplained extra die."],
+  "prohibitions":["Do not label Gear dice as Advantage.","Do not label VAM-added dice as Advantage unless the VAM explicitly grants Advantage.","Do not label Mastery as Advantage.","Do not convert situational judgment into a numeric +N modifier.","Do not create an unexplained extra die."],
   "examples":[
-    {"reason":"Target is unaware due to a successful ambush","kind":"advantage","source":"fiction/tactics"},
-    {"reason":"Heavy smoke materially obscures the target","kind":"disadvantage","source":"environment"},
-    {"reason":"Suppressed while attempting careful aim","kind":"disadvantage","source":"COND-SUPPRESSED","die":"d6"}
+    {"reason":"Target is unaware due to a successful ambush","kind":"advantage","effect":"add d6"},
+    {"reason":"Heavy smoke materially obscures the target","kind":"disadvantage","effect":"remove smallest Ability die"},
+    {"reason":"Strong tactical position and prepared ambush","kind":"advantage","effect":"still one d6 unless an explicit rule permits stacking"}
   ]
 }
