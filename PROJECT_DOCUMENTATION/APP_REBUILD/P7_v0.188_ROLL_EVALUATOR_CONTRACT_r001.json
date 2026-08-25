@@ -1,7 +1,8 @@
 {
-  "rules_version":"0.188-candidate",
-  "schema_version":"p7-roll-evaluator-r001",
+  "rules_version":"0.188-playtest",
+  "schema_version":"p7-roll-evaluator-r002",
   "status":"implementation-contract",
+  "rules_authority":"PROJECT_DOCUMENTATION/P7_v0.188_PLAYTEST_RULES_SOURCE_r001.md",
   "purpose":"Deterministically construct an explainable Protocol 7 roll pool without a generic bonus-die channel.",
   "input":{"skill_id":"SKL-*","skill_ranks":"integer >= 0","ability_dice":"three dice resolved from skill registry and character state","gear_sources":"0..n candidate gear objects","vam_sources":"0..n explicit active effects","advantage_sources":"0..n named sources","disadvantage_sources":"0..n named sources","mastery":{"skill_mastered":"boolean","access_granted":"boolean","source_id":"nullable"},"conditions":"0..n condition IDs"},
   "pipeline":[
@@ -9,15 +10,18 @@
     {"step":2,"operation":"RESOLVE_ABILITIES","rule":"Add the three Ability dice named by the canonical Skill record, preserving duplicate Ability references."},
     {"step":3,"operation":"RESOLVE_GEAR","rule":"Add only legal relevant Gear dice. Default primary relevant gear limit is one unless an explicit rule overrides it."},
     {"step":4,"operation":"RESOLVE_VAM","rule":"Apply only explicit VAM operations. VAM-added dice retain source_type=vam and are not renamed Advantage."},
-    {"step":5,"operation":"RESOLVE_CONDITIONS","rule":"Expand active Condition effects into named restrictions and/or Disadvantage sources."},
-    {"step":6,"operation":"RESOLVE_ADV_DISADV","rule":"Collect every named Advantage and Disadvantage source. Until the interaction rule is locked, do not silently cancel or stack multiple sources; mark GM_RESOLUTION_REQUIRED when interaction is ambiguous."},
+    {"step":5,"operation":"RESOLVE_CONDITIONS","rule":"Expand active Condition effects into named restrictions and/or Advantage/Disadvantage sources. Legacy condition die labels do not create alternate A/D die sizes."},
+    {"step":6,"operation":"RESOLVE_ADV_DISADV","rule":"Count named Advantage and Disadvantage reasons. Cancel reasons one-for-one. If one or more Advantage reasons remain, apply exactly one effective Advantage: add one d6. If one or more Disadvantage reasons remain, apply exactly one effective Disadvantage: remove the smallest Ability die in the pool for that roll. Same-side reasons do not stack unless an explicit rule specifically overrides the cap."},
     {"step":7,"operation":"RESOLVE_MASTERY","rule":"If and only if the Skill is Mastered and an explicit legal access mechanism grants access, add one Mastery die equal to the current ordinary Skill die."},
-    {"step":8,"operation":"VALIDATE_POOL","rule":"Every die must have source_type, source_id/reason, die size, and mechanical role. Reject unexplained dice and numeric +N modifiers."},
-    {"step":9,"operation":"PRESENT_POOL","rule":"Show the player every die grouped by Skill, Ability, Gear, VAM, Advantage, Disadvantage, and Mastery with a human-readable reason."}
+    {"step":8,"operation":"VALIDATE_POOL","rule":"Every added die must have source_type, source_id/reason, die size, and mechanical role. Every removed die must identify the source and removed Ability. Reject unexplained dice and numeric +N modifiers."},
+    {"step":9,"operation":"PRESENT_POOL","rule":"Show the player every surviving die grouped by Skill, Ability, Gear, VAM, Advantage, and Mastery, plus any removed Ability die and the reason for its removal."}
   ],
   "skill_die_breakpoints":[{"min_ranks":0,"die":"d4"},{"min_ranks":1,"die":"d6"},{"min_ranks":3,"die":"d8"},{"min_ranks":6,"die":"d10"},{"min_ranks":10,"die":"d12"}],
+  "advantage":{"effective_cap":1,"die":"d6","operation":"ADD_DIE"},
+  "disadvantage":{"effective_cap":1,"operation":"REMOVE_SMALLEST_ABILITY_DIE","tie_choice":"player"},
+  "cancellation":"one_for_one_before_effective_cap",
   "source_types":["skill","ability","gear","vam","advantage","disadvantage","mastery"],
-  "output":{"pool":[{"source_type":"enum","source_id":"string","label":"string","die":"d4|d6|d8|d10|d12","reason":"string"}],"restrictions":[],"warnings":[],"requires_gm_resolution":"boolean","explanation":"string"},
-  "hard_failures":["unknown skill ID","invalid Ability die","Skill die above d12","Mastery without mastered Skill","Mastery without explicit access","unidentified die source","numeric +N pool modifier","gear die with no relevant gear source"],
-  "audit_note":"The evaluator deliberately does not invent the unresolved multi-source Advantage/Disadvantage interaction rule. It can be implemented now and will surface that case instead of guessing."
+  "output":{"pool":[{"source_type":"enum","source_id":"string","label":"string","die":"d4|d6|d8|d10|d12","reason":"string"}],"removed_dice":[],"restrictions":[],"warnings":[],"requires_gm_resolution":"boolean","explanation":"string"},
+  "hard_failures":["unknown skill ID","invalid Ability die","Skill die above d12","Mastery without mastered Skill","Mastery without explicit access","unidentified die source","numeric +N pool modifier","gear die with no relevant gear source","alternate universal Advantage die","Disadvantage implemented as an added penalty die"],
+  "audit_note":"r002 synchronizes the evaluator to the v0.188 playtest A/D rule. Conditions and VAMs may create named A/D reasons, but they do not redefine the universal A/D operation unless an explicit higher-authority rule says so."
 }
