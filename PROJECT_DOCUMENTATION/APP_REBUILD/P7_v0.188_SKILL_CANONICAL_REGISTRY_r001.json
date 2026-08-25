@@ -1,7 +1,9 @@
 {
-  "rules_version":"0.188-candidate",
-  "schema_version":"p7-skill-registry-r001",
-  "authority_note":"Initial v0.188 machine registry migrated from the v0.187 application skill catalog. Skill dice are derived from ranks by P7_v0.188_RULES_DATA_CORE_r001.json and cap at d12. Mastery is separate.",
+  "rules_version":"0.188-playtest",
+  "schema_version":"p7-skill-registry-r002",
+  "status":"RECONCILED_PLAYTEST_REGISTRY",
+  "rules_authority":"PROJECT_DOCUMENTATION/P7_v0.188_PLAYTEST_RULES_SOURCE_r001.md",
+  "authority_note":"40-Skill registry reconciled for v0.188. Ability triples are retained from the promoted predecessor catalog; repeated Abilities are intentional. Ordinary Skill dice cap at d12 and Mastery is a separate source.",
   "categories":["General","Combat","Defense"],
   "skills":[
     {"id":"SKL-ATHLETICS","name":"Athletics","category":"General","abilities":["STR","STR","CON"],"uses":"Climbing, swimming, lifting, endurance"},
@@ -45,5 +47,5 @@
     {"id":"SKL-WILL","name":"Will","category":"Defense","abilities":["WIS","WIS","CHA"],"uses":"Fear, coercion, cognitive pressure"},
     {"id":"SKL-RECOVERY","name":"Recovery","category":"Defense","abilities":["CON","WIS","CON"],"uses":"Stabilizing and recovery"}
   ],
-  "validation":{"expected_count":40,"ability_ids":["STR","DEX","CON","INT","WIS","CHA"],"rank_min":0,"ordinary_die_ceiling":"d12","mastery_is_separate":true}
+  "validation":{"expected_count":40,"actual_count":40,"ability_ids":["STR","DEX","CON","INT","WIS","CHA"],"rank_min":0,"ordinary_die_ceiling":"d12","mastery_is_separate":true,"duplicate_ability_references_are_intentional":true}
 }
