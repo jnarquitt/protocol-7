@@ -144,10 +144,12 @@
         UI.el('div', { class: 'p7-btn-row' }, [
           UI.button('Custom Vector', function () { w.path = 'custom'; w.step = 'name'; app.render(); }, { variant: 'primary' }),
           UI.button('Preconfigured Vector', function () { w.step = 'preset'; app.render(); }, { variant: 'primary' })
-        ])
+        ]),
+        UI.note('Already have a save? Import it instead of creating a new Vector.', 'default'),
+        UI.button('Import a Save…', function () { promptImport(app); })
       ]));
     } else if (w.step === 'preset') {
-      wrap.appendChild(UI.section('Choose an Identity (Level 1 · 16 BAR ceiling)', [
+      wrap.appendChild(UI.section('Choose an Identity (Level 1 · ' + rc.levels['1'].bar + ' BAR ceiling)', [
         UI.el('div', { class: 'p7-preset-grid' }, Presets.PRESETS.map(function (p) {
           var bar = Presets.presetLoadedBar(p, app.canon.vams.vams);
           return UI.card([
@@ -288,6 +290,9 @@
           UI.stepper('Ranks', ranks, function (v) {
             w.skillRanks[s.id] = { ranks: v };
             app.render();
+          // 12 is a UI-only stepper stop, not a rule value — no canonical
+          // per-Skill rank ceiling exists; total spend is bounded by
+          // allocateSkillRanks()'s budget instead, enforced above.
           }, { min: 0, max: 12 })
         ], { class: 'p7-skill-card' });
       })));
@@ -369,7 +374,7 @@
         var next = JSON.parse(JSON.stringify(c));
         next.skills[s.id] = { ranks: v };
         app.setCharacter(next);
-      }, { min: 0, max: 12 }));
+      }, { min: 0, max: 12 })); // UI-only stepper stop, see the matching comment in the creation-flow Skills step
       var slotsAvail = State.masterySlots(c.progression.level, rc) - c.progression.mastered_skill_ids.length;
       var canMaster = isMastered || slotsAvail > 0;
       children.push(UI.button(isMastered ? 'Unmaster' : 'Master' + (canMaster ? '' : ' (no slots)'), function () {
@@ -583,7 +588,9 @@
     var myTotal = app.rollResult ? app.rollResult.total : 0;
     var box = UI.section('Active Defense Resolver', [
       UI.el('div', { text: 'Your last roll total: ' + myTotal }),
-      UI.stepper('Opponent Total', app.opponentTotal, function (v) { app.opponentTotal = v; app.render(); }, { min: 0, max: 40 }),
+      // 60 is a UI-only stepper ceiling for manual entry, not a rule value —
+      // there is no canonical maximum roll total.
+      UI.stepper('Opponent Total', app.opponentTotal, function (v) { app.opponentTotal = v; app.render(); }, { min: 0, max: 60 }),
       UI.button('Resolve', function () {
         var res = State.resolveAttack(myTotal, app.opponentTotal);
         app.combatResult = res;
@@ -601,28 +608,39 @@
   // ---------------------------------------------------------------
   function renderAdvancement(app, container) {
     var c = app.character, rc = app.canon.rulesCore;
-    for (var lvl = 1; lvl <= 6; lvl++) {
-      container.appendChild(renderLevelCard(app, c, rc, lvl));
+    var maxLevel = Math.max.apply(null, Object.keys(rc.levels).map(Number));
+    for (var lvl = 1; lvl <= maxLevel; lvl++) {
+      container.appendChild(renderLevelCard(app, c, rc, lvl, maxLevel));
     }
   }
 
-  function renderLevelCard(app, c, rc, lvl) {
+  /**
+   * Which Level unlocks which choice is read from rc, not hardcoded here —
+   * an A42 human read-through found an earlier draft of this function keyed
+   * directly off literal Level numbers (2/3/5/4/6), which would silently
+   * stop tracking the rules if a future revision moved a slot to a
+   * different Level. Ability growth reads rc.abilities.growth_levels
+   * directly; Edge and Mastery availability are derived from whether the
+   * current Level's slot count is nonzero / increased over the prior Level.
+   */
+  function renderLevelCard(app, c, rc, lvl, maxLevel) {
     var data = rc.levels[String(lvl)];
+    var prevData = rc.levels[String(lvl - 1)]; // undefined below Level 1, which is fine — treated as 0 slots
     var state = lvl < c.progression.level ? 'completed' : lvl === c.progression.level ? 'current' : 'upcoming';
     var children = [
       UI.el('div', { class: 'p7-level-title', text: 'Level ' + lvl + ' — ' + state }),
       UI.el('div', { text: 'BAR ceiling ' + data.bar + ' · Edge slots ' + data.edge_slots + ' · Ability growth ' + data.ability_growth_slots + ' · Mastery slots ' + data.mastery_slots })
     ];
 
-    if (state === 'current' && lvl < 6) {
-      if (lvl === 2 && !c.progression.edge_id) {
+    if (state === 'current') {
+      if (data.edge_slots > 0 && !c.progression.edge_id) {
         children.push(UI.el('div', { class: 'p7-btn-row' }, rc.edges.map(function (e) {
           return UI.button(e.name, function () {
             var next = JSON.parse(JSON.stringify(c)); next.progression.edge_id = e.id; app.setCharacter(next);
           }, { small: true });
         })));
       }
-      if ((lvl === 3 || lvl === 5)) {
+      if (rc.abilities.growth_levels.indexOf(lvl) !== -1) {
         var slotsUsedAtLevel = c.progression.ability_growth.filter(function (g) { return g.level === lvl; }).length;
         if (slotsUsedAtLevel === 0) {
           children.push(UI.el('div', { class: 'p7-btn-row' }, rc.abilities.ids.map(function (id) {
@@ -634,18 +652,23 @@
           })));
         }
       }
-      if ((lvl === 4 || lvl === 6)) {
+      var newMasterySlotsThisLevel = data.mastery_slots - (prevData ? prevData.mastery_slots : 0);
+      if (newMasterySlotsThisLevel > 0) {
         var slotsAvail = State.masterySlots(lvl, rc) - c.progression.mastered_skill_ids.length;
         if (slotsAvail > 0) {
           children.push(UI.el('div', { class: 'p7-note', text: slotsAvail + ' Mastered Skill slot(s) available — pick in Skills → Edit by tapping "Master" (see Skills tab)' }));
         }
       }
-      children.push(UI.button('Advance to Level ' + (lvl + 1), function () {
-        var next = JSON.parse(JSON.stringify(c));
-        next.progression.level = lvl + 1;
-        next.play.current_hp = Math.min(next.play.current_hp, State.maxHp(startingHpOf(next, rc), next.progression.level, next.progression.edge_id === 'durable', rc));
-        app.setCharacter(next);
-      }, { variant: 'primary' }));
+      if (lvl < maxLevel) {
+        children.push(UI.button('Advance to Level ' + (lvl + 1), function () {
+          var next = JSON.parse(JSON.stringify(c));
+          next.progression.level = lvl + 1;
+          next.play.current_hp = Math.min(next.play.current_hp, State.maxHp(startingHpOf(next, rc), next.progression.level, next.progression.edge_id === 'durable', rc));
+          app.setCharacter(next);
+        }, { variant: 'primary' }));
+      } else {
+        children.push(UI.note('Maximum Level reached.', 'success'));
+      }
     }
 
     if (state === 'completed' && lvl === c.progression.level - 1) {

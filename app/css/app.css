@@ -32,6 +32,7 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
   border-bottom: 2px solid var(--p7-gold-dim); flex-wrap: wrap;
 }
 .p7-home-link { color: var(--p7-gold); text-decoration: none; font-weight: 700; font-size: 1.05em; }
+.p7-rules-link { color: var(--p7-text-dim); text-decoration: none; font-size: 0.85em; border: 1px solid var(--p7-border); border-radius: 6px; padding: 4px 8px; }
 .p7-header-title { color: var(--p7-text-dim); font-size: 0.8em; letter-spacing: 0.08em; }
 .p7-header-char { margin-left: auto; font-weight: 600; color: var(--p7-text); }
 

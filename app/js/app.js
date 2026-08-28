@@ -97,8 +97,8 @@
 
     var header = UI.el('header', { class: 'p7-header' }, [
       UI.el('a', { class: 'p7-home-link', href: '../index.html', text: '⌂ Protocol 7' }),
-      UI.el('div', { class: 'p7-header-title', text: 'v0.188 PLAYTEST' }),
-      App.character ? UI.el('div', { class: 'p7-header-char', text: (App.character.identity.character_name || 'Unnamed Vector') + ' · L' + App.character.progression.level }) : null
+      UI.el('a', { class: 'p7-rules-link', href: '../rules.html', target: '_blank', rel: 'noopener', text: 'Rules Guide ↗' }),
+      App.character ? UI.el('div', { class: 'p7-header-char', text: (App.character.identity.character_name || 'Unnamed Vector') + ' · L' + App.character.progression.level }) : UI.el('div', { class: 'p7-header-title', text: 'v0.188 PLAYTEST' })
     ]);
     shell.appendChild(header);
 
