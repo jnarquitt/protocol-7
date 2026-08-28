@@ -166,6 +166,21 @@
     return { legal: legal, reasons: reasons };
   }
 
+  /**
+   * A18 — replacing already-loaded VAMs during active play costs exactly
+   * rulesCore.vam.field_swap_ap_cost AP for the whole swap, regardless of
+   * how many VAM slots changed. Loading into unused capacity outside an
+   * active swap (A17) is a plain array update with no AP cost, so it has
+   * no dedicated function here — the caller simply doesn't call this one.
+   */
+  function fieldSwap(play, rulesCore) {
+    var cost = rulesCore.vam.field_swap_ap_cost;
+    if (play.current_ap < cost) {
+      return { legal: false, play: play, reason: 'Field Swap costs ' + cost + ' AP; only ' + play.current_ap + ' AP available' };
+    }
+    return { legal: true, play: Object.assign({}, play, { current_ap: play.current_ap - cost }), reason: 'Field Swap charged ' + cost + ' AP for the whole swap' };
+  }
+
   /** A18 — loaded BAR is the sum of bar_cost for every currently loaded VAM. */
   function loadedBar(loadedVamIds, vamCatalog) {
     var byId = {};
@@ -255,6 +270,70 @@
     return { legal: problems.length === 0, problems: problems };
   }
 
+  /**
+   * A26/A26B/A26C/A26D — movement feet for a given AP spend, read from
+   * rulesCore.action_economy.movement (no universal Run action exists in
+   * the data, so there is nothing here to key one off of).
+   */
+  function movementFeet(apSpent, rulesCore) {
+    return apSpent * rulesCore.action_economy.movement.feet_per_ap;
+  }
+
+  /**
+   * A27 — Reaction resolution. Uses banked (unspent) current_ap first;
+   * only borrows from next turn if no AP is currently banked, capped at
+   * rulesCore.reaction.max_borrowed_ap. Returns a new play object rather
+   * than mutating the caller's.
+   */
+  function resolveReaction(play, rulesCore) {
+    if (!play.reaction_available) {
+      return { legal: false, play: play, reason: 'No Reaction available' };
+    }
+    var next = Object.assign({}, play);
+    if (play.current_ap > 0) {
+      next.current_ap = play.current_ap - 1;
+      next.reaction_available = false;
+      return { legal: true, play: next, reason: 'Spent 1 banked AP on Reaction' };
+    }
+    var maxBorrow = rulesCore.reaction.max_borrowed_ap;
+    if ((play.borrowed_next_ap || 0) >= maxBorrow) {
+      return { legal: false, play: play, reason: 'No banked AP and next-turn AP is already fully borrowed' };
+    }
+    next.borrowed_next_ap = (play.borrowed_next_ap || 0) + 1;
+    next.reaction_available = false;
+    return { legal: true, play: next, reason: 'No banked AP — borrowed 1 AP from next turn for Reaction' };
+  }
+
+  /**
+   * Start-of-turn AP/Reaction reset. Unused banked AP expires (does not
+   * carry forward); any AP borrowed by a Reaction is deducted from the
+   * fresh allotment; Reaction availability resets for the new between-turn
+   * window.
+   */
+  function startNewTurn(play, rulesCore) {
+    var apMax = rulesCore.action_economy.ap_max;
+    return Object.assign({}, play, {
+      current_ap: apMax - (play.borrowed_next_ap || 0),
+      borrowed_next_ap: 0,
+      reaction_available: true
+    });
+  }
+
+  /**
+   * Active-defense combat resolution (COMBAT authority in rulesCore):
+   * a hit requires attacker total > defender total; damage is the margin.
+   * No universal critical subsystem, no separate weapon damage die.
+   */
+  function resolveAttack(attackTotal, defenseTotal) {
+    var hit = attackTotal > defenseTotal;
+    return { hit: hit, damage: hit ? attackTotal - defenseTotal : 0, margin: attackTotal - defenseTotal };
+  }
+
+  /** Apply damage/healing to current HP, clamped to [0, maxHpValue]. */
+  function applyHpChange(currentHp, delta, maxHpValue) {
+    return Math.max(0, Math.min(maxHpValue, currentHp + delta));
+  }
+
   return {
     SCHEMA_VERSION: SCHEMA_VERSION,
     RULES_VERSION: RULES_VERSION,
@@ -271,9 +350,15 @@
     authorizationForLevel: authorizationForLevel,
     masterySlots: masterySlots,
     vamLegality: vamLegality,
+    fieldSwap: fieldSwap,
     loadedBar: loadedBar,
     levelReductionWarnings: levelReductionWarnings,
     createCharacter: createCharacter,
-    validateCharacterShape: validateCharacterShape
+    validateCharacterShape: validateCharacterShape,
+    movementFeet: movementFeet,
+    resolveReaction: resolveReaction,
+    startNewTurn: startNewTurn,
+    resolveAttack: resolveAttack,
+    applyHpChange: applyHpChange
   };
 }));
