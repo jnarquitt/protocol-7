@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Protocol 7 v0.188 — Vector App (Playtest)</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div id="app-root">
+    <noscript>Protocol 7 requires JavaScript.</noscript>
+  </div>
+
+  <!-- Load order matters: data/state/roll-builder/persistence/presets are
+       dependency-free-of-DOM game logic; components/screens/app are the UI
+       layer that consumes them. -->
+  <script src="js/data.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/roll-builder.js"></script>
+  <script src="js/persistence.js"></script>
+  <script src="js/presets.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/screens.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
