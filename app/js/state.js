@@ -69,17 +69,26 @@
     };
   }
 
-  /** A02 — starting Skill Ranks (rulesCore.skills.starting_ranks) can be allocated; overspend is blocked/explained. */
-  function allocateSkillRanks(skillsMap, rulesCore) {
+  /**
+   * A02 — Skill Rank budget legality. Level 1 budget is
+   * rulesCore.skills.starting_ranks; every Level after 1 adds
+   * rulesCore.skills.ranks_per_level_after_1 more (ADV-002/next-developer
+   * instructions: "+4 Skill Ranks each level after 1 and all ranks
+   * legally allocated"). level defaults to 1 so existing Level-1-only
+   * callers/tests are unaffected.
+   */
+  function allocateSkillRanks(skillsMap, rulesCore, level) {
     // skillsMap uses the same shape as the persisted character schema:
     // { [skillId]: { ranks: N } } — not a bare number — so this function
     // can validate the actual character.skills object with no reshaping.
-    var totalBudget = rulesCore.skills.starting_ranks;
+    var lvl = level || 1;
+    var totalBudget = rulesCore.skills.starting_ranks + rulesCore.skills.ranks_per_level_after_1 * (lvl - 1);
     var spent = Object.keys(skillsMap || {}).reduce(function (sum, id) { return sum + ((skillsMap[id] && skillsMap[id].ranks) || 0); }, 0);
     var legal = spent <= totalBudget;
     return {
       legal: legal,
       spent: spent,
+      budget: totalBudget,
       remaining: totalBudget - spent,
       reason: legal ? null : 'Spent ' + spent + ' ranks against a budget of ' + totalBudget + ' — overspend of ' + (spent - totalBudget)
     };

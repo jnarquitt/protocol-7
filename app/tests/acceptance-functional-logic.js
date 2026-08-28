@@ -156,6 +156,17 @@ Data.loadCanonicalData().then(function (canon) {
     'banked AP spent first (2->1 AP, 0 borrowed); no banked AP borrows 1 for next turn instead; a second borrow attempt is illegal ("' + reactionAlreadyMaxBorrowed.reason + '"); ' +
     'new turn resets AP to ' + rulesCore.action_economy.ap_max + '-1 borrowed=' + nextTurn.current_ap + ' and restores Reaction availability');
 
+  // ---- REG-03 Skill Rank budget grows with Level (ADV-002) ----
+  // Not a matrix ID itself, but a required precondition of the
+  // Advancement screen: allocateSkillRanks previously checked every
+  // level against the flat Level-1 budget (20), which would have made a
+  // legal Level 3 character (28 ranks) look like an overspend violation.
+  const ranksAt28 = {}; skills.slice(0, 14).forEach((s, i) => { ranksAt28[s.id] = { ranks: i < 14 ? 2 : 0 }; }); // 14*2=28
+  const allocL1 = State.allocateSkillRanks(ranksAt28, rulesCore, 1);
+  const allocL3 = State.allocateSkillRanks(ranksAt28, rulesCore, 3);
+  record('REG-03', allocL1.legal === false && allocL1.budget === 20 && allocL3.legal === true && allocL3.budget === 28,
+    '28 spent ranks: illegal at Level 1 (budget=' + allocL1.budget + '), legal at Level 3 (budget=' + allocL3.budget + ' = 20 + 4*(3-1))');
+
   // ---- Summary ----
   const passCount = results.filter(r => r.pass === true).length;
   const failCount = results.filter(r => r.pass === false).length;
