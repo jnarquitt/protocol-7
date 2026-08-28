@@ -154,6 +154,32 @@ Data.loadCanonicalData().then(function (canon) {
   const everyEntryIsADie = built.pool.every(d => typeof d.die === 'string' && !('modifier' in d) && !('value' in d));
   record('A39', everyEntryIsADie, built.pool.length + '-die pool built (' + built.explanation + '); every entry is a named die, none is a bare numeric modifier');
 
+  // ---- REG-01 rollPool() actually rolls the previewed pool without throwing ----
+  // Not a matrix ID itself, but a required precondition of A24 (pool truth):
+  // this caught a live bug (roll-builder.js referenced a nonexistent
+  // State.DIE_SIDES, so every dieValue() call threw) that A39 could not
+  // detect because A39 never calls rollPool.
+  let reg01Ok = true, reg01Evidence = '';
+  try {
+    const rolled = RollBuilder.rollPool(built.pool, rulesCore, () => 0.999); // force max face on every die
+    reg01Ok = rolled.results.length === built.pool.length && typeof rolled.total === 'number';
+    reg01Evidence = 'rolled ' + rolled.results.length + ' dice from the previewed pool, total=' + rolled.total;
+  } catch (e) {
+    reg01Ok = false; reg01Evidence = 'threw: ' + e.message;
+  }
+  record('REG-01', reg01Ok, reg01Evidence);
+
+  // ---- REG-02 Disadvantage removes the smallest Ability die without throwing ----
+  const builtWithDisadvantage = RollBuilder.buildRollPool({
+    skillId: 'SKL-ATHLETICS', skillsRegistry: skills, characterState: rollState, rulesCore: rulesCore,
+    gearCandidates: [], vamCandidates: [], advantageReasons: [], disadvantageReasons: ['heavy smoke']
+  });
+  const removedOneAbility = builtWithDisadvantage.removedDice.length === 1 && builtWithDisadvantage.removedDice[0].source_type === 'ability';
+  record('REG-02', removedOneAbility,
+    removedOneAbility
+      ? 'Disadvantage removed ' + builtWithDisadvantage.removedDice[0].source_id + ' (' + builtWithDisadvantage.removedDice[0].die + ') without throwing'
+      : 'expected exactly one removed ability die, got: ' + JSON.stringify(builtWithDisadvantage.removedDice));
+
   // ---- A42 Canon-source regression (heuristic static check — NOT a substitute for human review) ----
   const fs = require('fs');
   const src = fs.readFileSync(path.join(__dirname, '../js/state.js'), 'utf8') + fs.readFileSync(path.join(__dirname, '../js/roll-builder.js'), 'utf8');

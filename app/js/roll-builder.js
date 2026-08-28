@@ -9,6 +9,22 @@
  * (rollPool). Every roll launcher in the eventual UI must call these
  * two functions and nothing else — that is what "one canonical roll
  * builder" (A38 / ARCH-002) means in practice.
+ *
+ * A42 human read-through (2026-08-27) found and fixed three canon-source
+ * regressions the automated A42 text scan could not catch because nothing
+ * in the Data Model Gate suite exercised these paths:
+ *   1. dieValue() referenced a nonexistent State.DIE_SIDES lookup table —
+ *      every call (including every rollPool() roll) threw. Fixed to call
+ *      State.sidesOf(), which parses the die notation instead of
+ *      hardcoding a size table.
+ *   2. The ordinary Gear limit had a "|| 1" fallback that duplicated
+ *      rulesCore.gear.ordinary_primary_relevant_limit as a JS literal.
+ *      Fixed to require the canonical field and throw rather than fall
+ *      back to a hardcoded value if it's ever missing.
+ *   3. The Advantage die was hardcoded as 'd6' instead of read from
+ *      rulesCore.dice_sources.advantage_disadvantage.advantage.die.
+ * See app/tests/acceptance-data-model.js REG-01/REG-02 for regression
+ * coverage of (1).
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -20,9 +36,9 @@
 }(typeof self !== 'undefined' ? self : this, function (State) {
   'use strict';
 
-  var DIE_SIDES = State.DIE_SIDES;
-
-  function dieValue(die) { return DIE_SIDES[die]; }
+  // Side count comes from parsing the die notation (State.sidesOf), not a
+  // hardcoded lookup table — same rule A42 already enforces in state.js.
+  function dieValue(die) { return State.sidesOf(die); }
 
   function smallestDie(pool, sourceType) {
     var candidates = pool.filter(function (d) { return d.source_type === sourceType; });
@@ -66,7 +82,10 @@
 
     // Step 3 — RESOLVE_GEAR (at most one primary relevant Gear die by default)
     var gearCandidates = opts.gearCandidates || [];
-    var gearLimit = (opts.rulesCore.gear && opts.rulesCore.gear.ordinary_primary_relevant_limit) || 1;
+    if (!opts.rulesCore.gear || typeof opts.rulesCore.gear.ordinary_primary_relevant_limit !== 'number') {
+      throw new Error('hard_failure: rulesCore.gear.ordinary_primary_relevant_limit is missing — refusing to fall back to a hardcoded gear limit');
+    }
+    var gearLimit = opts.rulesCore.gear.ordinary_primary_relevant_limit;
     if (gearCandidates.length > gearLimit) {
       warnings.push(gearCandidates.length + ' Gear candidates offered but ordinary limit is ' + gearLimit + ' — only the first was used');
     }
@@ -102,7 +121,8 @@
     var netDisadvantage = disadvantageReasons.length - cancelCount;
 
     if (netAdvantage > 0) {
-      pool.push({ source_type: 'advantage', source_id: 'ADV', label: 'Advantage', die: 'd6', reason: advantageReasons.slice(cancelCount).join('; ') });
+      var advantageDie = opts.rulesCore.dice_sources.advantage_disadvantage.advantage.die;
+      pool.push({ source_type: 'advantage', source_id: 'ADV', label: 'Advantage', die: advantageDie, reason: advantageReasons.slice(cancelCount).join('; ') });
     }
     if (netDisadvantage > 0) {
       var target = smallestDie(pool, 'ability');
