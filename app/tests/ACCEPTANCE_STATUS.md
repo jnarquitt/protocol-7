@@ -92,3 +92,16 @@ harmless favicon 404 (now fixed). Pass 2 found and fixed two real bugs
 - **A37 UI-specific re-check**: still only verified at the module/data level; no second screen was found caching a derived value during interactive testing, but that was observed incidentally, not exhaustively checked.
 
 None of the above are BLOCKER-class per the audit's risk classification (no resurrected mechanic, no competing state/roll builder, no movement violation, no roll-preview mismatch). They are the remaining MEDIUM items before treating the Functional Skeleton Gate as fully closed, and well before any Release Gate or landing-page promotion.
+
+## Accepted playtest exception at landing-page promotion (2026-08-28)
+
+Per the Fast-Track Release Plan's decision rule ("make the smallest coherent
+playtest decision... record it"), the designer accepted promoting `app/` to
+the public landing page (`index.html`) without first running
+`MANUAL_MOBILE_TESTS.md` on a physical device. Rationale: A28–A33/A40/A41
+already have emulated-viewport automated + scripted-interactive evidence
+(390×844 real Chrome, zero console errors) covering the same behavior;
+real-thumb/real-brightness/real-latency confirmation is deferred to actual
+playtest use rather than blocking release. Run `MANUAL_MOBILE_TESTS.md` by
+hand at the first opportunity and correct this file if any item fails on a
+real device.
