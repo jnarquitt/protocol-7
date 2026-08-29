@@ -39,11 +39,29 @@
     var rc = app.canon.rulesCore;
     var startDice = {}; rc.abilities.ids.forEach(function (id) { startDice[id] = c.abilities[id].base_die; });
 
+    // Abilities stay editable after creation the same way VAMs/Gear/Skills
+    // do: tap one Ability, then tap another, to swap which starting die each
+    // holds. This only rearranges the already-legal multiset (never invents
+    // a new die), so it can't produce an illegal Ability spread, and Core
+    // Growth (persisted per ability_id) keeps applying on top of whichever
+    // base die ends up there afterward — currentAbilityDie derives from
+    // base_die + growth every time, so nothing here is a competing source.
+    var swapPending = app.abilitySwapPending;
     var abilityCards = rc.abilities.ids.map(function (id) {
       return UI.card([
         UI.el('div', { class: 'p7-ability-id', text: id }),
         UI.el('div', { class: 'p7-ability-die', text: State.currentAbilityDie(c, id, rc) }),
-        UI.el('div', { class: 'p7-ability-base', text: 'base ' + c.abilities[id].base_die })
+        UI.el('div', { class: 'p7-ability-base', text: 'base ' + c.abilities[id].base_die }),
+        UI.button(swapPending === id ? 'Cancel' : (swapPending ? 'Swap with ' + swapPending : 'Swap…'), function () {
+          if (!swapPending) { app.abilitySwapPending = id; app.render(); return; }
+          if (swapPending === id) { app.abilitySwapPending = null; app.render(); return; }
+          var next = JSON.parse(JSON.stringify(c));
+          var a = next.abilities[swapPending].base_die, b = next.abilities[id].base_die;
+          next.abilities[swapPending].base_die = b;
+          next.abilities[id].base_die = a;
+          app.abilitySwapPending = null;
+          app.setCharacter(next);
+        }, { small: true, variant: swapPending === id ? 'danger' : 'secondary' })
       ], { class: 'p7-ability-card' });
     });
 
@@ -125,7 +143,7 @@
         step: 'path', path: null, presetId: null, name: '',
         remainingDice: app.canon.rulesCore.abilities.starting_multiset.slice(),
         abilityAssignment: {}, vitalityFaces: {}, vitalityOrigin: null,
-        skillRanks: {}
+        skillRanks: {}, loadedVamIds: []
       };
       ids.forEach(function (id) { app.creation.abilityAssignment[id] = null; app.creation.vitalityFaces[id] = null; });
     }
@@ -162,6 +180,9 @@
               // ability design is silently baked in here. Fully editable next step.
               rc.abilities.ids.forEach(function (id, i) { w.abilityAssignment[id] = rc.abilities.starting_multiset[i]; });
               w.remainingDice = [];
+              // Preset's VAM loadout is only a starting point — the VAMs step
+              // lets the player Unload/Load before Review, same as post-creation.
+              w.loadedVamIds = p.vam_ids.slice();
               w.step = 'name'; app.render();
             }, { variant: 'primary' })
           ], { class: 'p7-preset-card' });
@@ -182,6 +203,8 @@
       wrap.appendChild(renderVitalityStep(app, w, rc));
     } else if (w.step === 'skills') {
       wrap.appendChild(renderSkillStep(app, w, rc));
+    } else if (w.step === 'vams') {
+      wrap.appendChild(renderCreationVamsStep(app, w, rc));
     } else if (w.step === 'review') {
       wrap.appendChild(renderReviewStep(app, w, rc));
     }
@@ -300,18 +323,60 @@
 
     box.appendChild(UI.el('div', { class: 'p7-btn-row' }, [
       UI.button('← Back', function () { w.step = 'vitality'; app.render(); }),
-      UI.button('Continue →', function () { w.step = 'review'; app.render(); }, { variant: 'primary', disabled: !alloc.legal })
+      UI.button('Continue →', function () { w.step = 'vams'; app.render(); }, { variant: 'primary', disabled: !alloc.legal })
+    ]));
+    return box;
+  }
+
+  // A preset only proposes a starting VAM loadout — this step lets the
+  // player Unload/Load before creation, same controls as the post-creation
+  // VAMS screen (renderVams), just operating on wizard state instead of a
+  // saved character. A Custom Vector starts here with nothing loaded.
+  function renderCreationVamsStep(app, w, rc) {
+    var vams = app.canon.vams.vams;
+    var ceiling = State.barCeiling(1, rc);
+    var used = State.loadedBar(w.loadedVamIds, vams);
+    var auth = State.authorizationForLevel(1, app.canon.vams);
+    var box = UI.el('div');
+
+    box.appendChild(UI.meter('BAR', used, ceiling));
+    box.appendChild(UI.el('div', { class: 'p7-note', text: 'Authorization: ' + auth }));
+    box.appendChild(UI.note('Starting VAM Loadout — ' + (w.path === 'preconfigured' ? "this is the preset's default; Load/Unload freely before you create the Vector." : 'optional — load any Level 1 VAMs now, or skip and load them later.'), 'default'));
+
+    box.appendChild(UI.el('div', { class: 'p7-vam-grid' }, vams.map(function (v) {
+      var loaded = w.loadedVamIds.indexOf(v.id) !== -1;
+      var otherLoadedBar = used - (loaded ? v.bar : 0);
+      var legality = State.vamLegality(v, 1, otherLoadedBar, rc);
+      var canToggle = loaded || legality.legal;
+      return UI.card([
+        UI.el('div', { class: 'p7-vam-name', text: v.name }),
+        UI.el('div', { class: 'p7-vam-meta', text: v.family + ' · Lv' + v.level + ' · ' + v.bar + ' BAR' }),
+        !canToggle ? UI.note(legality.reasons.join('; '), 'warn') : null,
+        UI.button(loaded ? 'Unload' : 'Load', function () {
+          if (loaded) w.loadedVamIds = w.loadedVamIds.filter(function (id) { return id !== v.id; });
+          else w.loadedVamIds.push(v.id);
+          app.render();
+        }, { disabled: !canToggle, variant: loaded ? 'danger' : 'primary', small: true })
+      ], { class: 'p7-vam-card' });
+    })));
+
+    box.appendChild(UI.el('div', { class: 'p7-btn-row' }, [
+      UI.button('← Back', function () { w.step = 'skills'; app.render(); }),
+      UI.button('Continue →', function () { w.step = 'review'; app.render(); }, { variant: 'primary' })
     ]));
     return box;
   }
 
   function renderReviewStep(app, w, rc) {
+    var vams = app.canon.vams.vams;
+    var vamsById = byId(vams);
     var box = UI.section('Review & Create', [
       UI.el('div', { text: 'Name: ' + (w.name || '(unnamed)') }),
       UI.el('div', { text: 'Path: ' + w.path + (w.presetId ? ' (' + w.presetId + ')' : '') }),
       UI.el('div', { text: 'Abilities: ' + rc.abilities.ids.map(function (id) { return id + '=' + w.abilityAssignment[id]; }).join(', ') }),
+      UI.el('div', { text: 'VAMs (' + State.loadedBar(w.loadedVamIds, vams) + ' BAR): ' + (w.loadedVamIds.length ? w.loadedVamIds.map(function (id) { return vamsById[id] ? vamsById[id].name : id; }).join(', ') : '(none loaded)') }),
       UI.button('Create Vector', function () { finalizeCreation(app, w, rc); }, { variant: 'primary' }),
-      UI.button('← Back', function () { w.step = 'skills'; app.render(); })
+      UI.button('← Back', function () { w.step = 'vams'; app.render(); })
     ]);
     return box;
   }
@@ -324,10 +389,7 @@
       allBlanksException: vit.allBlanksException, startingHp: vit.startingHp,
       skillRanks: w.skillRanks, presetId: w.presetId
     }, rc);
-    if (w.path === 'preconfigured' && w.presetId) {
-      var preset = Presets.PRESETS.filter(function (p) { return p.id === w.presetId; })[0];
-      if (preset) character.vams.loaded_ids = preset.vam_ids.slice();
-    }
+    character.vams.loaded_ids = w.loadedVamIds.slice();
     app.creation = null;
     app.setCharacter(character);
   }

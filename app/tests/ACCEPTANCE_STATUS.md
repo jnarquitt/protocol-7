@@ -105,3 +105,21 @@ real-thumb/real-brightness/real-latency confirmation is deferred to actual
 playtest use rather than blocking release. Run `MANUAL_MOBILE_TESTS.md` by
 hand at the first opportunity and correct this file if any item fails on a
 real device.
+
+## Playtest bug fixed post-promotion (2026-08-29)
+
+Amanda (playtest) reported: "the editable pre-sets aren't currently
+editable." Root cause: F04/B04 promise preset loadouts stay editable, and
+the post-creation VAMS screen genuinely does allow it — but the creation
+wizard itself never showed the preset's VAM loadout at all. It was applied
+silently in `finalizeCreation()` with no step to inspect or change it, so a
+player choosing "Preconfigured Vector" had no way to tell (or act on) the
+fact that it was still just a starting point. Custom Vectors had the mirror
+gap: creation never offered a VAM step, only an empty loadout to fill in
+after the fact via the VAMS tab.
+
+Fixed in `app/js/screens.js`: added a `vams` wizard step (between Skills and
+Review) that renders the same Load/Unload/BAR-legality controls as the
+post-creation VAMS screen, seeded from the chosen preset's `vam_ids` (empty
+for Custom), fully editable before Review. Review now lists the resulting
+loadout instead of omitting VAMs entirely.
