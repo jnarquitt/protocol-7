@@ -176,10 +176,15 @@
             UI.el('div', { class: 'p7-preset-identity', text: p.identity }),
             UI.button('Choose ' + p.name, function () {
               w.path = 'preconfigured'; w.presetId = p.id;
-              // Playtest default: a neutral ability array so no per-archetype
-              // ability design is silently baked in here. Fully editable next step.
-              rc.abilities.ids.forEach(function (id, i) { w.abilityAssignment[id] = rc.abilities.starting_multiset[i]; });
+              // A preset pre-fills the same neutral Ability dice every path
+              // gets, just arranged by the preset's suggested priority, plus
+              // a suggested Skill spread — both are only a starting point,
+              // exactly as editable afterward (here, and later on the
+              // character sheet) as if the player had entered them by hand.
+              w.abilityAssignment = Presets.presetAbilityAssignment(p, rc);
               w.remainingDice = [];
+              w.skillRanks = {};
+              Object.keys(p.skills || {}).forEach(function (id) { w.skillRanks[id] = { ranks: p.skills[id] }; });
               // Preset's VAM loadout is only a starting point — the VAMs step
               // lets the player Unload/Load before Review, same as post-creation.
               w.loadedVamIds = p.vam_ids.slice();
@@ -496,13 +501,13 @@
     })));
     container.appendChild(UI.chip('Loaded Only', !!app.vamLoadedOnly, function () { app.vamLoadedOnly = !app.vamLoadedOnly; app.render(); }));
 
-    var list = vams.filter(function (v) {
+    var visible = vams.filter(function (v) {
       if (app.vamFamilyFilter !== 'all' && v.family !== app.vamFamilyFilter) return false;
       if (app.vamLoadedOnly && c.vams.loaded_ids.indexOf(v.id) === -1) return false;
       return true;
     });
 
-    container.appendChild(UI.el('div', { class: 'p7-vam-grid' }, list.map(function (v) {
+    function renderVamCard(v) {
       var loaded = c.vams.loaded_ids.indexOf(v.id) !== -1;
       var otherLoadedBar = used - (loaded ? v.bar : 0);
       var legality = State.vamLegality(v, c.progression.level, otherLoadedBar, rc);
@@ -519,7 +524,21 @@
           app.setCharacter(next);
         }, { disabled: !canToggle, variant: loaded ? 'danger' : 'primary', small: true })
       ], { class: 'p7-vam-card' });
-    })));
+    }
+
+    // Grouped by Family (like the Skills screen groups by category) instead
+    // of one long flat list — the family filter chips above narrow this
+    // further, but the default "all" view still reads as a long list
+    // without these section breaks.
+    if (app.vamFamilyFilter !== 'all') {
+      container.appendChild(UI.el('div', { class: 'p7-vam-grid' }, visible.map(renderVamCard)));
+    } else {
+      app.canon.vams.families.forEach(function (family) {
+        var list = visible.filter(function (v) { return v.family === family; });
+        if (!list.length) return;
+        container.appendChild(UI.section(family, [UI.el('div', { class: 'p7-vam-grid' }, list.map(renderVamCard))]));
+      });
+    }
   }
 
   // ---------------------------------------------------------------

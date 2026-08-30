@@ -35,7 +35,7 @@
     App.root = document.getElementById('app-root');
     return Data.loadCanonicalData().then(function (canon) {
       App.canon = canon;
-      Presets.validatePresets(canon.vams.vams, canon.rulesCore); // throws on drift — fail loudly, not silently
+      Presets.validatePresets(canon.vams.vams, canon.rulesCore, canon.skills.skills); // throws on drift — fail loudly, not silently
       App.loadFromStorage();
       App.render();
       log('booted. rulesCore ' + canon.rulesCore.rules_version + ', ' + canon.skills.skills.length + ' Skills, ' + canon.vams.vams.length + ' VAMs, ' + canon.gear.gear.length + ' Gear.');
