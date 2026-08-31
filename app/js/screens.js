@@ -334,7 +334,7 @@
     if (!w.skillsCategoryFilter) w.skillsCategoryFilter = 'all';
     var allCats = app.canon.skills.categories;
     box.appendChild(UI.el('div', { class: 'p7-tabbar' }, ['all'].concat(allCats).map(function (cat) {
-      return UI.chip(cat, w.skillsCategoryFilter === cat, function () { w.skillsCategoryFilter = cat; app.render(); });
+      return UI.chip(filterChipLabel(cat), w.skillsCategoryFilter === cat, function () { w.skillsCategoryFilter = cat; app.render(); });
     })));
 
     box.appendChild(UI.el('div', { class: 'p7-budget-banner' + (alloc.legal ? '' : ' p7-budget-over'), text: 'Skill Ranks: ' + alloc.spent + ' / ' + alloc.budget + ' spent' }));
@@ -379,22 +379,24 @@
     box.appendChild(UI.el('div', { class: 'p7-note', text: 'Authorization: ' + auth }));
     box.appendChild(UI.note('Starting VAM Loadout — ' + (w.path === 'preconfigured' ? "this is the preset's default; Load/Unload freely before you create the Vector." : 'optional — load any Level 1 VAMs now, or skip and load them later.'), 'default'));
 
-    box.appendChild(UI.el('div', { class: 'p7-vam-grid' }, vams.map(function (v) {
+    // Same Family filter + grouping as the post-creation VAMs screen — all
+    // 84 VAMs in one flat list meant a preset's own loaded VAMs (which can
+    // span several Families) were scattered end to end, and finding an
+    // unloaded one meant scrolling to the very bottom.
+    if (!w.vamFamilyFilter) w.vamFamilyFilter = 'all';
+    box.appendChild(UI.el('div', { class: 'p7-tabbar' },
+      renderFamilyFilterChips(w.vamFamilyFilter, app.canon.vams.families, function (f) { w.vamFamilyFilter = f; app.render(); })));
+
+    var visible = vams.filter(function (v) { return w.vamFamilyFilter === 'all' || v.family === w.vamFamilyFilter; });
+    renderVamFamilyGroups(box, app.canon.vams.families, w.vamFamilyFilter, visible, function (v) {
       var loaded = w.loadedVamIds.indexOf(v.id) !== -1;
       var otherLoadedBar = used - (loaded ? v.bar : 0);
-      var legality = State.vamLegality(v, 1, otherLoadedBar, rc);
-      var canToggle = loaded || legality.legal;
-      return UI.card([
-        UI.el('div', { class: 'p7-vam-name', text: v.name }),
-        UI.el('div', { class: 'p7-vam-meta', text: v.family + ' · Lv' + v.level + ' · ' + v.bar + ' BAR' }),
-        !canToggle ? UI.note(legality.reasons.join('; '), 'warn') : null,
-        UI.button(loaded ? 'Unload' : 'Load', function () {
-          if (loaded) w.loadedVamIds = w.loadedVamIds.filter(function (id) { return id !== v.id; });
-          else w.loadedVamIds.push(v.id);
-          app.render();
-        }, { disabled: !canToggle, variant: loaded ? 'danger' : 'primary', small: true })
-      ], { class: 'p7-vam-card' });
-    })));
+      return renderVamCard(v, loaded, 1, otherLoadedBar, rc, function () {
+        if (loaded) w.loadedVamIds = w.loadedVamIds.filter(function (id) { return id !== v.id; });
+        else w.loadedVamIds.push(v.id);
+        app.render();
+      });
+    });
 
     box.appendChild(UI.el('div', { class: 'p7-btn-row' }, [
       UI.button('← Back', function () { w.step = 'skills'; app.render(); }),
@@ -464,7 +466,7 @@
     var catFilter = app.skillsCategoryFilter;
     var allCats = app.canon.skills.categories;
     container.appendChild(UI.el('div', { class: 'p7-tabbar p7-tabbar-2' }, ['all'].concat(allCats).map(function (cat) {
-      return UI.chip(cat, catFilter === cat, function () { app.skillsCategoryFilter = cat; app.render(); });
+      return UI.chip(filterChipLabel(cat), catFilter === cat, function () { app.skillsCategoryFilter = cat; app.render(); });
     })));
 
     var alloc = State.allocateSkillRanks(c.skills, rc, c.progression.level);
@@ -512,6 +514,59 @@
     return UI.card(children, { class: 'p7-skill-card' });
   }
 
+  // Family ids in the canonical data are shouting-case with underscores
+  // (DEFENSE_MOBILITY, RECON_INVESTIGATION, ...) because they're identifiers,
+  // not display copy — never show one verbatim as a button label, section
+  // title, or card meta line.
+  function formatFamily(f) {
+    if (f === 'all') return 'All';
+    return f.split('_').map(function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }).join(' / ');
+  }
+
+  /** The literal filter value 'all' is never a display label on its own —
+   * every other option in these filter rows (Skills categories, Gear eras)
+   * is already Title Case, so a bare lowercase "all" chip stood out. */
+  function filterChipLabel(v) { return v === 'all' ? 'All' : v; }
+
+  /** One VAM card, shared by the post-creation VAMs screen and the creation
+   * wizard's VAMs step — same look, different backing state (a saved
+   * character's loaded_ids vs. the wizard's own w.loadedVamIds) and
+   * Load/Unload handler, both passed in instead of closed over. */
+  function renderVamCard(v, loaded, level, otherLoadedBar, rc, onToggle) {
+    var legality = State.vamLegality(v, level, otherLoadedBar, rc);
+    var canToggle = loaded || legality.legal;
+    return UI.card([
+      UI.el('div', { class: 'p7-vam-name', text: v.name }),
+      UI.el('div', { class: 'p7-vam-meta', text: formatFamily(v.family) + ' · Lv' + v.level + ' · ' + v.bar + ' BAR' }),
+      (v.effects || []).some(function (e) { return e.op === 'ALLOW_MASTERY'; }) ? UI.badge('Mastery-enabling', 'mastery') : null,
+      !canToggle ? UI.note(legality.reasons.join('; '), 'warn') : null,
+      UI.button(loaded ? 'Unload' : 'Load', function () { onToggle(loaded); }, { disabled: !canToggle, variant: loaded ? 'danger' : 'primary', small: true })
+    ], { class: 'p7-vam-card' });
+  }
+
+  /** Renders `visible` VAMs either as one flat grid (a single family is
+   * already isolated by the filter) or grouped into a Family section per
+   * the Skills screen's category pattern — the default "all" view is what
+   * makes a long VAM list (84 entries) scrollable-to-the-bottom without
+   * this, since 8+ Families stacked with no breaks reads as one big list. */
+  function renderVamFamilyGroups(container, allFamilies, familyFilter, visible, cardFn) {
+    if (familyFilter !== 'all') {
+      container.appendChild(UI.el('div', { class: 'p7-vam-grid' }, visible.map(cardFn)));
+      return;
+    }
+    allFamilies.forEach(function (family) {
+      var list = visible.filter(function (v) { return v.family === family; });
+      if (!list.length) return;
+      container.appendChild(UI.section(formatFamily(family), [UI.el('div', { class: 'p7-vam-grid' }, list.map(cardFn))]));
+    });
+  }
+
+  function renderFamilyFilterChips(currentFilter, allFamilies, onChange) {
+    return ['all'].concat(allFamilies).map(function (f) {
+      return UI.chip(formatFamily(f), currentFilter === f, function () { onChange(f); });
+    });
+  }
+
   // ---------------------------------------------------------------
   // VAMS screen
   // ---------------------------------------------------------------
@@ -551,13 +606,12 @@
     }
 
     if (!app.vamFamilyFilter) app.vamFamilyFilter = 'all';
-    var families = ['all'].concat(app.canon.vams.families);
     // Family filter + Loaded Only live in one sticky sub-tab row (see
     // .p7-tabbar in app.css) so both stay reachable while scrolling the
     // VAM list instead of only being visible at the top of the screen.
-    container.appendChild(UI.el('div', { class: 'p7-tabbar' }, families.map(function (f) {
-      return UI.chip(f, app.vamFamilyFilter === f, function () { app.vamFamilyFilter = f; app.render(); });
-    }).concat([UI.chip('Loaded Only', !!app.vamLoadedOnly, function () { app.vamLoadedOnly = !app.vamLoadedOnly; app.render(); })])));
+    container.appendChild(UI.el('div', { class: 'p7-tabbar' },
+      renderFamilyFilterChips(app.vamFamilyFilter, app.canon.vams.families, function (f) { app.vamFamilyFilter = f; app.render(); })
+        .concat([UI.chip('Loaded Only', !!app.vamLoadedOnly, function () { app.vamLoadedOnly = !app.vamLoadedOnly; app.render(); })])));
 
     var visible = vams.filter(function (v) {
       if (app.vamFamilyFilter !== 'all' && v.family !== app.vamFamilyFilter) return false;
@@ -565,38 +619,16 @@
       return true;
     });
 
-    function renderVamCard(v) {
+    renderVamFamilyGroups(container, app.canon.vams.families, app.vamFamilyFilter, visible, function (v) {
       var loaded = c.vams.loaded_ids.indexOf(v.id) !== -1;
       var otherLoadedBar = used - (loaded ? v.bar : 0);
-      var legality = State.vamLegality(v, c.progression.level, otherLoadedBar, rc);
-      var canToggle = loaded || legality.legal;
-      return UI.card([
-        UI.el('div', { class: 'p7-vam-name', text: v.name }),
-        UI.el('div', { class: 'p7-vam-meta', text: v.family + ' · Lv' + v.level + ' · ' + v.bar + ' BAR' }),
-        (v.effects || []).some(function (e) { return e.op === 'ALLOW_MASTERY'; }) ? UI.badge('Mastery-enabling', 'mastery') : null,
-        !canToggle ? UI.note(legality.reasons.join('; '), 'warn') : null,
-        UI.button(loaded ? 'Unload' : 'Load', function () {
-          var next = JSON.parse(JSON.stringify(c));
-          if (loaded) next.vams.loaded_ids = next.vams.loaded_ids.filter(function (id) { return id !== v.id; });
-          else next.vams.loaded_ids.push(v.id);
-          app.setCharacter(next);
-        }, { disabled: !canToggle, variant: loaded ? 'danger' : 'primary', small: true })
-      ], { class: 'p7-vam-card' });
-    }
-
-    // Grouped by Family (like the Skills screen groups by category) instead
-    // of one long flat list — the family filter chips above narrow this
-    // further, but the default "all" view still reads as a long list
-    // without these section breaks.
-    if (app.vamFamilyFilter !== 'all') {
-      container.appendChild(UI.el('div', { class: 'p7-vam-grid' }, visible.map(renderVamCard)));
-    } else {
-      app.canon.vams.families.forEach(function (family) {
-        var list = visible.filter(function (v) { return v.family === family; });
-        if (!list.length) return;
-        container.appendChild(UI.section(family, [UI.el('div', { class: 'p7-vam-grid' }, list.map(renderVamCard))]));
+      return renderVamCard(v, loaded, c.progression.level, otherLoadedBar, rc, function () {
+        var next = JSON.parse(JSON.stringify(c));
+        if (loaded) next.vams.loaded_ids = next.vams.loaded_ids.filter(function (id) { return id !== v.id; });
+        else next.vams.loaded_ids.push(v.id);
+        app.setCharacter(next);
       });
-    }
+    });
   }
 
   // ---------------------------------------------------------------
@@ -607,7 +639,7 @@
     if (!app.gearEraFilter) app.gearEraFilter = 'all';
     var eras = ['all'].concat(app.canon.gear.era_filters);
     container.appendChild(UI.el('div', { class: 'p7-tabbar' }, eras.map(function (e) {
-      return UI.chip(e, app.gearEraFilter === e, function () { app.gearEraFilter = e; app.render(); });
+      return UI.chip(filterChipLabel(e), app.gearEraFilter === e, function () { app.gearEraFilter = e; app.render(); });
     })));
 
     var categories = {};
