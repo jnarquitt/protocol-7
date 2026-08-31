@@ -411,12 +411,23 @@
       return UI.chip(t === 'trained' ? 'My Trained Skills' : t.charAt(0).toUpperCase() + t.slice(1), tab === t, function () { app.skillsTab = t; app.render(); });
     })));
 
+    // Category filter — a second, independent sticky sub-tab row (stacked
+    // directly under the one above via .p7-tabbar-2's top offset) so
+    // tapping "Combat" shows only Combat Skills instead of requiring a
+    // scroll past General/Defense to reach it.
+    if (!app.skillsCategoryFilter) app.skillsCategoryFilter = 'all';
+    var catFilter = app.skillsCategoryFilter;
+    var allCats = app.canon.skills.categories;
+    container.appendChild(UI.el('div', { class: 'p7-tabbar p7-tabbar-2' }, ['all'].concat(allCats).map(function (cat) {
+      return UI.chip(cat, catFilter === cat, function () { app.skillsCategoryFilter = cat; app.render(); });
+    })));
+
     var alloc = State.allocateSkillRanks(c.skills, rc, c.progression.level);
     container.appendChild(UI.el('div', { class: 'p7-budget-banner' + (alloc.legal ? '' : ' p7-budget-over'), text: 'Skill Ranks: ' + alloc.spent + ' / ' + alloc.budget + ' spent, ' + alloc.remaining + ' remaining' }));
 
     var trainedOnly = tab === 'trained';
     var editable = tab === 'edit';
-    var cats = app.canon.skills.categories;
+    var cats = catFilter === 'all' ? allCats : [catFilter];
     cats.forEach(function (cat) {
       var list = skills.filter(function (s) { return s.category === cat && (!trainedOnly || ((c.skills[s.id] && c.skills[s.id].ranks) > 0)); });
       if (list.length === 0) return;

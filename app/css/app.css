@@ -19,6 +19,7 @@
   --p7-success: #4a8c3a;
   --p7-warn: #b3821f;
   --p7-nav-h: 56px;
+  --p7-tabbar-h: 59px;
 }
 
 * { box-sizing: border-box; }
@@ -87,6 +88,10 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
   position: sticky; top: var(--p7-nav-h); z-index: 9;
   background: var(--p7-bg); border-bottom: 1px solid var(--p7-border);
 }
+/* A screen with two independent sub-tab rows (e.g. Skills' trained/all/edit
+   view PLUS a Category filter) stacks the second .p7-tabbar directly under
+   the first one's own sticky height instead of overlapping it. */
+.p7-tabbar-2 { top: calc(var(--p7-nav-h) + var(--p7-tabbar-h)); }
 
 .p7-stepper { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
 .p7-stepper-label { color: var(--p7-text-dim); font-size: 0.85em; min-width: 50px; }
