@@ -496,10 +496,12 @@
 
     if (!app.vamFamilyFilter) app.vamFamilyFilter = 'all';
     var families = ['all'].concat(app.canon.vams.families);
+    // Family filter + Loaded Only live in one sticky sub-tab row (see
+    // .p7-tabbar in app.css) so both stay reachable while scrolling the
+    // VAM list instead of only being visible at the top of the screen.
     container.appendChild(UI.el('div', { class: 'p7-tabbar' }, families.map(function (f) {
       return UI.chip(f, app.vamFamilyFilter === f, function () { app.vamFamilyFilter = f; app.render(); });
-    })));
-    container.appendChild(UI.chip('Loaded Only', !!app.vamLoadedOnly, function () { app.vamLoadedOnly = !app.vamLoadedOnly; app.render(); }));
+    }).concat([UI.chip('Loaded Only', !!app.vamLoadedOnly, function () { app.vamLoadedOnly = !app.vamLoadedOnly; app.render(); })])));
 
     var visible = vams.filter(function (v) {
       if (app.vamFamilyFilter !== 'all' && v.family !== app.vamFamilyFilter) return false;

@@ -18,6 +18,7 @@
   --p7-danger: #c0392b;
   --p7-success: #4a8c3a;
   --p7-warn: #b3821f;
+  --p7-nav-h: 56px;
 }
 
 * { box-sizing: border-box; }
@@ -36,17 +37,24 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
 .p7-header-title { color: var(--p7-text-dim); font-size: 0.8em; letter-spacing: 0.08em; }
 .p7-header-char { margin-left: auto; font-weight: 600; color: var(--p7-text); }
 
-.p7-content { flex: 1; padding: 14px; padding-bottom: 90px; max-width: 720px; margin: 0 auto; width: 100%; }
+.p7-content { flex: 1; padding: 14px; max-width: 720px; margin: 0 auto; width: 100%; }
 
+/* Screen nav lives at the top (not the bottom) and stays pinned there via
+   position: sticky while the page scrolls, so it's always one tap away —
+   the same fix that made position: sticky actually work (overflow-x: clip
+   instead of hidden, see above) is what makes this viable. --p7-nav-h is
+   also read by .p7-tabbar below so each screen's own sub-tabs (Skills'
+   trained/all/edit, VAMs' family filter, Gear's era filter) can stick
+   directly beneath it instead of scrolling away with a long list. */
 .p7-nav {
-  position: sticky; bottom: 0; display: flex; background: var(--p7-bg-panel);
-  border-top: 2px solid var(--p7-gold-dim); z-index: 10;
+  position: sticky; top: 0; display: flex; height: var(--p7-nav-h); background: var(--p7-bg-panel);
+  border-bottom: 2px solid var(--p7-gold-dim); z-index: 10;
 }
 .p7-nav-btn {
   flex: 1; min-height: 52px; background: none; border: none; color: var(--p7-text-dim);
   font-size: 0.85em; font-weight: 600; cursor: pointer; padding: 6px 2px;
 }
-.p7-nav-btn-active { color: var(--p7-gold); border-top: 3px solid var(--p7-gold); }
+.p7-nav-btn-active { color: var(--p7-gold); border-bottom: 3px solid var(--p7-gold); }
 .p7-nav-btn-locked { opacity: 0.35; cursor: not-allowed; }
 
 .p7-section { margin-bottom: 20px; }
@@ -74,7 +82,11 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
   color: var(--p7-text-dim); padding: 6px 14px; margin: 3px; cursor: pointer; font-size: 0.85em;
 }
 .p7-chip-active { background: var(--p7-gold-dim); color: #0d0808; border-color: var(--p7-gold); font-weight: 700; }
-.p7-tabbar { display: flex; flex-wrap: wrap; margin-bottom: 8px; }
+.p7-tabbar {
+  display: flex; flex-wrap: wrap; margin: 0 -14px 8px; padding: 8px 14px 4px;
+  position: sticky; top: var(--p7-nav-h); z-index: 9;
+  background: var(--p7-bg); border-bottom: 1px solid var(--p7-border);
+}
 
 .p7-stepper { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
 .p7-stepper-label { color: var(--p7-text-dim); font-size: 0.85em; min-width: 50px; }

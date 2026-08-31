@@ -102,10 +102,9 @@
     ]);
     shell.appendChild(header);
 
-    var content = UI.el('main', { class: 'p7-content', id: 'p7-screen-content' });
-    shell.appendChild(content);
-    window.P7.Screens.render(App, content);
-
+    // Screen nav sits at the top, right under the header, and is itself
+    // position: sticky (see app.css) so it stays reachable while scrolling
+    // a long screen instead of requiring a scroll back to find it.
     var nav = UI.el('nav', { class: 'p7-nav' }, SCREENS.map(function (s) {
       var locked = !App.character && s !== 'character';
       var btn = UI.el('button', {
@@ -117,6 +116,10 @@
       return btn;
     }));
     shell.appendChild(nav);
+
+    var content = UI.el('main', { class: 'p7-content', id: 'p7-screen-content' });
+    shell.appendChild(content);
+    window.P7.Screens.render(App, content);
 
     App.root.appendChild(shell);
   };
