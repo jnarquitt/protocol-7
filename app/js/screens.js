@@ -306,9 +306,19 @@
     var skills = app.canon.skills.skills;
     var alloc = State.allocateSkillRanks(w.skillRanks, rc, 1);
     var box = UI.el('div');
+
+    // Same Category filter as the post-creation Skills screen (renderSkills)
+    // — tapping "Combat" here during creation shows only Combat Skills too,
+    // instead of every category stacked in one long scroll.
+    if (!w.skillsCategoryFilter) w.skillsCategoryFilter = 'all';
+    var allCats = app.canon.skills.categories;
+    box.appendChild(UI.el('div', { class: 'p7-tabbar' }, ['all'].concat(allCats).map(function (cat) {
+      return UI.chip(cat, w.skillsCategoryFilter === cat, function () { w.skillsCategoryFilter = cat; app.render(); });
+    })));
+
     box.appendChild(UI.el('div', { class: 'p7-budget-banner' + (alloc.legal ? '' : ' p7-budget-over'), text: 'Skill Ranks: ' + alloc.spent + ' / ' + alloc.budget + ' spent' }));
 
-    var cats = app.canon.skills.categories;
+    var cats = w.skillsCategoryFilter === 'all' ? allCats : [w.skillsCategoryFilter];
     cats.forEach(function (cat) {
       box.appendChild(UI.section(cat, skills.filter(function (s) { return s.category === cat; }).map(function (s) {
         var ranks = (w.skillRanks[s.id] && w.skillRanks[s.id].ranks) || 0;
