@@ -48,9 +48,12 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
    trained/all/edit, VAMs' family filter, Gear's era filter) can stick
    directly beneath it instead of scrolling away with a long list. */
 .p7-nav {
-  position: sticky; top: 0; display: flex; height: var(--p7-nav-h); background: var(--p7-bg-panel);
+  position: sticky; top: 0; height: var(--p7-nav-h); background: var(--p7-bg-panel);
   border-bottom: 2px solid var(--p7-gold-dim); z-index: 10;
 }
+/* Capped at the same width as .p7-content so the nav buttons line up with
+   the screen's own tab rows instead of stretching full-bleed on desktop. */
+.p7-nav-inner { display: flex; height: 100%; max-width: 720px; margin: 0 auto; }
 .p7-nav-btn {
   flex: 1; min-height: 52px; background: none; border: none; color: var(--p7-text-dim);
   font-size: 0.85em; font-weight: 600; cursor: pointer; padding: 6px 2px;

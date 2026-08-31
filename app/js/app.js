@@ -104,8 +104,12 @@
 
     // Screen nav sits at the top, right under the header, and is itself
     // position: sticky (see app.css) so it stays reachable while scrolling
-    // a long screen instead of requiring a scroll back to find it.
-    var nav = UI.el('nav', { class: 'p7-nav' }, SCREENS.map(function (s) {
+    // a long screen instead of requiring a scroll back to find it. The
+    // outer <nav> spans the full width for its background/border stripe;
+    // the button row inside is capped at the same max-width as
+    // .p7-content so the buttons line up with the screen's own tab rows
+    // instead of stretching edge-to-edge on a wide desktop window.
+    var navInner = UI.el('div', { class: 'p7-nav-inner' }, SCREENS.map(function (s) {
       var locked = !App.character && s !== 'character';
       var btn = UI.el('button', {
         class: 'p7-nav-btn' + (App.screen === s ? ' p7-nav-btn-active' : '') + (locked ? ' p7-nav-btn-locked' : ''),
@@ -115,6 +119,7 @@
       if (locked) btn.disabled = true;
       return btn;
     }));
+    var nav = UI.el('nav', { class: 'p7-nav' }, [navInner]);
     shell.appendChild(nav);
 
     var content = UI.el('main', { class: 'p7-content', id: 'p7-screen-content' });
