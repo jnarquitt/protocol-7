@@ -61,12 +61,18 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
 .p7-nav-btn-active { color: var(--p7-gold); border-bottom: 3px solid var(--p7-gold); }
 .p7-nav-btn-locked { opacity: 0.35; cursor: not-allowed; }
 
-.p7-section { margin-bottom: 20px; }
-.p7-section-title { color: var(--p7-gold); font-size: 1.1em; border-bottom: 1px solid var(--p7-border); padding-bottom: 6px; margin-bottom: 10px; }
+/* display:flex + gap (rather than relying on each child's own margin) is
+   what gives a Section's title, grid, notes, and trailing buttons uniform
+   breathing room between them — previously plain stacked divs had zero
+   margin of their own and sat flush against whatever followed. */
+.p7-section { margin-bottom: 22px; display: flex; flex-direction: column; gap: 12px; }
+.p7-section-title { color: var(--p7-gold); font-size: 1.1em; border-bottom: 1px solid var(--p7-border); padding-bottom: 8px; margin: 0; }
 
+/* Same reasoning as .p7-section above: a Card's stacked name/meta/badges/
+   button need consistent gap, not to rely on each child's own margin. */
 .p7-card {
   background: var(--p7-bg-card); border: 1px solid var(--p7-border); border-radius: 10px;
-  padding: 12px; margin-bottom: 10px;
+  padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;
 }
 
 .p7-btn {
@@ -79,13 +85,14 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
 .p7-btn-ghost { background: transparent; }
 .p7-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .p7-btn-small { min-height: 38px; font-size: 0.85em; padding: 6px 12px; }
-.p7-btn-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.p7-btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
 
 .p7-chip {
   min-height: 40px; border-radius: 20px; border: 1px solid var(--p7-border); background: var(--p7-bg-panel);
   color: var(--p7-text-dim); padding: 6px 14px; margin: 3px; cursor: pointer; font-size: 0.85em;
 }
 .p7-chip-active { background: var(--p7-gold-dim); color: #0d0808; border-color: var(--p7-gold); font-weight: 700; }
+.p7-chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .p7-tabbar {
   display: flex; flex-wrap: wrap; margin: 0 -14px 8px; padding: 8px 14px 4px;
   position: sticky; top: var(--p7-nav-h); z-index: 9;
@@ -117,7 +124,7 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
 .p7-badge { display: inline-block; border-radius: 6px; padding: 3px 8px; font-size: 0.75em; margin: 2px; background: var(--p7-bg-panel); border: 1px solid var(--p7-border); }
 .p7-badge-mastery { background: var(--p7-gold-dim); color: #1a1010; font-weight: 700; }
 
-.p7-note { font-size: 0.85em; padding: 6px 10px; border-radius: 6px; margin: 4px 0; }
+.p7-note { font-size: 0.85em; padding: 8px 10px; border-radius: 6px; margin: 8px 0; }
 .p7-note-warn { background: rgba(179,130,31,0.15); color: var(--p7-warn); }
 .p7-note-success { background: rgba(74,140,58,0.15); color: var(--p7-success); }
 
@@ -141,6 +148,24 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
 
 .p7-budget-banner { padding: 8px 12px; background: var(--p7-bg-panel); border-radius: 8px; margin-bottom: 10px; font-weight: 600; }
 .p7-budget-over { background: rgba(192,57,43,0.25); color: #ff9f96; }
+
+/* Creation wizard: a welcoming title + a visual progress trail instead of
+   a raw "Create a Vector — Step: <step id>" debug line, and consistent
+   gap between the header block and whichever step's .p7-section follows. */
+.p7-creation { display: flex; flex-direction: column; gap: 18px; }
+.p7-creation-header { padding-bottom: 4px; }
+.p7-creation-title { font-size: 1.4em; font-weight: 800; color: var(--p7-gold); margin-bottom: 10px; }
+.p7-creation-progress { display: flex; gap: 6px; margin-bottom: 8px; }
+.p7-progress-dot { flex: 1; height: 5px; border-radius: 3px; background: var(--p7-border); }
+.p7-progress-dot-done { background: var(--p7-gold-dim); }
+.p7-progress-dot-active { background: var(--p7-gold); }
+.p7-creation-step-label { color: var(--p7-text-dim); font-size: 0.85em; font-weight: 600; letter-spacing: 0.03em; }
+
+/* Review & Create: labeled rows in a card instead of a raw text dump. */
+.p7-review-row { display: flex; justify-content: space-between; gap: 14px; padding: 6px 0; border-bottom: 1px solid var(--p7-border); }
+.p7-review-row:last-child { border-bottom: none; }
+.p7-review-label { color: var(--p7-text-dim); font-size: 0.85em; flex-shrink: 0; }
+.p7-review-value { font-weight: 600; text-align: right; }
 
 .p7-fatal { padding: 30px; color: var(--p7-danger); font-weight: 700; }
 .p7-roll-preview { font-size: 0.85em; color: var(--p7-text-dim); padding: 8px; background: var(--p7-bg-panel); border-radius: 8px; }

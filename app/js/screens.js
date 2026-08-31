@@ -150,18 +150,39 @@
     return app.creation;
   }
 
+  // Ordered per path — Custom Vector skips the 'preset' step, Preconfigured
+  // Vector doesn't — so the progress header below always shows an accurate
+  // "Step N of <path's total>" instead of a fixed count.
+  var CREATION_STEPS = {
+    custom: ['path', 'name', 'abilities', 'vitality', 'skills', 'vams', 'review'],
+    preconfigured: ['path', 'preset', 'name', 'abilities', 'vitality', 'skills', 'vams', 'review']
+  };
+  var CREATION_STEP_LABELS = {
+    path: 'Starting Path', preset: 'Identity', name: 'Name', abilities: 'Abilities',
+    vitality: 'Vitality', skills: 'Skills', vams: 'VAMs', review: 'Review & Create'
+  };
+
   function renderCreation(app) {
     var w = ensureCreation(app);
     var rc = app.canon.rulesCore;
     var wrap = UI.el('div', { class: 'p7-creation' });
 
-    wrap.appendChild(UI.el('div', { class: 'p7-creation-steps', text: 'Create a Vector — Step: ' + w.step }));
+    var order = CREATION_STEPS[w.path || 'custom'];
+    var stepIndex = order.indexOf(w.step);
+    if (stepIndex === -1) stepIndex = 0;
+    wrap.appendChild(UI.el('div', { class: 'p7-creation-header' }, [
+      UI.el('div', { class: 'p7-creation-title', text: 'Create Your Vector' }),
+      UI.el('div', { class: 'p7-creation-progress' }, order.map(function (s, i) {
+        return UI.el('div', { class: 'p7-progress-dot' + (i <= stepIndex ? ' p7-progress-dot-done' : '') + (i === stepIndex ? ' p7-progress-dot-active' : '') });
+      })),
+      UI.el('div', { class: 'p7-creation-step-label', text: 'Step ' + (stepIndex + 1) + ' of ' + order.length + ' — ' + CREATION_STEP_LABELS[w.step] })
+    ]));
 
     if (w.step === 'path') {
       wrap.appendChild(UI.section('Choose a starting path', [
         UI.el('div', { class: 'p7-btn-row' }, [
           UI.button('Custom Vector', function () { w.path = 'custom'; w.step = 'name'; app.render(); }, { variant: 'primary' }),
-          UI.button('Preconfigured Vector', function () { w.step = 'preset'; app.render(); }, { variant: 'primary' })
+          UI.button('Preconfigured Vector', function () { w.path = 'preconfigured'; w.step = 'preset'; app.render(); }, { variant: 'primary' })
         ]),
         UI.note('Already have a save? Import it instead of creating a new Vector.', 'default'),
         UI.button('Import a Save…', function () { promptImport(app); })
@@ -382,16 +403,30 @@
     return box;
   }
 
+  function reviewRow(label, value) {
+    return UI.el('div', { class: 'p7-review-row' }, [
+      UI.el('div', { class: 'p7-review-label', text: label }),
+      UI.el('div', { class: 'p7-review-value', text: value })
+    ]);
+  }
+
   function renderReviewStep(app, w, rc) {
     var vams = app.canon.vams.vams;
     var vamsById = byId(vams);
+    var spentSkillRanks = Object.keys(w.skillRanks).reduce(function (sum, id) { return sum + ((w.skillRanks[id] && w.skillRanks[id].ranks) || 0); }, 0);
     var box = UI.section('Review & Create', [
-      UI.el('div', { text: 'Name: ' + (w.name || '(unnamed)') }),
-      UI.el('div', { text: 'Path: ' + w.path + (w.presetId ? ' (' + w.presetId + ')' : '') }),
-      UI.el('div', { text: 'Abilities: ' + rc.abilities.ids.map(function (id) { return id + '=' + w.abilityAssignment[id]; }).join(', ') }),
-      UI.el('div', { text: 'VAMs (' + State.loadedBar(w.loadedVamIds, vams) + ' BAR): ' + (w.loadedVamIds.length ? w.loadedVamIds.map(function (id) { return vamsById[id] ? vamsById[id].name : id; }).join(', ') : '(none loaded)') }),
-      UI.button('Create Vector', function () { finalizeCreation(app, w, rc); }, { variant: 'primary' }),
-      UI.button('← Back', function () { w.step = 'vams'; app.render(); })
+      UI.note('One last look before this becomes your Vector — every value below stays exactly as editable afterward as it is right now.', 'default'),
+      UI.card([
+        reviewRow('Name', w.name || '(unnamed)'),
+        reviewRow('Path', w.path === 'preconfigured' ? 'Preconfigured (' + w.presetId + ')' : 'Custom'),
+        reviewRow('Abilities', rc.abilities.ids.map(function (id) { return id + ' ' + w.abilityAssignment[id]; }).join(' · ')),
+        reviewRow('Skills', spentSkillRanks + ' ranks assigned'),
+        reviewRow('VAMs', State.loadedBar(w.loadedVamIds, vams) + ' BAR — ' + (w.loadedVamIds.length ? w.loadedVamIds.map(function (id) { return vamsById[id] ? vamsById[id].name : id; }).join(', ') : '(none loaded)'))
+      ]),
+      UI.el('div', { class: 'p7-btn-row' }, [
+        UI.button('Create Vector', function () { finalizeCreation(app, w, rc); }, { variant: 'primary' }),
+        UI.button('← Back', function () { w.step = 'vams'; app.render(); })
+      ])
     ]);
     return box;
   }
@@ -635,14 +670,20 @@
       })
     ]));
 
-    container.appendChild(UI.section('Conditions', app.canon.conditions.conditions.map(function (cond) {
-      var active = c.play.conditions.indexOf(cond.id) !== -1;
-      return UI.chip(cond.name, active, function () {
-        var next = JSON.parse(JSON.stringify(c));
-        next.play.conditions = active ? next.play.conditions.filter(function (id) { return id !== cond.id; }) : next.play.conditions.concat([cond.id]);
-        app.setCharacter(next);
-      });
-    })));
+    container.appendChild(UI.section('Conditions', [
+      // Chips need their own flex-wrap row — .p7-section is itself a flex
+      // *column* (for gap between its blocks), so a flat array of chips
+      // passed straight in as section children would stack one-per-line
+      // instead of wrapping into a compact grid.
+      UI.el('div', { class: 'p7-chip-row' }, app.canon.conditions.conditions.map(function (cond) {
+        var active = c.play.conditions.indexOf(cond.id) !== -1;
+        return UI.chip(cond.name, active, function () {
+          var next = JSON.parse(JSON.stringify(c));
+          next.play.conditions = active ? next.play.conditions.filter(function (id) { return id !== cond.id; }) : next.play.conditions.concat([cond.id]);
+          app.setCharacter(next);
+        });
+      }))
+    ]));
 
     container.appendChild(renderRollLauncher(app, c, rc, skills));
     container.appendChild(renderCombatResolver(app, c));
