@@ -1,0 +1,136 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0c0b0b"><title>Protocol Dice Engine — Running It in Other Settings</title><style>:root{--bg:#0c0b0b;--panel:#171414;--ink:#f3eee2;--muted:#c6bca8;--red:#b62929;--gold:#d4a72c;--line:#443b32}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}header{padding:28px 18px 18px;background:linear-gradient(#211515,#0c0b0b);border-bottom:2px solid var(--red)}main{max-width:860px;margin:auto;padding:14px 16px 105px}h1{font-size:1.9rem;margin:0;color:#fff}h2{margin-top:34px;color:var(--gold);border-bottom:1px solid var(--line);padding-bottom:6px}h3{color:#fff;margin-bottom:4px}.tag{color:var(--gold);font-weight:800;letter-spacing:.08em}.card,.callout{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}.callout{border-left:5px solid var(--gold)}.warn{border-left-color:var(--red)}strong{color:#fff}table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.92em}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--gold)}nav{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid var(--line);display:flex;overflow-x:auto;z-index:5}nav a{color:var(--ink);text-decoration:none;padding:14px 12px;white-space:nowrap;font-size:.8rem;font-weight:700}.dice{font-weight:900;color:var(--gold)}ul,ol{padding-left:22px}.skin{margin-top:26px}.living{display:inline-block;background:#8e2d2d;padding:4px 7px;border-radius:6px;font-size:.78rem;font-weight:900}@media(max-width:600px){body{font-size:17px}h1{font-size:1.55rem}main{padding-left:13px;padding-right:13px}}</style></head><body>
+
+<header>
+<div class="tag">JADE LION STUDIOS • SYSTEM TOOLKIT</div>
+<h1>Protocol Dice Engine</h1>
+<p><span class="living">HOW TO RUN IT IN OTHER SETTINGS</span></p>
+<p>The resolution mechanic under Protocol 7 — named dice, no flat modifiers, every die explainable — was built as a general-purpose engine, and The Continuance Files is one skin on top of it. This is the toolkit for building another. Reference baseline: v0.188 core dice math.</p>
+</header>
+
+<main>
+
+<section id="engine">
+<h2>The Engine, and the Skin On Top of It</h2>
+<p>Everything a GM needs to reskin lives in one distinction. Keep it in mind through the rest of this guide:</p>
+<table>
+<tr><th>The Engine (do not change without simulation)</th><th>The Skin (change freely per setting)</th></tr>
+<tr><td>Blank-face scoring: faces <span class="dice">1–3 score 0</span>, faces <span class="dice">4+</span> score their value</td><td>What "blank" means narratively — static, hesitation, a failed working, whatever fits the genre</td></tr>
+<tr><td>A roll pool is a <strong>sum of named dice</strong> — never a flat +N modifier</td><td>How many named sources exist and what they're called</td></tr>
+<tr><td>Every die in a pool must declare its source — skill, ability, gear, special-resource, advantage, mastery</td><td>The Ability list, the Skill list, and what the special-resource (Protocol 7 calls it VAM) actually is</td></tr>
+<tr><td>Advantage/Disadvantage: add or remove one die, cancel 1-for-1, cap at one effective side</td><td>What in the fiction grants Advantage or imposes Disadvantage</td></tr>
+<tr><td>The die ladder is ordered small→large with a hard ceiling</td><td>How large the ladder goes, and what unlocks the next step up</td></tr>
+<tr><td>Difficulty targets (8/12/16/20/24) and margin bands (Narrow/Solid/Powerful/Overwhelming)</td><td>What a Powerful success actually looks like at the table</td></tr>
+</table>
+<p>Protocol 7's own setting content — Vectors, Aletheia, the six Abilities named STR/DEX/CON/INT/WIS/CHA, the 40-Skill registry, VAMs — is <em>all</em> skin. None of it is required for the engine to work. That's what makes reskinning possible without touching a single formula.</p>
+</section>
+
+<section id="core">
+<h2>The Core Math (Reference)</h2>
+<p>Copy these unchanged into any setting skin. They are the load-bearing part of the engine.</p>
+<div class="callout"><strong>Roll the complete pool together.</strong> Every die's face is checked independently: faces <span class="dice">1–3 are blank</span> (score 0), every face of <span class="dice">4+</span> contributes its visible value. Total the scored faces. There is no separate crit table — a large die is already more likely to score, and scores higher when it does.</div>
+<table><tr><th>Ranks in the trained thing</th><th>Die</th></tr><tr><td>0</td><td>d4</td></tr><tr><td>1–2</td><td>d6</td></tr><tr><td>3–5</td><td>d8</td></tr><tr><td>6–9</td><td>d10</td></tr><tr><td>10+</td><td>d12 (then Mastery, not a bigger die)</td></tr></table>
+<table><tr><th>Difficulty</th><th>Target</th></tr><tr><td>Easy under pressure</td><td>8</td></tr><tr><td>Moderate</td><td>12</td></tr><tr><td>Hard</td><td>16</td></tr><tr><td>Very Hard</td><td>20</td></tr><tr><td>Extreme</td><td>24</td></tr></table>
+<p>Winning margin: <strong>1–3 Narrow; 4–7 Solid; 8–11 Powerful; 12+ Overwhelming.</strong> This ladder never needs a setting-specific version — only the fiction describing what each band looks like changes.</p>
+</section>
+
+<section id="build">
+<h2>Build a New Skin — Step by Step</h2>
+<ol>
+<li><strong>Pick your Attribute set.</strong> Protocol 7 uses six (STR/DEX/CON/INT/WIS/CHA). Five or six both work cleanly against a 3-Attribute-per-roll pattern; below four gets thin, above seven starts diluting what each roll says about the character.</li>
+<li><strong>Build the trained-thing list</strong> (Protocol 7 calls these Skills) and link each one to 1–3 Attributes. Repeating an Attribute across two links on the same roll is intentional, not a bug — it's how the engine says "this Attribute matters a lot here."</li>
+<li><strong>Name your special-resource layer</strong> (Protocol 7's VAM). Decide what it represents in-fiction, and give it a capacity budget with its own name (Protocol 7's BAR). Keep the rule that it only ever adds a die when a specific entry explicitly says so — never an implied bonus.</li>
+<li><strong>Set your Gear rule.</strong> Default is one primary-relevant Gear die per roll. Raise the limit only for a gadget-forward genre (see Chrome Static below), and say so explicitly — don't let it drift upward table by table.</li>
+<li><strong>Decide your Mastery fiction.</strong> A trained-thing hitting the die ceiling doesn't get a bigger die (there isn't one past the ceiling) — it unlocks a second, identical die, gated behind something explicit in your setting (a rite, a root-access boot sequence, a clearance level). "Mastered but dormant" — trained past the ceiling with no active access — should be a real, nameable state in your skin, the same way Protocol 7 flags it rather than silently ignoring it.</li>
+<li><strong>Decide what earns Advantage/Disadvantage</strong> in your genre's tone. Keep the mechanic identical (add/remove one die, cancel 1-for-1); only the trigger list changes.</li>
+<li><strong>Reskin the blank-face flavor.</strong> One sentence is enough — see the worked skins below for the pattern.</li>
+<li><strong>Leave the math alone unless you have a reason and can simulate it.</strong> Reskin fiction, not formulas — this is the single most important rule in this whole guide.</li>
+</ol>
+</section>
+
+<section id="reskins">
+<h2>Four Worked Skins</h2>
+<p>Each below is a complete, table-ready reskin — copy one directly or use it as a template for your own.</p>
+
+<div class="skin">
+<h3>Field Ops Fantasy</h3>
+<table>
+<tr><td><strong>Attributes</strong></td><td>Might, Grace, Grit, Mind, Insight, Presence</td></tr>
+<tr><td><strong>Sample trained thing</strong></td><td>Spellcraft — linked to Mind, Insight, Presence</td></tr>
+<tr><td><strong>Special resource</strong></td><td>Boons (blessings/invocations); budget named <strong>Favor</strong></td></tr>
+<tr><td><strong>Gear</strong></td><td>Relics & Arms</td></tr>
+<tr><td><strong>Mastery fiction</strong></td><td>Attuned — requires an attunement rite as explicit access</td></tr>
+<tr><td><strong>Blank-face flavor</strong></td><td>"The working falters — no effect, no cost, no visible sign anything was tried."</td></tr>
+</table>
+</div>
+
+<div class="skin">
+<h3>Chrome Static (Cyberpunk)</h3>
+<table>
+<tr><td><strong>Attributes</strong></td><td>Body, Reflex, Grit, Logic, Awareness, Presence</td></tr>
+<tr><td><strong>Sample trained thing</strong></td><td>Netrunning — linked to Logic, Awareness, Reflex</td></tr>
+<tr><td><strong>Special resource</strong></td><td>Wetware (cyberware/software); budget named <strong>Heat</strong></td></tr>
+<tr><td><strong>Gear</strong></td><td>Hardware — raise the primary-relevant Gear limit to 2 here; a chromed-up build reasonably swings two pieces of kit at once</td></tr>
+<tr><td><strong>Mastery fiction</strong></td><td>Root Access — requires a jacked-in boot sequence as explicit access</td></tr>
+<tr><td><strong>Blank-face flavor</strong></td><td>"Packet loss — the action just doesn't register, no error, no warning."</td></tr>
+</table>
+</div>
+
+<div class="skin">
+<h3>Static Hour (Modern Investigative Horror)</h3>
+<table>
+<tr><td><strong>Attributes</strong></td><td>Might, Nerve, Health, Mind, Perception, Charm</td></tr>
+<tr><td><strong>Sample trained thing</strong></td><td>Occult Research — linked to Mind, Perception, Nerve</td></tr>
+<tr><td><strong>Special resource</strong></td><td>Optional only — a grounded table can run with none. If used: Charms; budget named <strong>Toll</strong>, and every Charm should cost something outside the dice (sanity, time, a debt) to keep the genre honest</td></tr>
+<tr><td><strong>Gear</strong></td><td>Kit</td></tr>
+<tr><td><strong>Mastery fiction</strong></td><td>Obsession — access requires the GM to grant it at a personal cost, not a rite the player controls</td></tr>
+<tr><td><strong>Blank-face flavor</strong></td><td>"Your nerve slips — a half-second of hesitation at exactly the wrong moment."</td></tr>
+</table>
+</div>
+
+<div class="skin">
+<h3>Long Dark (Space Opera)</h3>
+<table>
+<tr><td><strong>Attributes</strong></td><td>Power, Pilot, Endurance, Logic, Sensor, Command</td></tr>
+<tr><td><strong>Sample trained thing</strong></td><td>Void Navigation — linked to Pilot, Sensor, Logic</td></tr>
+<tr><td><strong>Special resource</strong></td><td>Systems (ship/suit); budget named <strong>Power Draw</strong></td></tr>
+<tr><td><strong>Gear</strong></td><td>Loadout</td></tr>
+<tr><td><strong>Mastery fiction</strong></td><td>Override Clearance</td></tr>
+<tr><td><strong>Blank-face flavor</strong></td><td>"The readout blanks — the system just doesn't answer."</td></tr>
+</table>
+</div>
+</section>
+
+<section id="worked-roll">
+<h2>One Full Roll, End to End</h2>
+<p>Proving the engine ports 1:1: building and resolving a roll in the Chrome Static skin, following the exact same steps the app's canonical roll builder uses — resolve the trained-thing die, resolve its linked Attributes, resolve Gear, resolve the special resource, net Advantage/Disadvantage, resolve Mastery, then roll and sum.</p>
+<div class="card">
+<strong>Reyes, a netrunner with 6 Ranks in Netrunning, Logic d8, Awareness d6, Reflex d6, a Deck Mk.II (d6 Gear), and a Ghost Protocol implant (Wetware, explicit d4), attempts a Hard (16) intrusion with one Advantage reason (prep time) and no Disadvantage. Netrunning is not yet Mastered.</strong>
+<table>
+<tr><th>Source</th><th>Die</th><th>Reason</th></tr>
+<tr><td>Netrunning (trained thing)</td><td>d10</td><td>6 Ranks → breakpoint d10</td></tr>
+<tr><td>Logic</td><td>d8</td><td>linked Attribute</td></tr>
+<tr><td>Awareness</td><td>d6</td><td>linked Attribute</td></tr>
+<tr><td>Reflex</td><td>d6</td><td>linked Attribute</td></tr>
+<tr><td>Deck Mk.II</td><td>d6</td><td>primary relevant Gear</td></tr>
+<tr><td>Ghost Protocol</td><td>d4</td><td>explicit Wetware effect</td></tr>
+<tr><td>Advantage</td><td>d6</td><td>prep time; no Disadvantage to cancel against</td></tr>
+</table>
+<p>Roll every die together. Faces: d10→7 (scores 7), d8→3 (blank), d6→5 (scores 5), d6→2 (blank), d6(gear)→6 (scores 6), d4→4 (scores 4), d6(adv)→1 (blank). <strong>Total: 22</strong> against a target of 16 — a margin of 6, a <strong>Solid</strong> success. Two of the seven dice going blank and the roll still clearing Hard by a solid margin is the engine working as intended: a wide pool is resilient to any single bad face.</p>
+</div>
+</section>
+
+<section id="guardrails">
+<h2>Guardrails</h2>
+<div class="callout warn"><strong>Never add a generic bonus-die slot or a flat numeric modifier.</strong> Protocol 7's core data explicitly locks this off (<code>generic_bonus_die_slot: false</code>, <code>routine_flat_numeric_modifiers: false</code>, <code>all_pool_changes_require_named_source: true</code>). Every die in a pool must be traceable to a specific, nameable reason. The moment a skin allows "+2 because reasons," it has stopped being this engine and become a different game wearing its die ladder.</div>
+<div class="callout"><strong>Safe to retune per skin:</strong> the die ladder's ceiling, the Attribute count, the trained-thing list's size, the special-resource budget formula, the Gear limit (with a stated reason), and how many trained-thing Ranks a level grants. None of these touch the blank-face rule or the no-modifiers rule, so none of them require new simulation to stay balanced — they change scope, not shape.</div>
+</section>
+
+<section id="playtest">
+<h2>Status</h2>
+<p>This toolkit follows Protocol 7 v0.188's core dice math as its reference baseline. If that baseline's blank-face rule, die ladder, or Advantage/Disadvantage handling changes in a later playtest revision, this guide's Core Math section needs a matching update — the worked skins and the step-by-step build process don't reference any version-specific numbers beyond that section, so they carry forward unchanged.</p>
+</section>
+
+</main>
+
+<nav><a href="#engine">Engine</a><a href="#core">Core Math</a><a href="#build">Build Steps</a><a href="#reskins">Skins</a><a href="#worked-roll">Worked Roll</a><a href="#guardrails">Guardrails</a><a href="#playtest">Status</a></nav>
+</body></html>
