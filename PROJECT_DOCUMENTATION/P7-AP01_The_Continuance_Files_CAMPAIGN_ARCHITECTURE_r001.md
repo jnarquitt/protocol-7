@@ -153,6 +153,8 @@ Do not let an early skill roll solve the whole mystery. Investigation can establ
 
 The campaign needs recurring emotional continuity even though the Vectors visit different eras.
 
+**Companion authority:** Aletheia, Venn, and Ellery each now have a Full Dossier in `P7-AP01_NPC_DOSSIERS_RECURRING_CAST_r001.md` (format defined by `P7-AP01_NPC_DOSSIER_STANDARD_r001.md`), which carries the per-mission argument evolution below forward into a GM-usable how-to-play/foreshadowing/callback record, and tracks where M03–M05 have not yet placed this cast on stage (see `P7-AP01_ADVENTURE_PATH_LEVEL_10_DIAGNOSTIC_r001.md`, finding D-01). Update the dossier file, not just this architecture doc, when a mission draft resolves that gap.
+
 ## Aletheia
 Aletheia begins as the team's trusted mission authority. Do not make it evasive merely to manufacture suspicion. It should answer what it knows honestly within operational limits. The tension comes from selection bias: Aletheia can truthfully believe a Carrier is necessary for humanity while being unable to prove that its own future role did not influence why it selected that Carrier.
 
@@ -208,7 +210,7 @@ Every future GM Field Guide should open in this order:
 2. **Historical Background That Matters at the Table.** No encyclopedia dump; explain only what creates choices, access, danger, or tone.
 3. **GM Truth.** Before/without intervention/after causal chain.
 4. **Revelation Ladder.** What players learn and in what dramatic order.
-5. **Cast as playable motivations.** Wants, fear, leverage, voice, what changes their mind.
+5. **Cast as playable motivations.** Wants, fear, leverage, voice, what changes their mind. Keep this inline Cast block a Tier 1 stub per `P7-AP01_NPC_DOSSIER_STANDARD_r001.md` — write a Tier 2 Full Dossier separately only for campaign-recurring cast or an NPC a table has promoted, never as the default for every named character. If this mission places Venn or Ellery on stage, write or update their Continuity Thread row in `P7-AP01_NPC_DOSSIERS_RECURRING_CAST_r001.md`, not just this Cast block.
 6. **Clue architecture.** Minimum three doors for every essential conclusion.
 7. **Mission walkthrough.** Every scene includes purpose, entry condition, useful information, pressure, likely player approaches, failure change, and transition.
 8. **Opposition strategy.** What the Covenant does based on player progress rather than fixed encounter placement.
