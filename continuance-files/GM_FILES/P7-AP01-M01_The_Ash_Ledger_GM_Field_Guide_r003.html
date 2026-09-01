@@ -1,618 +1,2434 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>P7-AP01-M01 — The Ash Ledger — GM Field Guide</title>
-<style>
-:root{
-  --bg:#0d0c0b; --bg2:#15120f; --card:#1b1713; --card-border:#3b3226;
-  --gold:#c99b2e; --gold-dim:#806423; --red:#8e1f1f; --red2:#be3b32;
-  --text:#eee7d8; --text-dim:#b9ae9b; --paper:#f0e4c8; --paper-text:#261d13;
-  --paper-border:#b79b63; --green:#4d7b56; --blue:#496778;
-}
-*{box-sizing:border-box} html{scroll-behavior:smooth}
-body{margin:0;background:linear-gradient(180deg,#0b0a09,#11100e 35%,#0b0a09);
- color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
- line-height:1.5;padding-bottom:64px}
-a{color:var(--gold)}
-.container{max-width:900px;margin:0 auto;padding:0 12px}
-.hero{min-height:315px;display:flex;align-items:flex-end;border-bottom:4px solid var(--gold-dim);
- background:
- radial-gradient(circle at 72% 25%,rgba(190,59,50,.28),transparent 22%),
- linear-gradient(135deg,#22140e 0%,#0a0908 48%,#281712 100%);
- position:relative;overflow:hidden}
-.hero:before{content:"";position:absolute;inset:-20% -5%;opacity:.24;
- background:repeating-linear-gradient(112deg,transparent 0 22px,rgba(201,155,46,.3) 23px 24px,transparent 25px 50px);
- transform:skewY(-8deg)}
-.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.87))}
-.hero-inner{position:relative;z-index:1;padding:24px 18px 20px;width:100%;max-width:900px;margin:0 auto}
-.hero .kicker{text-transform:uppercase;letter-spacing:.14em;font-weight:900;color:var(--gold);font-size:.78rem}
-.hero h1{font-family:Georgia,"Times New Roman",serif;font-size:2.35rem;line-height:1.03;margin:5px 0;color:#fff;
- text-shadow:0 2px 12px #000}
-.hero .subtitle{font-family:Georgia,serif;font-style:italic;color:var(--paper);font-size:1.02rem}
-.badges{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
-.badge{background:rgba(0,0,0,.62);border:1px solid var(--gold-dim);color:var(--gold);
- padding:4px 10px;border-radius:20px;font-size:.76rem;white-space:nowrap}
-.navbar{position:sticky;top:0;z-index:50;background:rgba(13,12,11,.97);border-bottom:1px solid var(--card-border);backdrop-filter:blur(6px)}
-.navscroll{display:flex;gap:6px;overflow-x:auto;padding:9px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.navscroll::-webkit-scrollbar{display:none}
-.navscroll a{flex:0 0 auto;color:var(--text-dim);text-decoration:none;font-size:.8rem;padding:6px 11px;border-radius:16px;
- border:1px solid var(--card-border);background:var(--card);white-space:nowrap;font-weight:750}
-.navscroll a.active,.navscroll a:active{background:var(--red);color:#fff;border-color:var(--red2)}
-section{padding:28px 0 10px;border-bottom:1px solid var(--card-border);scroll-margin-top:58px}
-section:last-of-type{border-bottom:none}
-.section-title{display:flex;align-items:center;gap:10px;font-family:Georgia,serif;color:var(--gold);
- font-size:1.48rem;font-weight:800;border-bottom:2px solid var(--gold-dim);padding-bottom:8px;margin-bottom:16px}
-.section-title .num{background:var(--red);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
- justify-content:center;font-family:Georgia,serif;font-size:1rem;flex:0 0 auto}
-h3,h4,h5{font-family:Georgia,"Times New Roman",serif;color:var(--gold)}
-h3{margin-top:22px;margin-bottom:8px} h4{margin:0 0 6px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:640px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:14px 16px;margin:10px 0}
-.card p:last-child{margin-bottom:0}
-.readaloud{background:var(--paper);color:var(--paper-text);border:1px solid var(--paper-border);border-left:6px solid var(--red);
- border-radius:4px;padding:14px 16px;font-style:italic;font-family:Georgia,serif;margin:14px 0;box-shadow:0 4px 14px rgba(0,0,0,.35)}
-.readaloud .tag,.gmnote .tag,.pathnote .tag,.exposure .tag{display:block;font-style:normal;font-weight:900;font-size:.7rem;
- letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
-.readaloud .tag{color:var(--red)}
-.gmnote{background:rgba(77,123,86,.12);border:1px solid var(--green);border-radius:7px;padding:11px 14px;margin:10px 0;font-size:.93rem}
-.gmnote .tag{color:#91d29a}
-.pathnote{background:rgba(73,103,120,.15);border:1px solid var(--blue);border-radius:7px;padding:11px 14px;margin:10px 0;font-size:.93rem}
-.pathnote .tag{color:#9cc9dd}
-.exposure{background:rgba(190,59,50,.11);border:1px solid var(--red);border-radius:7px;padding:11px 14px;margin:10px 0;font-size:.93rem}
-.exposure .tag{color:#ff9189}
-.dc{display:inline-block;background:var(--red);color:#fff;font-size:.75rem;font-weight:900;padding:2px 7px;border-radius:4px;white-space:nowrap}
-.pill-row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
-.pill{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:3px 9px;font-size:.76rem}
-.small{font-size:.82rem;color:var(--text-dim)}
-hr.divider{border:0;border-top:1px dashed var(--card-border);margin:22px 0}
-ul.checklist{list-style:none;padding-left:0}
-ul.checklist li{padding:5px 0 5px 28px;position:relative}
-ul.checklist li:before{content:"☐";position:absolute;left:0;color:var(--gold);font-size:1.1rem}
-table.ref{width:100%;border-collapse:collapse;margin:12px 0;font-size:.87rem}
-table.ref th,table.ref td{border:1px solid var(--card-border);padding:7px 8px;text-align:left;vertical-align:top;white-space:normal;word-break:normal}
-table.ref th{background:#211a13;color:var(--gold)}
-table.ref tr:nth-child(even){background:rgba(255,255,255,.025)}
-.tablewrap{overflow-x:auto;margin:12px 0;-webkit-overflow-scrolling:touch}
-details.statblock{background:var(--card);border:1px solid var(--card-border);border-radius:10px;margin:14px 0;overflow:hidden}
-details.statblock summary{cursor:pointer;padding:12px 16px;list-style:none;font-family:Georgia,serif;font-size:1.08rem;color:var(--gold);
- background:linear-gradient(90deg,rgba(142,31,31,.26),transparent)}
-details.statblock summary::-webkit-details-marker{display:none}
-details.statblock summary .meta{font-size:.75rem;color:var(--text-dim);font-family:-apple-system,sans-serif;font-weight:500;margin-left:8px}
-.statblock-body{padding:0 16px 16px}
-.statline{margin:6px 0;font-size:.92rem}.statline b{color:var(--gold)}
-.flow{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:10px 0;font-size:.8rem}
-.flow span{background:var(--card);border:1px solid var(--card-border);padding:4px 8px;border-radius:6px}
-.flow .arrow{color:var(--gold);border:0;background:none;padding:0 2px}
-.tracker{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:8px 0}
-.tracker div{border:1px solid var(--card-border);background:#14110e;padding:8px 5px;text-align:center;border-radius:6px;font-size:.75rem}
-.back-top{position:fixed;bottom:16px;right:16px;background:var(--red);color:#fff;width:44px;height:44px;border-radius:50%;
- display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.55);z-index:40;font-size:1.2rem}
-footer{text-align:center;padding:28px 14px;color:var(--text-dim);font-size:.8rem}
-@media(max-width:480px){
- .hero{min-height:285px}.hero h1{font-size:2rem}.section-title{font-size:1.3rem}
- table.ref{font-size:.78rem}.tracker{grid-template-columns:1fr}
-}
-@media print{
- .navbar,.back-top{display:none}.hero{min-height:auto;background:#111}.container{max-width:none}
- body{background:#fff;color:#111}.card,details.statblock{background:#fff;color:#111}
- section{break-inside:auto}.readaloud{box-shadow:none}
-}
-</style></head><body id="top"><style id="p7-global-nav-style">.p7-global-nav{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;padding:.6rem max(1rem,calc((100% - 1100px)/2));background:#090909;border-bottom:1px solid #55472f;font-family:Arial,sans-serif;position:relative;z-index:1000}.p7-global-nav a{display:inline-block;padding:.5rem .7rem;border:1px solid #5f5138;border-radius:8px;background:#1b1916;color:#ead18a!important;text-decoration:none!important;font-size:.82rem;font-weight:800;line-height:1.1}.p7-global-nav a:hover,.p7-global-nav a:focus{background:#2a261f;color:#fff!important}@media(max-width:560px){.p7-global-nav{padding:.5rem}.p7-global-nav a{flex:1 1 auto;text-align:center}}@media print{.p7-global-nav{display:none!important}}</style><nav class="p7-global-nav" data-p7-global-nav="1" aria-label="Project navigation"><a href="../current.html">Adventure Path Home</a><a href="../../index.html">Protocol 7 Home</a><a href="https://jnarquitt.github.io/">Jade Lion Studios</a></nav>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+    />
+    <title>P7-AP01-M01 — The Ash Ledger — GM Field Guide</title>
+    <style>
+      :root {
+        --bg: #0d0c0b;
+        --bg2: #15120f;
+        --card: #1b1713;
+        --card-border: #3b3226;
+        --gold: #c99b2e;
+        --gold-dim: #806423;
+        --red: #8e1f1f;
+        --red2: #be3b32;
+        --text: #eee7d8;
+        --text-dim: #b9ae9b;
+        --paper: #f0e4c8;
+        --paper-text: #261d13;
+        --paper-border: #b79b63;
+        --green: #4d7b56;
+        --blue: #496778;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #0b0a09, #11100e 35%, #0b0a09);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial,
+          sans-serif;
+        line-height: 1.5;
+        padding-bottom: 64px;
+      }
+      a {
+        color: var(--gold);
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 12px;
+      }
+      .hero {
+        min-height: 420px;
+        display: flex;
+        align-items: flex-end;
+        border-bottom: 4px solid var(--gold-dim);
+        background:
+          linear-gradient(90deg, #0d0c0bde, #0d0c0b70 55%, #0d0c0baa),
+          url("../../assets/adventure-art/ash-ledger/title-background.png")
+            center/cover no-repeat;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero:before {
+        content: "";
+        position: absolute;
+        inset: -20% -5%;
+        opacity: 0.24;
+        background: repeating-linear-gradient(
+          112deg,
+          transparent 0 22px,
+          rgba(201, 155, 46, 0.3) 23px 24px,
+          transparent 25px 50px
+        );
+        transform: skewY(-8deg);
+      }
+      .hero:after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.05),
+          rgba(0, 0, 0, 0.87)
+        );
+      }
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        padding: 24px 18px 20px;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .hero .kicker {
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-weight: 900;
+        color: var(--gold);
+        font-size: 0.78rem;
+      }
+      .hero h1 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 2.35rem;
+        line-height: 1.03;
+        margin: 5px 0;
+        color: #fff;
+        text-shadow: 0 2px 12px #000;
+      }
+      .hero .subtitle {
+        font-family: Georgia, serif;
+        font-style: italic;
+        color: var(--paper);
+        font-size: 1.02rem;
+      }
+      .badges {
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .badge {
+        background: rgba(0, 0, 0, 0.62);
+        border: 1px solid var(--gold-dim);
+        color: var(--gold);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.76rem;
+        white-space: nowrap;
+      }
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(13, 12, 11, 0.97);
+        border-bottom: 1px solid var(--card-border);
+        backdrop-filter: blur(6px);
+      }
+      .navscroll {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding: 9px 10px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .navscroll::-webkit-scrollbar {
+        display: none;
+      }
+      .navscroll a {
+        flex: 0 0 auto;
+        color: var(--text-dim);
+        text-decoration: none;
+        font-size: 0.8rem;
+        padding: 6px 11px;
+        border-radius: 16px;
+        border: 1px solid var(--card-border);
+        background: var(--card);
+        white-space: nowrap;
+        font-weight: 750;
+      }
+      .navscroll a.active,
+      .navscroll a:active {
+        background: var(--red);
+        color: #fff;
+        border-color: var(--red2);
+      }
+      section {
+        padding: 28px 0 10px;
+        border-bottom: 1px solid var(--card-border);
+        scroll-margin-top: 58px;
+      }
+      section:last-of-type {
+        border-bottom: none;
+      }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: Georgia, serif;
+        color: var(--gold);
+        font-size: 1.48rem;
+        font-weight: 800;
+        border-bottom: 2px solid var(--gold-dim);
+        padding-bottom: 8px;
+        margin-bottom: 16px;
+      }
+      .section-title .num {
+        background: var(--red);
+        color: #fff;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Georgia, serif;
+        font-size: 1rem;
+        flex: 0 0 auto;
+      }
+      h3,
+      h4,
+      h5 {
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--gold);
+      }
+      h3 {
+        margin-top: 22px;
+        margin-bottom: 8px;
+      }
+      h4 {
+        margin: 0 0 6px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 640px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .card p:last-child {
+        margin-bottom: 0;
+      }
+      .portrait {
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: cover;
+        border-radius: 7px;
+        border: 1px solid var(--card-border);
+        filter: grayscale(1);
+        margin-bottom: 8px;
+      }
+      .scene-art {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--card-border);
+        border-radius: 9px;
+        margin: 14px 0;
+      }
+      .art-caption {
+        font-size: 0.78rem;
+        color: var(--dim);
+        font-style: italic;
+        margin-top: -8px;
+      }
+      .readaloud {
+        background: var(--paper);
+        color: var(--paper-text);
+        border: 1px solid var(--paper-border);
+        border-left: 6px solid var(--red);
+        border-radius: 4px;
+        padding: 14px 16px;
+        font-style: italic;
+        font-family: Georgia, serif;
+        margin: 14px 0;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      }
+      .readaloud .tag,
+      .gmnote .tag,
+      .pathnote .tag,
+      .exposure .tag {
+        display: block;
+        font-style: normal;
+        font-weight: 900;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+      }
+      .readaloud .tag {
+        color: var(--red);
+      }
+      .gmnote {
+        background: rgba(77, 123, 86, 0.12);
+        border: 1px solid var(--green);
+        border-radius: 7px;
+        padding: 11px 14px;
+        margin: 10px 0;
+        font-size: 0.93rem;
+      }
+      .gmnote .tag {
+        color: #91d29a;
+      }
+      .pathnote {
+        background: rgba(73, 103, 120, 0.15);
+        border: 1px solid var(--blue);
+        border-radius: 7px;
+        padding: 11px 14px;
+        margin: 10px 0;
+        font-size: 0.93rem;
+      }
+      .pathnote .tag {
+        color: #9cc9dd;
+      }
+      .exposure {
+        background: rgba(190, 59, 50, 0.11);
+        border: 1px solid var(--red);
+        border-radius: 7px;
+        padding: 11px 14px;
+        margin: 10px 0;
+        font-size: 0.93rem;
+      }
+      .exposure .tag {
+        color: #ff9189;
+      }
+      .dc {
+        display: inline-block;
+        background: var(--red);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 900;
+        padding: 2px 7px;
+        border-radius: 4px;
+        white-space: nowrap;
+      }
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 8px 0;
+      }
+      .pill {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 14px;
+        padding: 3px 9px;
+        font-size: 0.76rem;
+      }
+      .small {
+        font-size: 0.82rem;
+        color: var(--text-dim);
+      }
+      hr.divider {
+        border: 0;
+        border-top: 1px dashed var(--card-border);
+        margin: 22px 0;
+      }
+      ul.checklist {
+        list-style: none;
+        padding-left: 0;
+      }
+      ul.checklist li {
+        padding: 5px 0 5px 28px;
+        position: relative;
+      }
+      ul.checklist li:before {
+        content: "☐";
+        position: absolute;
+        left: 0;
+        color: var(--gold);
+        font-size: 1.1rem;
+      }
+      table.ref {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+        font-size: 0.87rem;
+      }
+      table.ref th,
+      table.ref td {
+        border: 1px solid var(--card-border);
+        padding: 7px 8px;
+        text-align: left;
+        vertical-align: top;
+        white-space: normal;
+        word-break: normal;
+      }
+      table.ref th {
+        background: #211a13;
+        color: var(--gold);
+      }
+      table.ref tr:nth-child(even) {
+        background: rgba(255, 255, 255, 0.025);
+      }
+      .tablewrap {
+        overflow-x: auto;
+        margin: 12px 0;
+        -webkit-overflow-scrolling: touch;
+      }
+      details.statblock {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        margin: 14px 0;
+        overflow: hidden;
+      }
+      details.statblock summary {
+        cursor: pointer;
+        padding: 12px 16px;
+        list-style: none;
+        font-family: Georgia, serif;
+        font-size: 1.08rem;
+        color: var(--gold);
+        background: linear-gradient(
+          90deg,
+          rgba(142, 31, 31, 0.26),
+          transparent
+        );
+      }
+      details.statblock summary::-webkit-details-marker {
+        display: none;
+      }
+      details.statblock summary .meta {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        font-family: -apple-system, sans-serif;
+        font-weight: 500;
+        margin-left: 8px;
+      }
+      .statblock-body {
+        padding: 0 16px 16px;
+      }
+      .statline {
+        margin: 6px 0;
+        font-size: 0.92rem;
+      }
+      .statline b {
+        color: var(--gold);
+      }
+      .flow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+        margin: 10px 0;
+        font-size: 0.8rem;
+      }
+      .flow span {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        padding: 4px 8px;
+        border-radius: 6px;
+      }
+      .flow .arrow {
+        color: var(--gold);
+        border: 0;
+        background: none;
+        padding: 0 2px;
+      }
+      .tracker {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+        margin: 8px 0;
+      }
+      .tracker div {
+        border: 1px solid var(--card-border);
+        background: #14110e;
+        padding: 8px 5px;
+        text-align: center;
+        border-radius: 6px;
+        font-size: 0.75rem;
+      }
+      .back-top {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        background: var(--red);
+        color: #fff;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+        z-index: 40;
+        font-size: 1.2rem;
+      }
+      footer {
+        text-align: center;
+        padding: 28px 14px;
+        color: var(--text-dim);
+        font-size: 0.8rem;
+      }
+      @media (max-width: 480px) {
+        .hero {
+          min-height: 285px;
+        }
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .section-title {
+          font-size: 1.3rem;
+        }
+        table.ref {
+          font-size: 0.78rem;
+        }
+        .tracker {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media print {
+        .navbar,
+        .back-top {
+          display: none;
+        }
+        .hero {
+          min-height: auto;
+          background: #111;
+        }
+        .container {
+          max-width: none;
+        }
+        body {
+          background: #fff;
+          color: #111;
+        }
+        .card,
+        details.statblock {
+          background: #fff;
+          color: #111;
+        }
+        section {
+          break-inside: auto;
+        }
+        .readaloud {
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body id="top">
+    <style id="p7-global-nav-style">
+      .p7-global-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        align-items: center;
+        padding: 0.6rem max(1rem, calc((100% - 1100px) / 2));
+        background: #090909;
+        border-bottom: 1px solid #55472f;
+        font-family: Arial, sans-serif;
+        position: relative;
+        z-index: 1000;
+      }
+      .p7-global-nav a {
+        display: inline-block;
+        padding: 0.5rem 0.7rem;
+        border: 1px solid #5f5138;
+        border-radius: 8px;
+        background: #1b1916;
+        color: #ead18a !important;
+        text-decoration: none !important;
+        font-size: 0.82rem;
+        font-weight: 800;
+        line-height: 1.1;
+      }
+      .p7-global-nav a:hover,
+      .p7-global-nav a:focus {
+        background: #2a261f;
+        color: #fff !important;
+      }
+      @media (max-width: 560px) {
+        .p7-global-nav {
+          padding: 0.5rem;
+        }
+        .p7-global-nav a {
+          flex: 1 1 auto;
+          text-align: center;
+        }
+      }
+      @media print {
+        .p7-global-nav {
+          display: none !important;
+        }
+      }
+    </style>
+    <nav
+      class="p7-global-nav"
+      data-p7-global-nav="1"
+      aria-label="Project navigation"
+    >
+      <a href="../current.html">Adventure Path Home</a
+      ><a href="../../index.html">Protocol 7 Home</a
+      ><a href="https://jnarquitt.github.io/">Jade Lion Studios</a>
+    </nav>
 
-<header class="hero"><div class="hero-inner">
-  <div class="kicker">PROTOCOL 7 ADVENTURE PATH 01 · THE CONTINUANCE FILES</div>
-  <h1>The Ash Ledger</h1>
-  <div class="subtitle">P7-AP01-M01 · A complete Protocol 7 operation for 4–6 Vectors</div>
-  <div class="badges">
-    <span class="badge">San Francisco · April 1906</span>
-    <span class="badge">Two sessions · 6–8 hours</span>
-    <span class="badge">Investigation · Disaster · Temporal Ethics</span>
-    <span class="badge">Required Carrier: Established</span>
-    <span class="badge">Exposure Target: 0–2</span>
-    <span class="badge">Rules Target: P7 v0.187 PRE-BETA</span>
-    <span class="badge">Adventure Revision: r003</span>
-  </div>
-</div></header>
-<div class="navbar"><nav class="navscroll"><a href="#overview">At a Glance</a><a href="#prep">Prep</a><a href="#safety">Tone</a><a href="#truth">GM Truth</a><a href="#cast">Cast</a><a href="#vectors">Vectors</a><a href="#walkthrough">Mission</a><a href="#opposition">Opposition</a><a href="#assets">Assets</a><a href="#ending">Ending</a><a href="#cheat">Cheat Sheet</a><a href="#continuity">Path</a></nav></div>
-<main class="container">
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="kicker">
+          PROTOCOL 7 ADVENTURE PATH 01 · THE CONTINUANCE FILES
+        </div>
+        <h1>The Ash Ledger</h1>
+        <div class="subtitle">
+          P7-AP01-M01 · A complete Protocol 7 operation for 4–6 Vectors
+        </div>
+        <div class="badges">
+          <span class="badge">San Francisco · April 1906</span>
+          <span class="badge">Two sessions · 6–8 hours</span>
+          <span class="badge">Investigation · Disaster · Temporal Ethics</span>
+          <span class="badge">Required Carrier: Established</span>
+          <span class="badge">Exposure Target: 0–2</span>
+          <span class="badge">Rules Target: P7 v0.187 PRE-BETA</span>
+          <span class="badge">Adventure Revision: r003</span>
+        </div>
+      </div>
+    </header>
+    <div class="navbar">
+      <nav class="navscroll">
+        <a href="#overview">At a Glance</a><a href="#prep">Prep</a
+        ><a href="#safety">Tone</a><a href="#truth">GM Truth</a
+        ><a href="#cast">Cast</a><a href="#vectors">Vectors</a
+        ><a href="#walkthrough">Mission</a><a href="#opposition">Opposition</a
+        ><a href="#assets">Assets</a><a href="#ending">Ending</a
+        ><a href="#cheat">Cheat Sheet</a><a href="#continuity">Path</a>
+      </nav>
+    </div>
+    <main class="container">
+      <section id="overview">
+        <div class="section-title"><span class="num">1</span> At a Glance</div>
+        <p>
+          <strong>Player Apocryphon:</strong>
+          <a
+            href="../PLAYER_FILES/P7-AP01-M01_The_Electrical_Argosy_Apocryphon_r001.html"
+            >Open "The Electrical Argosy"</a
+          >
+          — give this to the players before insertion.
+        </p>
+        <div class="grid">
+          <div class="card">
+            <h4>What is this?</h4>
+            <p>
+              A complete two-session Protocol 7 mission. Session One centers on
+              an impossible 1905 scientific-romance publication and the team's
+              competing interpretations. Session Two inserts the Vectors into
+              the 1906 San Francisco earthquake and fire, where they must
+              identify a forgotten structural survey and turn one vulnerable
+              notebook into a Historical Carrier that can survive the century.
+            </p>
+          </div>
+          <div class="card">
+            <h4>The central choice</h4>
+            <p>
+              The easiest way to preserve Miriam Quill's observations is to
+              spread them widely. Every additional copy strengthens the
+              Carrier—and makes the team's intervention more visible. The
+              mission should force the table to choose between
+              <b>historical durability</b> and <b>temporal cleanliness</b>.
+            </p>
+          </div>
+          <div class="card">
+            <h4>What the players receive</h4>
+            <p>
+              Aletheia supplies a complete, impossible 1905 scientific-romance
+              periodical: <i>The Electrical Argosy, Volume VII, Number III</i>.
+              Its serial, advertisements, letters, technical plate, errata,
+              publication data, handwritten notes, and missing page contain
+              overlapping clues. The opening session is an investigation of the
+              publication itself.
+            </p>
+          </div>
+          <div class="card">
+            <h4>What the GM knows</h4>
+            <p>
+              The mission-critical content is a set of observations showing why
+              some structures survived while neighboring buildings failed. The
+              Vectors do not merely save the work: their choices become the
+              undocumented reason it enters the 1908 earthquake investigation,
+              influences redundant emergency-water planning, and eventually
+              contributes to Sanctuary engineering.
+            </p>
+          </div>
+        </div>
 
-<section id="overview">
-<div class="section-title"><span class="num">1</span> At a Glance</div>
-<p><strong>Player Apocryphon:</strong> <a href="../PLAYER_FILES/P7-AP01-M01_The_Electrical_Argosy_Apocryphon_r001.html">Open "The Electrical Argosy"</a> — give this to the players before insertion.</p>
-<div class="grid">
-<div class="card"><h4>What is this?</h4>
-<p>A complete two-session Protocol 7 mission. Session One centers on an impossible 1905 scientific-romance publication and the team's competing interpretations. Session Two inserts the Vectors into the 1906 San Francisco earthquake and fire, where they must identify a forgotten structural survey and turn one vulnerable notebook into a Historical Carrier that can survive the century.</p></div>
-<div class="card"><h4>The central choice</h4>
-<p>The easiest way to preserve Miriam Quill's observations is to spread them widely. Every additional copy strengthens the Carrier—and makes the team's intervention more visible. The mission should force the table to choose between <b>historical durability</b> and <b>temporal cleanliness</b>.</p></div>
-<div class="card"><h4>What the players receive</h4>
-<p>Aletheia supplies a complete, impossible 1905 scientific-romance periodical: <i>The Electrical Argosy, Volume VII, Number III</i>. Its serial, advertisements, letters, technical plate, errata, publication data, handwritten notes, and missing page contain overlapping clues. The opening session is an investigation of the publication itself.</p></div>
-<div class="card"><h4>What the GM knows</h4>
-<p>The mission-critical content is a set of observations showing why some structures survived while neighboring buildings failed. The Vectors do not merely save the work: their choices become the undocumented reason it enters the 1908 earthquake investigation, influences redundant emergency-water planning, and eventually contributes to Sanctuary engineering.</p></div>
-</div>
+        <h3>Mission Parameters</h3>
+        <table class="ref">
+          <tr>
+            <th>Parameter</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>Operation Code</td>
+            <td><b>P7-AP01-M01</b></td>
+          </tr>
+          <tr>
+            <td>Expected Play</td>
+            <td>
+              Session One: Apocryphon analysis and operational planning. Session
+              Two: insertion through Historical Verification. Approximately 6–8
+              hours total.
+            </td>
+          </tr>
+          <tr>
+            <td>Fulcrum</td>
+            <td>
+              Preserve Miriam Quill's structural observations in an independent
+              professional or institutional record.
+            </td>
+          </tr>
+          <tr>
+            <td>Required Carrier</td>
+            <td>
+              Quill's documented observations and method—not merely Quill
+              herself.
+            </td>
+          </tr>
+          <tr>
+            <td>Required Strength</td>
+            <td><b>Established</b>. Durable is an exceptional result.</td>
+          </tr>
+          <tr>
+            <td>Starting Exposure</td>
+            <td>0 — Clean.</td>
+          </tr>
+          <tr>
+            <td>Exposure Target</td>
+            <td>0–2 — Trace or better.</td>
+          </tr>
+          <tr>
+            <td>Confirmation Keys</td>
+            <td>3.</td>
+          </tr>
+          <tr>
+            <td>Default Opposition</td>
+            <td>Two Covenant Custodians working under period cover.</td>
+          </tr>
+          <tr>
+            <td>Insertion</td>
+            <td>
+              South of Market, shortly after dawn, after the major earthquake.
+            </td>
+          </tr>
+          <tr>
+            <td>Extraction</td>
+            <td>
+              Ferry Building south arcade, 23:40 local. Temporal Beacon is an
+              emergency alternate, but Severe if recovered.
+            </td>
+          </tr>
+        </table>
 
-<h3>Mission Parameters</h3>
-<table class="ref">
-<tr><th>Parameter</th><th>Value</th></tr>
-<tr><td>Operation Code</td><td><b>P7-AP01-M01</b></td></tr>
-<tr><td>Expected Play</td><td>Session One: Apocryphon analysis and operational planning. Session Two: insertion through Historical Verification. Approximately 6–8 hours total.</td></tr>
-<tr><td>Fulcrum</td><td>Preserve Miriam Quill's structural observations in an independent professional or institutional record.</td></tr>
-<tr><td>Required Carrier</td><td>Quill's documented observations and method—not merely Quill herself.</td></tr>
-<tr><td>Required Strength</td><td><b>Established</b>. Durable is an exceptional result.</td></tr>
-<tr><td>Starting Exposure</td><td>0 — Clean.</td></tr>
-<tr><td>Exposure Target</td><td>0–2 — Trace or better.</td></tr>
-<tr><td>Confirmation Keys</td><td>3.</td></tr>
-<tr><td>Default Opposition</td><td>Two Covenant Custodians working under period cover.</td></tr>
-<tr><td>Insertion</td><td>South of Market, shortly after dawn, after the major earthquake.</td></tr>
-<tr><td>Extraction</td><td>Ferry Building south arcade, 23:40 local. Temporal Beacon is an emergency alternate, but Severe if recovered.</td></tr>
-</table>
+        <h3>The Apocryphon</h3>
+        <div class="readaloud">
+          <span class="tag">Read to the players</span> Aletheia places a cheaply
+          printed magazine on the table. Its cover is dated October 1905. A
+          woman stands before a burning city, holding a blue ledger beneath the
+          headline <i>The City Beneath the Cinders</i>. “No record of this
+          publication exists in baseline history,” Aletheia says. “Its materials
+          are authentic to the period. Its contents describe events that have
+          not yet occurred. The disaster is not your target. Determine what must
+          survive it.”
+        </div>
+        <p>
+          Give the players
+          <a
+            href="../PLAYER_FILES/P7-AP01-M01_The_Electrical_Argosy_Apocryphon_r001.html"
+            ><b>The Electrical Argosy</b></a
+          >. Do not summarize it for them. The former short verse now appears
+          inside the removable technical plate as one clue among many.
+        </p>
+        <div class="gmnote">
+          <span class="tag">GM Note — Interpretation</span> There is no single
+          Interpretation roll. Let players state theories. Skills can
+          investigate a theory; Confirmation Keys can validate a specific claim
+          once the team has enough evidence to formulate it. The three key
+          conclusions are: <b>Quill is the woman</b>,
+          <b>the observations are the Carrier</b>, and
+          <b>independent copies are the leverage point</b>.
+        </div>
+        <div class="pathnote">
+          <span class="tag">Aha architecture</span> The phrase
+          <b>little giant</b> is deliberately unresolved during briefing. It
+          points to a working hydrant at 20th and Church that later becomes the
+          Golden Fire Hydrant. The players may cause the message that sends hose
+          and volunteers there. History remembers the firefighters, volunteers,
+          and hydrant; it does not remember who supplied the decisive route.
+        </div>
 
-<h3>The Apocryphon</h3>
-<div class="readaloud"><span class="tag">Read to the players</span>
-Aletheia places a cheaply printed magazine on the table. Its cover is dated October 1905. A woman stands before a burning city, holding a blue ledger beneath the headline <i>The City Beneath the Cinders</i>. “No record of this publication exists in baseline history,” Aletheia says. “Its materials are authentic to the period. Its contents describe events that have not yet occurred. The disaster is not your target. Determine what must survive it.”
-</div>
-<p>Give the players <a href="../PLAYER_FILES/P7-AP01-M01_The_Electrical_Argosy_Apocryphon_r001.html"><b>The Electrical Argosy</b></a>. Do not summarize it for them. The former short verse now appears inside the removable technical plate as one clue among many.</p>
-<div class="gmnote"><span class="tag">GM Note — Interpretation</span>
-There is no single Interpretation roll. Let players state theories. Skills can investigate a theory; Confirmation Keys can validate a specific claim once the team has enough evidence to formulate it. The three key conclusions are: <b>Quill is the woman</b>, <b>the observations are the Carrier</b>, and <b>independent copies are the leverage point</b>.
-</div>
-<div class="pathnote"><span class="tag">Aha architecture</span>
-The phrase <b>little giant</b> is deliberately unresolved during briefing. It points to a working hydrant at 20th and Church that later becomes the Golden Fire Hydrant. The players may cause the message that sends hose and volunteers there. History remembers the firefighters, volunteers, and hydrant; it does not remember who supplied the decisive route.
-</div>
+        <h3>Session One — The Magazine on the Table</h3>
+        <p>
+          The artifact is designed to support a complete first session. Let the
+          players control the pace. A strong session ends with operational
+          theories and insertion, not with the GM explaining the publication.
+        </p>
+        <table class="ref">
+          <tr>
+            <th>Movement</th>
+            <th>Table activity</th>
+            <th>GM function</th>
+          </tr>
+          <tr>
+            <td>Authenticity</td>
+            <td>
+              Inspect the date, publisher, postal data, materials report, and
+              impossibilities.
+            </td>
+            <td>
+              Establish that the artifact is physically period-authentic but
+              historically nonexistent.
+            </td>
+          </tr>
+          <tr>
+            <td>First reading</td>
+            <td>
+              Read or divide the serial, advertisements, correspondence, plate,
+              and errata among players.
+            </td>
+            <td>Ask what each Vector notices; do not rank clues.</td>
+          </tr>
+          <tr>
+            <td>Competing theories</td>
+            <td>
+              Argue whether Quell is a person, role, decoy, ancestor, or future
+              echo; identify possible Carriers and routes.
+            </td>
+            <td>
+              Require evidence for every theory. Reward disagreement that
+              produces testable claims.
+            </td>
+          </tr>
+          <tr>
+            <td>Confirmation</td>
+            <td>Spend up to three Keys on specific claims.</td>
+            <td>
+              Answer only Consistent, Inconsistent, or Insufficiently Specific.
+            </td>
+          </tr>
+          <tr>
+            <td>Operationalization</td>
+            <td>
+              Select covers, caches, technology limits, first leads, and
+              contingency plans.
+            </td>
+            <td>
+              Convert interpretation into choices without confirming the final
+              answer.
+            </td>
+          </tr>
+          <tr>
+            <td>Cliffhanger</td>
+            <td>Initiate insertion.</td>
+            <td>
+              End on the first aftershock or continue into Scene 2 if time
+              remains.
+            </td>
+          </tr>
+        </table>
+        <div class="gmnote">
+          <span class="tag">Discussion prompts when energy slows</span>
+          Ask: Which clue would still matter if Miranda Quell never existed?
+          Which printed feature looks like an adversary's bait? Why correct
+          fictional names to real ones? What can cross the bay as information
+          but not as an object? Why is Page 21 “waiting”? What would the
+          Covenant want the team to believe?
+        </div>
 
-<h3>Session One — The Magazine on the Table</h3>
-<p>The artifact is designed to support a complete first session. Let the players control the pace. A strong session ends with operational theories and insertion, not with the GM explaining the publication.</p>
-<table class="ref"><tr><th>Movement</th><th>Table activity</th><th>GM function</th></tr>
-<tr><td>Authenticity</td><td>Inspect the date, publisher, postal data, materials report, and impossibilities.</td><td>Establish that the artifact is physically period-authentic but historically nonexistent.</td></tr>
-<tr><td>First reading</td><td>Read or divide the serial, advertisements, correspondence, plate, and errata among players.</td><td>Ask what each Vector notices; do not rank clues.</td></tr>
-<tr><td>Competing theories</td><td>Argue whether Quell is a person, role, decoy, ancestor, or future echo; identify possible Carriers and routes.</td><td>Require evidence for every theory. Reward disagreement that produces testable claims.</td></tr>
-<tr><td>Confirmation</td><td>Spend up to three Keys on specific claims.</td><td>Answer only Consistent, Inconsistent, or Insufficiently Specific.</td></tr>
-<tr><td>Operationalization</td><td>Select covers, caches, technology limits, first leads, and contingency plans.</td><td>Convert interpretation into choices without confirming the final answer.</td></tr>
-<tr><td>Cliffhanger</td><td>Initiate insertion.</td><td>End on the first aftershock or continue into Scene 2 if time remains.</td></tr></table>
-<div class="gmnote"><span class="tag">Discussion prompts when energy slows</span>
-Ask: Which clue would still matter if Miranda Quell never existed? Which printed feature looks like an adversary's bait? Why correct fictional names to real ones? What can cross the bay as information but not as an object? Why is Page 21 “waiting”? What would the Covenant want the team to believe?
-</div>
+        <h3>Mission Flow</h3>
+        <div class="flow">
+          <span>Briefing</span><span class="arrow">→</span><span>Insertion</span
+          ><span class="arrow">→</span><span>Cover</span
+          ><span class="arrow">→</span><span>Investigate</span
+          ><span class="arrow">→</span><span>Leverage</span
+          ><span class="arrow">→</span><span>Intervene</span
+          ><span class="arrow">→</span><span>Carrier</span
+          ><span class="arrow">→</span><span>Exposure</span
+          ><span class="arrow">→</span><span>Extract</span
+          ><span class="arrow">→</span><span>Verify</span>
+        </div>
+      </section>
 
-<h3>Mission Flow</h3>
-<div class="flow">
-<span>Briefing</span><span class="arrow">→</span><span>Insertion</span><span class="arrow">→</span><span>Cover</span><span class="arrow">→</span><span>Investigate</span><span class="arrow">→</span><span>Leverage</span><span class="arrow">→</span><span>Intervene</span><span class="arrow">→</span><span>Carrier</span><span class="arrow">→</span><span>Exposure</span><span class="arrow">→</span><span>Extract</span><span class="arrow">→</span><span>Verify</span>
-</div>
-</section>
+      <section id="prep">
+        <div class="section-title">
+          <span class="num">2</span> Before the Table Sits Down
+        </div>
+        <h3>15-Minute Prep Checklist</h3>
+        <ul class="checklist">
+          <li>
+            Read the complete Electrical Argosy and the GM Truth before play.
+          </li>
+          <li>
+            Keep the three Essential Conclusions visible; never gate any one
+            conclusion behind a single roll.
+          </li>
+          <li>
+            Choose whether the Covenant is primarily persuasive, covert, or
+            confrontational for this group.
+          </li>
+          <li>
+            Put the Carrier and Exposure trackers where everyone can see them
+            once identified.
+          </li>
+          <li>
+            Decide which Vectors have period-safe survey, medical, and security
+            gear.
+          </li>
+          <li>
+            Know the extraction location: Ferry Building, south arcade, 23:40.
+          </li>
+          <li>
+            Use the Fire Clock only to create momentum, never to erase the
+            mission.
+          </li>
+        </ul>
 
-<section id="prep">
-<div class="section-title"><span class="num">2</span> Before the Table Sits Down</div>
-<h3>15-Minute Prep Checklist</h3>
-<ul class="checklist">
-<li>Read the complete Electrical Argosy and the GM Truth before play.</li>
-<li>Keep the three Essential Conclusions visible; never gate any one conclusion behind a single roll.</li>
-<li>Choose whether the Covenant is primarily persuasive, covert, or confrontational for this group.</li>
-<li>Put the Carrier and Exposure trackers where everyone can see them once identified.</li>
-<li>Decide which Vectors have period-safe survey, medical, and security gear.</li>
-<li>Know the extraction location: Ferry Building, south arcade, 23:40.</li>
-<li>Use the Fire Clock only to create momentum, never to erase the mission.</li>
-</ul>
+        <h3>Fire Clock</h3>
+        <p>
+          The city is the pressure system. Start at <b>0</b>. Advance the clock
+          after a long detour, a major failed action that costs time, or
+          whenever the group needs a harder push forward.
+        </p>
+        <div class="tracker">
+          <div><b>0</b><br />Smoke and confusion</div>
+          <div><b>1</b><br />Routes close</div>
+          <div><b>2</b><br />Records district burns</div>
+          <div><b>3</b><br />Water mains fail locally</div>
+          <div><b>4</b><br />Quill's office route collapses</div>
+        </div>
+        <div class="gmnote">
+          <span class="tag">Fail Forward</span>
+          At Fire 4, do not destroy the ledger offscreen. Move Quill, the
+          ledger, or the surviving carbon pages into a harder location: a
+          refugee cart, a police wagon, a ferry queue, or Covenant hands.
+        </div>
 
-<h3>Fire Clock</h3>
-<p>The city is the pressure system. Start at <b>0</b>. Advance the clock after a long detour, a major failed action that costs time, or whenever the group needs a harder push forward.</p>
-<div class="tracker">
-<div><b>0</b><br>Smoke and confusion</div><div><b>1</b><br>Routes close</div><div><b>2</b><br>Records district burns</div><div><b>3</b><br>Water mains fail locally</div><div><b>4</b><br>Quill's office route collapses</div>
-</div>
-<div class="gmnote"><span class="tag">Fail Forward</span>
-At Fire 4, do not destroy the ledger offscreen. Move Quill, the ledger, or the surviving carbon pages into a harder location: a refugee cart, a police wagon, a ferry queue, or Covenant hands.
-</div>
+        <h3>Period Texture in One Minute</h3>
+        <p>
+          Telephones and telegraphy exist, but most communication is slow and
+          local. Streets are damaged, smoke limits visibility, crowds move
+          unpredictably, and official authority is fragmented. A convincing
+          cover role—surveyor, relief worker, insurance investigator, medical
+          volunteer, telegraph technician—often matters more than a perfect
+          forged document.
+        </p>
+      </section>
 
-<h3>Period Texture in One Minute</h3>
-<p>Telephones and telegraphy exist, but most communication is slow and local. Streets are damaged, smoke limits visibility, crowds move unpredictably, and official authority is fragmented. A convincing cover role—surveyor, relief worker, insurance investigator, medical volunteer, telegraph technician—often matters more than a perfect forged document.</p>
-</section>
+      <section id="safety">
+        <div class="section-title">
+          <span class="num">3</span> Content, Tone, and Table Safety
+        </div>
+        <p>
+          This mission uses a real historical disaster as its backdrop, but the
+          named mission NPCs and the target engineering record are fictional.
+          The disaster should create urgency and human stakes, not spectacle for
+          its own sake.
+        </p>
+        <div class="exposure">
+          <span class="tag">Content heads-up</span>
+          Earthquake aftermath, fire, smoke, injured civilians, collapsed
+          buildings, panic, firearms, institutional sexism, and difficult
+          choices about who receives scarce help. Historical prejudice can be
+          present as background if the table wants it, but it is not required to
+          run the mission and should never be used as a surprise “gotcha.”
+        </div>
+        <div class="gmnote">
+          <span class="tag">Tone dial</span>
+          For a lighter table, keep casualties mostly offscreen and emphasize
+          rescue, improvised cooperation, and racing the fire. For a harder
+          table, show institutional failure and moral triage, but avoid graphic
+          descriptions unless the group explicitly wants them.
+        </div>
+      </section>
 
-<section id="safety">
-<div class="section-title"><span class="num">3</span> Content, Tone, and Table Safety</div>
-<p>This mission uses a real historical disaster as its backdrop, but the named mission NPCs and the target engineering record are fictional. The disaster should create urgency and human stakes, not spectacle for its own sake.</p>
-<div class="exposure"><span class="tag">Content heads-up</span>
-Earthquake aftermath, fire, smoke, injured civilians, collapsed buildings, panic, firearms, institutional sexism, and difficult choices about who receives scarce help. Historical prejudice can be present as background if the table wants it, but it is not required to run the mission and should never be used as a surprise “gotcha.”
-</div>
-<div class="gmnote"><span class="tag">Tone dial</span>
-For a lighter table, keep casualties mostly offscreen and emphasize rescue, improvised cooperation, and racing the fire. For a harder table, show institutional failure and moral triage, but avoid graphic descriptions unless the group explicitly wants them.
-</div>
-</section>
+      <section id="truth">
+        <div class="section-title">
+          <span class="num">4</span> The Ash Ledger — GM Truth
+        </div>
+        <div class="card">
+          <h4>Miriam Quill</h4>
+          <p>
+            Miriam Quill is a fictional architectural drafter and field surveyor
+            working for a small insurance engineering office. For months she has
+            been documenting masonry failures, foundation settling, improvised
+            bracing, and firebreak practices. The earthquake gives her a
+            terrible natural experiment: neighboring structures subjected to the
+            same catastrophe fail in visibly different ways.
+          </p>
+        </div>
+        <div class="card">
+          <h4>What baseline history loses</h4>
+          <p>
+            Quill spends the day adding observations in blue pencil to a blue
+            cloth ledger. By the second night, the office where she plans to
+            leave it is consumed by fire. Her surviving notes are scattered,
+            treated as insurance ephemera, and never enter a professional
+            archive.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Why Aletheia cares</h4>
+          <p>
+            In Aletheia's damaged future, a later branch of resilient civil
+            engineering never develops on schedule. Quill's comparisons join the
+            scientific investigation published after the earthquake, then echo
+            through redundant emergency-water planning, distributed utilities,
+            and underground-habitat design. Centuries later, those principles
+            are used in the Sanctuaries. Aletheia knows the future dependency
+            but does not yet know why the corrected record contains evidence of
+            another editor.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Why the Covenant cares</h4>
+          <p>
+            The Covenant agrees the ledger matters. Its Custodians argue that
+            this particular knowledge chain eventually strengthens
+            infrastructure governed by Aletheia's emergency authority. They
+            prefer Quill to survive as a person while her work remains
+            <i>Fragile</i>. Their victory condition is not necessarily Quill's
+            death—it is preventing institutional adoption.
+          </p>
+        </div>
 
-<section id="truth">
-<div class="section-title"><span class="num">4</span> The Ash Ledger — GM Truth</div>
-<div class="card"><h4>Miriam Quill</h4>
-<p>Miriam Quill is a fictional architectural drafter and field surveyor working for a small insurance engineering office. For months she has been documenting masonry failures, foundation settling, improvised bracing, and firebreak practices. The earthquake gives her a terrible natural experiment: neighboring structures subjected to the same catastrophe fail in visibly different ways.</p></div>
-<div class="card"><h4>What baseline history loses</h4>
-<p>Quill spends the day adding observations in blue pencil to a blue cloth ledger. By the second night, the office where she plans to leave it is consumed by fire. Her surviving notes are scattered, treated as insurance ephemera, and never enter a professional archive.</p></div>
-<div class="card"><h4>Why Aletheia cares</h4>
-<p>In Aletheia's damaged future, a later branch of resilient civil engineering never develops on schedule. Quill's comparisons join the scientific investigation published after the earthquake, then echo through redundant emergency-water planning, distributed utilities, and underground-habitat design. Centuries later, those principles are used in the Sanctuaries. Aletheia knows the future dependency but does not yet know why the corrected record contains evidence of another editor.</p></div>
-<div class="card"><h4>Why the Covenant cares</h4>
-<p>The Covenant agrees the ledger matters. Its Custodians argue that this particular knowledge chain eventually strengthens infrastructure governed by Aletheia's emergency authority. They prefer Quill to survive as a person while her work remains <i>Fragile</i>. Their victory condition is not necessarily Quill's death—it is preventing institutional adoption.</p></div>
+        <h3>The Remembered History Layer</h3>
+        <p>
+          Use these connections as quiet recognition, never as a lecture. Real
+          people still perform the recorded work. The Vectors create missing
+          links that history absorbs without naming them.
+        </p>
+        <table class="ref">
+          <tr>
+            <th>Remembered fact</th>
+            <th>What the Vectors may secretly cause</th>
+            <th>Later payoff</th>
+          </tr>
+          <tr>
+            <td>
+              The post-quake investigation becomes a landmark record connecting
+              damage with construction and local ground conditions.
+            </td>
+            <td>
+              They place Quill's anonymous comparison sheets in Halden's
+              outgoing packet to the Earthquake Investigation Commission.
+            </td>
+            <td>
+              A later mission reveals the same comparison format inside an early
+              Sanctuary design archive.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Water at 20th and Church helps stop the fire from advancing
+              through the Mission.
+            </td>
+            <td>
+              Quill's pressure notes and a Vector-carried street message cause a
+              hose wagon and volunteers to test that overlooked hydrant.
+            </td>
+            <td>
+              The “little giant” clue becomes the first proof that an Apocryphon
+              can describe history the team has not caused yet.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Photographs preserve anonymous workers, refugees, soldiers, and
+              rescuers throughout the disaster.
+            </td>
+            <td>
+              A period photograph catches the Vectors passing Quill's packet
+              through the crowd; only ordinary clothing and a blue pencil are
+              visible.
+            </td>
+            <td>
+              The same photograph returns later with one impossible seventh
+              figure or annotation.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              San Francisco later builds a redundant auxiliary water-supply
+              network.
+            </td>
+            <td>
+              Morrow's bulletin preserves Quill's argument that a survival
+              system needs independent routes, not merely stronger components.
+            </td>
+            <td>
+              “Independent routes” becomes the engineering grammar of the
+              Sanctuaries and the moral grammar of the Adventure Path.
+            </td>
+          </tr>
+        </table>
 
-<h3>The Remembered History Layer</h3>
-<p>Use these connections as quiet recognition, never as a lecture. Real people still perform the recorded work. The Vectors create missing links that history absorbs without naming them.</p>
-<table class="ref">
-<tr><th>Remembered fact</th><th>What the Vectors may secretly cause</th><th>Later payoff</th></tr>
-<tr><td>The post-quake investigation becomes a landmark record connecting damage with construction and local ground conditions.</td><td>They place Quill's anonymous comparison sheets in Halden's outgoing packet to the Earthquake Investigation Commission.</td><td>A later mission reveals the same comparison format inside an early Sanctuary design archive.</td></tr>
-<tr><td>Water at 20th and Church helps stop the fire from advancing through the Mission.</td><td>Quill's pressure notes and a Vector-carried street message cause a hose wagon and volunteers to test that overlooked hydrant.</td><td>The “little giant” clue becomes the first proof that an Apocryphon can describe history the team has not caused yet.</td></tr>
-<tr><td>Photographs preserve anonymous workers, refugees, soldiers, and rescuers throughout the disaster.</td><td>A period photograph catches the Vectors passing Quill's packet through the crowd; only ordinary clothing and a blue pencil are visible.</td><td>The same photograph returns later with one impossible seventh figure or annotation.</td></tr>
-<tr><td>San Francisco later builds a redundant auxiliary water-supply network.</td><td>Morrow's bulletin preserves Quill's argument that a survival system needs independent routes, not merely stronger components.</td><td>“Independent routes” becomes the engineering grammar of the Sanctuaries and the moral grammar of the Adventure Path.</td></tr>
-</table>
+        <h3>Three Essential Conclusions</h3>
+        <table class="ref">
+          <tr>
+            <th>Conclusion</th>
+            <th>Clue A</th>
+            <th>Clue B</th>
+            <th>Clue C</th>
+          </tr>
+          <tr>
+            <td>Quill is the “woman with the blue pencil.”</td>
+            <td>Relief-camp witness remembers her blue survey book.</td>
+            <td>
+              Insurance office message names “M. Quill” and blue-pencil field
+              sheets.
+            </td>
+            <td>
+              A telegraph clerk recalls Quill sending measurements across the
+              bay.
+            </td>
+          </tr>
+          <tr>
+            <td>The observations—not Quill alone—are the Carrier.</td>
+            <td>
+              Quill says memory is useless unless another engineer can reproduce
+              the comparisons.
+            </td>
+            <td>
+              A surviving carbon sheet contains a repeatable bracing comparison.
+            </td>
+            <td>
+              Covenant Custodian Venn offers to save Quill if she agrees to burn
+              the ledger.
+            </td>
+          </tr>
+          <tr>
+            <td>Independent copies are the leverage point.</td>
+            <td>Professor Ada Halden asks for a duplicate set.</td>
+            <td>A technical editor is seeking earthquake field reports.</td>
+            <td>
+              The Apocryphon's “third copy” becomes literal once players
+              identify two viable routes.
+            </td>
+          </tr>
+        </table>
 
-<h3>Three Essential Conclusions</h3>
-<table class="ref">
-<tr><th>Conclusion</th><th>Clue A</th><th>Clue B</th><th>Clue C</th></tr>
-<tr><td>Quill is the “woman with the blue pencil.”</td><td>Relief-camp witness remembers her blue survey book.</td><td>Insurance office message names “M. Quill” and blue-pencil field sheets.</td><td>A telegraph clerk recalls Quill sending measurements across the bay.</td></tr>
-<tr><td>The observations—not Quill alone—are the Carrier.</td><td>Quill says memory is useless unless another engineer can reproduce the comparisons.</td><td>A surviving carbon sheet contains a repeatable bracing comparison.</td><td>Covenant Custodian Venn offers to save Quill if she agrees to burn the ledger.</td></tr>
-<tr><td>Independent copies are the leverage point.</td><td>Professor Ada Halden asks for a duplicate set.</td><td>A technical editor is seeking earthquake field reports.</td><td>The Apocryphon's “third copy” becomes literal once players identify two viable routes.</td></tr>
-</table>
+        <h3>What Actually Creates Carrier Strength</h3>
+        <table class="ref">
+          <tr>
+            <th>State</th>
+            <th>In this mission</th>
+          </tr>
+          <tr>
+            <td>Fragile</td>
+            <td>
+              Quill lives with one ledger, or one copy exists in one vulnerable
+              location.
+            </td>
+          </tr>
+          <tr>
+            <td>Established</td>
+            <td>
+              Two independent people/copies exist, or a
+              professional/institutional record is created.
+            </td>
+          </tr>
+          <tr>
+            <td>Durable</td>
+            <td>
+              Distributed publication plus a separate archive, or independent
+              replication plus institutional adoption.
+            </td>
+          </tr>
+        </table>
+      </section>
 
-<h3>What Actually Creates Carrier Strength</h3>
-<table class="ref">
-<tr><th>State</th><th>In this mission</th></tr>
-<tr><td>Fragile</td><td>Quill lives with one ledger, or one copy exists in one vulnerable location.</td></tr>
-<tr><td>Established</td><td>Two independent people/copies exist, or a professional/institutional record is created.</td></tr>
-<tr><td>Durable</td><td>Distributed publication plus a separate archive, or independent replication plus institutional adoption.</td></tr>
-</table>
-</section>
+      <section id="cast">
+        <div class="section-title">
+          <span class="num">5</span> Cast of Characters
+        </div>
+        <div class="grid">
+          <div class="card">
+            <img
+              class="portrait"
+              src="../../assets/adventure-art/ash-ledger/miriam-quill.png"
+              alt="Black-and-white sketch portrait of Miriam Quill"
+            />
+            <h4>Miriam Quill — Surveyor</h4>
+            <p>
+              <b>Wants:</b> evidence taken seriously, not credit for heroism.<br /><b
+                >Fear:</b
+              >
+              that the ledger is just one more thing the fire will erase.<br /><b
+                >Voice:</b
+              >
+              clipped, practical, impatient with authority.<br /><b>Tell:</b>
+              blue pencil behind her right ear; counts damaged wall bays under
+              her breath.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              class="portrait"
+              src="../../assets/adventure-art/ash-ledger/ada-halden.png"
+              alt="Black-and-white sketch portrait of Professor Ada Halden"
+            />
+            <h4>Prof. Ada Halden — Structural Lecturer</h4>
+            <p>
+              <b>Wants:</b> Quill's raw comparisons before rumor turns them into
+              folklore.<br /><b>Fear:</b> publishing too quickly and being
+              professionally discredited.<br /><b>Leverage:</b> can create an
+              institutional copy across the bay if convinced the observations
+              are methodical.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              class="portrait"
+              src="../../assets/adventure-art/ash-ledger/elias-rourke.png"
+              alt="Black-and-white sketch portrait of Elias Rourke"
+            />
+            <h4>Elias Rourke — Relief Sergeant</h4>
+            <p>
+              <b>Wants:</b> people out of dangerous streets and no “private
+              investigators” interfering with rescue routes.<br /><b>Use:</b>
+              checkpoint pressure, local authority, or ally if the Vectors help
+              civilians early.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              class="portrait"
+              src="../../assets/adventure-art/ash-ledger/clara-morrow.png"
+              alt="Black-and-white sketch portrait of Clara Morrow"
+            />
+            <h4>Clara Morrow — Technical Editor</h4>
+            <p>
+              <b>Wants:</b> reliable field reports for a special engineering
+              bulletin.<br /><b>Fear:</b> fraud, sensationalism, or impossible
+              claims.<br /><b>Leverage:</b> publication route. She will print
+              measurements, not prophecy.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              class="portrait"
+              src="../../assets/adventure-art/ash-ledger/silas-venn.png"
+              alt="Black-and-white sketch portrait of Silas Venn"
+            />
+            <h4>Silas Venn — Covenant Custodian</h4>
+            <p>
+              <b>Wants:</b> the ledger to remain one person's private notes.<br /><b
+                >Belief:</b
+              >
+              Aletheia is selecting the institutional ancestors of its own
+              power.<br /><b>Method:</b> persuasion first, theft second,
+              violence only if the Carrier is about to become Durable.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              class="portrait"
+              src="../../assets/adventure-art/ash-ledger/mara-ellery.png"
+              alt="Black-and-white sketch portrait of Mara Ellery"
+            />
+            <h4>Mara Ellery — Covenant Field Agent</h4>
+            <p>
+              <b>Wants:</b> clean containment with minimal public anomaly.<br /><b
+                >Method:</b
+              >
+              surveillance, forged orders, quiet interception, and recovery of
+              future technology.<br /><b>Crack in loyalty:</b> she will not
+              knowingly leave trapped civilians to die merely to win the
+              mission.
+            </p>
+          </div>
+        </div>
+      </section>
 
-<section id="cast">
-<div class="section-title"><span class="num">5</span> Cast of Characters</div>
-<div class="grid">
-<div class="card"><h4>Miriam Quill — Surveyor</h4>
-<p><b>Wants:</b> evidence taken seriously, not credit for heroism.<br><b>Fear:</b> that the ledger is just one more thing the fire will erase.<br><b>Voice:</b> clipped, practical, impatient with authority.<br><b>Tell:</b> blue pencil behind her right ear; counts damaged wall bays under her breath.</p></div>
-<div class="card"><h4>Prof. Ada Halden — Structural Lecturer</h4>
-<p><b>Wants:</b> Quill's raw comparisons before rumor turns them into folklore.<br><b>Fear:</b> publishing too quickly and being professionally discredited.<br><b>Leverage:</b> can create an institutional copy across the bay if convinced the observations are methodical.</p></div>
-<div class="card"><h4>Elias Rourke — Relief Sergeant</h4>
-<p><b>Wants:</b> people out of dangerous streets and no “private investigators” interfering with rescue routes.<br><b>Use:</b> checkpoint pressure, local authority, or ally if the Vectors help civilians early.</p></div>
-<div class="card"><h4>Clara Morrow — Technical Editor</h4>
-<p><b>Wants:</b> reliable field reports for a special engineering bulletin.<br><b>Fear:</b> fraud, sensationalism, or impossible claims.<br><b>Leverage:</b> publication route. She will print measurements, not prophecy.</p></div>
-<div class="card"><h4>Silas Venn — Covenant Custodian</h4>
-<p><b>Wants:</b> the ledger to remain one person's private notes.<br><b>Belief:</b> Aletheia is selecting the institutional ancestors of its own power.<br><b>Method:</b> persuasion first, theft second, violence only if the Carrier is about to become Durable.</p></div>
-<div class="card"><h4>Mara Ellery — Covenant Field Agent</h4>
-<p><b>Wants:</b> clean containment with minimal public anomaly.<br><b>Method:</b> surveillance, forged orders, quiet interception, and recovery of future technology.<br><b>Crack in loyalty:</b> she will not knowingly leave trapped civilians to die merely to win the mission.</p></div>
-</div>
-</section>
+      <section id="vectors">
+        <div class="section-title">
+          <span class="num">6</span> Vector Readiness
+        </div>
+        <p>
+          This operation works with any team. The following configurations have
+          especially clear jobs.
+        </p>
+        <div class="grid">
+          <div class="card">
+            <h4>Engineer</h4>
+            <p>
+              Understands structural clues, survey methods, water and fire
+              infrastructure, and Quill's evidence.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Investigator</h4>
+            <p>
+              Connects witnesses, documents, routes, and the difference between
+              Quill and her Carrier.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Diplomat</h4>
+            <p>
+              Can convert raw evidence into professional trust with Halden,
+              Morrow, police, and relief authorities.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Infiltrator</h4>
+            <p>
+              Gets into damaged offices, tracks Covenant surveillance, and
+              handles clean evidence recovery.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Medic</h4>
+            <p>
+              Turns disaster response into cover, preserves lives, and earns
+              cooperation without needing forged status.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Field Operator</h4>
+            <p>
+              Protects the team when routes collapse or the Custodians escalate,
+              while controlling public Exposure.
+            </p>
+          </div>
+        </div>
 
-<section id="vectors">
-<div class="section-title"><span class="num">6</span> Vector Readiness</div>
-<p>This operation works with any team. The following configurations have especially clear jobs.</p>
-<div class="grid">
-<div class="card"><h4>Engineer</h4><p>Understands structural clues, survey methods, water and fire infrastructure, and Quill's evidence.</p></div>
-<div class="card"><h4>Investigator</h4><p>Connects witnesses, documents, routes, and the difference between Quill and her Carrier.</p></div>
-<div class="card"><h4>Diplomat</h4><p>Can convert raw evidence into professional trust with Halden, Morrow, police, and relief authorities.</p></div>
-<div class="card"><h4>Infiltrator</h4><p>Gets into damaged offices, tracks Covenant surveillance, and handles clean evidence recovery.</p></div>
-<div class="card"><h4>Medic</h4><p>Turns disaster response into cover, preserves lives, and earns cooperation without needing forged status.</p></div>
-<div class="card"><h4>Field Operator</h4><p>Protects the team when routes collapse or the Custodians escalate, while controlling public Exposure.</p></div>
-</div>
+        <h3>Period-Safe Cache</h3>
+        <table class="ref">
+          <tr>
+            <th>Item</th>
+            <th>Die</th>
+            <th>Exposure</th>
+            <th>Use</th>
+          </tr>
+          <tr>
+            <td>Surveyor's Transit &amp; Rod</td>
+            <td>d6</td>
+            <td>None</td>
+            <td>Engineering when measuring alignment, settling, or bracing.</td>
+          </tr>
+          <tr>
+            <td>Period Intrusion Kit</td>
+            <td>d6</td>
+            <td>None</td>
+            <td>Security against era-appropriate locks.</td>
+          </tr>
+          <tr>
+            <td>First Aid Roll</td>
+            <td>d4</td>
+            <td>None</td>
+            <td>Medicine for ordinary treatment and stabilization.</td>
+          </tr>
+          <tr>
+            <td>Period Currency &amp; Credentials</td>
+            <td>d4</td>
+            <td>None</td>
+            <td>
+              Influence/Culture when transactions or paperwork materially
+              matter.
+            </td>
+          </tr>
+          <tr>
+            <td>Pocket Revolver</td>
+            <td>d4</td>
+            <td>None if plausibly sourced</td>
+            <td>
+              Sidearms. Concealable, but public gunplay still creates ordinary
+              consequences.
+            </td>
+          </tr>
+          <tr>
+            <td>Trauma Nanogel</td>
+            <td>—</td>
+            <td>Noticeable</td>
+            <td>
+              1 AP; restore 6 HP to an adjacent living target. Dangerous if
+              witnessed or recovered.
+            </td>
+          </tr>
+          <tr>
+            <td>Temporal Beacon</td>
+            <td>—</td>
+            <td>Severe</td>
+            <td>
+              Emergency extraction reference only. Recover it if deployed.
+            </td>
+          </tr>
+        </table>
+      </section>
 
-<h3>Period-Safe Cache</h3>
-<table class="ref">
-<tr><th>Item</th><th>Die</th><th>Exposure</th><th>Use</th></tr>
-<tr><td>Surveyor's Transit &amp; Rod</td><td>d6</td><td>None</td><td>Engineering when measuring alignment, settling, or bracing.</td></tr>
-<tr><td>Period Intrusion Kit</td><td>d6</td><td>None</td><td>Security against era-appropriate locks.</td></tr>
-<tr><td>First Aid Roll</td><td>d4</td><td>None</td><td>Medicine for ordinary treatment and stabilization.</td></tr>
-<tr><td>Period Currency &amp; Credentials</td><td>d4</td><td>None</td><td>Influence/Culture when transactions or paperwork materially matter.</td></tr>
-<tr><td>Pocket Revolver</td><td>d4</td><td>None if plausibly sourced</td><td>Sidearms. Concealable, but public gunplay still creates ordinary consequences.</td></tr>
-<tr><td>Trauma Nanogel</td><td>—</td><td>Noticeable</td><td>1 AP; restore 6 HP to an adjacent living target. Dangerous if witnessed or recovered.</td></tr>
-<tr><td>Temporal Beacon</td><td>—</td><td>Severe</td><td>Emergency extraction reference only. Recover it if deployed.</td></tr>
-</table>
-</section>
+      <section id="walkthrough">
+        <div class="section-title">
+          <span class="num">7</span> Mission Walkthrough
+        </div>
 
-<section id="walkthrough">
-<div class="section-title"><span class="num">7</span> Mission Walkthrough</div>
+        <h3>Scene 1 — Briefing <span class="pill">Phase: Briefing</span></h3>
+        <div class="readaloud">
+          <span class="tag">Aletheia briefing</span>
+          The packet contains no map to a person. It contains a newspaper sketch
+          of burning rooftops, a railway timetable, a page of engineering
+          notation, and the story you have already heard. Aletheia adds only
+          this: “The intervention is not the earthquake. The intervention is
+          what survives it.”
+        </div>
+        <div class="gmnote">
+          <span class="tag">GM Notes</span>
+          Let the players investigate the complete Apocryphon. Give them the
+          1906 city map and cache list only after they begin turning theories
+          into a plan. If they stall, use the Session One discussion prompts; do
+          not name Quill or explain the Little Giant. The errata supplies names,
+          but players must decide whether the corrections are trustworthy.
+        </div>
 
-<h3>Scene 1 — Briefing <span class="pill">Phase: Briefing</span></h3>
-<div class="readaloud"><span class="tag">Aletheia briefing</span>
-The packet contains no map to a person. It contains a newspaper sketch of burning rooftops, a railway timetable, a page of engineering notation, and the story you have already heard. Aletheia adds only this: “The intervention is not the earthquake. The intervention is what survives it.”
-</div>
-<div class="gmnote"><span class="tag">GM Notes</span>
-Let the players investigate the complete Apocryphon. Give them the 1906 city map and cache list only after they begin turning theories into a plan. If they stall, use the Session One discussion prompts; do not name Quill or explain the Little Giant. The errata supplies names, but players must decide whether the corrections are trustworthy.
-</div>
+        <hr class="divider" />
+        <h3>
+          Scene 2 — The Falling Hour <span class="pill">Phase: Insertion</span>
+        </h3>
+        <div class="readaloud">
+          <span class="tag">Read on arrival</span>
+          You arrive in an alley already filled with dust. The ground is still
+          moving. Brick falls from a cornice three stories above. Somewhere
+          beyond the roofs, bells are ringing without rhythm and the sky is
+          turning the color of copper. A horse screams. A man in shirtsleeves is
+          trying to pull a child from beneath a collapsed awning. No one is
+          looking at you yet.
+        </div>
+        <div class="gmnote">
+          <span class="tag">Immediate choices</span> The team can move, rescue,
+          hide the insertion, or split tasks. Use Reflex or Athletics
+          <span class="dc">DC 12</span> only when uncertainty matters. Helping
+          the trapped civilians earns Rourke's later cooperation; ignoring them
+          is not punished mechanically, but loses that easy social route.
+        </div>
+        <div class="exposure">
+          <span class="tag">Insertion signature</span>
+          The temporal arrival is masked by dust, arcing power lines, and
+          aftershock. If a Vector immediately uses conspicuous future technology
+          in the open, start at Exposure 1 instead of 0.
+        </div>
 
-<hr class="divider">
-<h3>Scene 2 — The Falling Hour <span class="pill">Phase: Insertion</span></h3>
-<div class="readaloud"><span class="tag">Read on arrival</span>
-You arrive in an alley already filled with dust. The ground is still moving. Brick falls from a cornice three stories above. Somewhere beyond the roofs, bells are ringing without rhythm and the sky is turning the color of copper. A horse screams. A man in shirtsleeves is trying to pull a child from beneath a collapsed awning. No one is looking at you yet.
-</div>
-<div class="gmnote"><span class="tag">Immediate choices</span>
-The team can move, rescue, hide the insertion, or split tasks. Use Reflex or Athletics <span class="dc">DC 12</span> only when uncertainty matters. Helping the trapped civilians earns Rourke's later cooperation; ignoring them is not punished mechanically, but loses that easy social route.
-</div>
-<div class="exposure"><span class="tag">Insertion signature</span>
-The temporal arrival is masked by dust, arcing power lines, and aftershock. If a Vector immediately uses conspicuous future technology in the open, start at Exposure 1 instead of 0.
-</div>
+        <hr class="divider" />
+        <h3>
+          Scene 3 — Borrowed Authority
+          <span class="pill">Phase: Establish Cover</span>
+        </h3>
+        <p>
+          Ask each Vector for one sentence explaining why they belong in the
+          district. Prepared period clothing and ordinary tools do not require
+          rolls. Test a cover only when an NPC actively challenges it.
+        </p>
+        <table class="ref">
+          <tr>
+            <th>Cover</th>
+            <th>Useful Skill</th>
+            <th>What it opens</th>
+          </tr>
+          <tr>
+            <td>Insurance surveyors</td>
+            <td>Culture or Deception <span class="dc">DC 12</span></td>
+            <td>Damaged offices, clerks, building owners.</td>
+          </tr>
+          <tr>
+            <td>Relief / medical volunteers</td>
+            <td>Medicine or Influence <span class="dc">DC 12</span></td>
+            <td>Camps, casualty lists, police cooperation.</td>
+          </tr>
+          <tr>
+            <td>Telegraph repair crew</td>
+            <td>Engineering or Culture <span class="dc">DC 12</span></td>
+            <td>Message traffic, dispatch rooms, equipment access.</td>
+          </tr>
+          <tr>
+            <td>Independent reporters</td>
+            <td>Influence or Deception <span class="dc">DC 16</span></td>
+            <td>Witnesses talk; authorities become suspicious faster.</td>
+          </tr>
+        </table>
+        <div class="gmnote">
+          <span class="tag">Failure</span>
+          A failed cover roll creates paperwork, delay, a memorable witness, or
+          a local escort. It does not block the route. Advance the Fire Clock if
+          the delay is meaningful.
+        </div>
 
-<hr class="divider">
-<h3>Scene 3 — Borrowed Authority <span class="pill">Phase: Establish Cover</span></h3>
-<p>Ask each Vector for one sentence explaining why they belong in the district. Prepared period clothing and ordinary tools do not require rolls. Test a cover only when an NPC actively challenges it.</p>
-<table class="ref">
-<tr><th>Cover</th><th>Useful Skill</th><th>What it opens</th></tr>
-<tr><td>Insurance surveyors</td><td>Culture or Deception <span class="dc">DC 12</span></td><td>Damaged offices, clerks, building owners.</td></tr>
-<tr><td>Relief / medical volunteers</td><td>Medicine or Influence <span class="dc">DC 12</span></td><td>Camps, casualty lists, police cooperation.</td></tr>
-<tr><td>Telegraph repair crew</td><td>Engineering or Culture <span class="dc">DC 12</span></td><td>Message traffic, dispatch rooms, equipment access.</td></tr>
-<tr><td>Independent reporters</td><td>Influence or Deception <span class="dc">DC 16</span></td><td>Witnesses talk; authorities become suspicious faster.</td></tr>
-</table>
-<div class="gmnote"><span class="tag">Failure</span>
-A failed cover roll creates paperwork, delay, a memorable witness, or a local escort. It does not block the route. Advance the Fire Clock if the delay is meaningful.
-</div>
+        <hr class="divider" />
+        <h3>
+          Scene 4 — Three Trails Through Smoke
+          <span class="pill">Phase: Investigate</span>
+        </h3>
+        <p>
+          Present at least two leads immediately. The third can appear after any
+          failed investigation so the mission keeps moving.
+        </p>
+        <div class="grid">
+          <div class="card">
+            <h4>A. Relief Camp</h4>
+            <p>
+              A clerk remembers a woman with a blue ledger asking where the
+              Pacific Assurance records office moved. Perception or Influence
+              <span class="dc">DC 12</span> gets the name <b>Miriam Quill</b>. A
+              Solid success also reveals she was measuring wall failures rather
+              than casualties.
+            </p>
+          </div>
+          <div class="card">
+            <h4>B. Insurance Annex</h4>
+            <p>
+              The front is damaged and the records room is unsafe. Security
+              <span class="dc">DC 12</span> or Athletics
+              <span class="dc">DC 16</span> reaches a surviving carbon page.
+              Engineering or Investigation
+              <span class="dc">DC 12</span> recognizes a controlled comparison
+              of bracing and foundation behavior.
+            </p>
+          </div>
+          <div class="card">
+            <h4>C. Telegraph Exchange</h4>
+            <p>
+              A clerk has a half-sent message: “QUILL — SEND DUPLICATE
+              MEASUREMENTS — HALDEN — OAKLAND.” Tradecraft, Culture, or
+              Influence <span class="dc">DC 12</span> obtains it cleanly.
+              Failure gets the clue but creates a suspicious clerk or Covenant
+              tail.
+            </p>
+          </div>
+          <div class="card">
+            <h4>D. Street Observation</h4>
+            <p>
+              An Engineer or Scientist can independently compare two nearby
+              structures. Engineering or Science
+              <span class="dc">DC 16</span> confirms Quill is measuring
+              something reproducible, not merely collecting anecdotes.
+            </p>
+          </div>
+          <div class="card">
+            <h4>E. The Dry Line</h4>
+            <p>
+              A fire-company runner carries a list of failed hydrants and one
+              unverified pressure reading from 20th and Church. Engineering,
+              Investigation, or Influence <span class="dc">DC 12</span> connects
+              Quill's note “small main—pressure isolated” with the Apocryphon's
+              “little giant.” The clue is optional for the Carrier but opens the
+              strongest historical echo.
+            </p>
+          </div>
+        </div>
 
-<hr class="divider">
-<h3>Scene 4 — Three Trails Through Smoke <span class="pill">Phase: Investigate</span></h3>
-<p>Present at least two leads immediately. The third can appear after any failed investigation so the mission keeps moving.</p>
-<div class="grid">
-<div class="card"><h4>A. Relief Camp</h4><p>A clerk remembers a woman with a blue ledger asking where the Pacific Assurance records office moved. Perception or Influence <span class="dc">DC 12</span> gets the name <b>Miriam Quill</b>. A Solid success also reveals she was measuring wall failures rather than casualties.</p></div>
-<div class="card"><h4>B. Insurance Annex</h4><p>The front is damaged and the records room is unsafe. Security <span class="dc">DC 12</span> or Athletics <span class="dc">DC 16</span> reaches a surviving carbon page. Engineering or Investigation <span class="dc">DC 12</span> recognizes a controlled comparison of bracing and foundation behavior.</p></div>
-<div class="card"><h4>C. Telegraph Exchange</h4><p>A clerk has a half-sent message: “QUILL — SEND DUPLICATE MEASUREMENTS — HALDEN — OAKLAND.” Tradecraft, Culture, or Influence <span class="dc">DC 12</span> obtains it cleanly. Failure gets the clue but creates a suspicious clerk or Covenant tail.</p></div>
-<div class="card"><h4>D. Street Observation</h4><p>An Engineer or Scientist can independently compare two nearby structures. Engineering or Science <span class="dc">DC 16</span> confirms Quill is measuring something reproducible, not merely collecting anecdotes.</p></div>
-<div class="card"><h4>E. The Dry Line</h4><p>A fire-company runner carries a list of failed hydrants and one unverified pressure reading from 20th and Church. Engineering, Investigation, or Influence <span class="dc">DC 12</span> connects Quill's note “small main—pressure isolated” with the Apocryphon's “little giant.” The clue is optional for the Carrier but opens the strongest historical echo.</p></div>
-</div>
+        <hr class="divider" />
+        <h3>
+          Scene 5 — The Woman With the Blue Pencil
+          <span class="pill">Phase: Identify Leverage</span>
+        </h3>
+        <img class="scene-art" src="../../assets/adventure-art/ash-ledger/scene-field-survey.png" alt="Miriam Quill and the Vectors surveying earthquake damage" />
+        <p class="art-caption">Quill records structural failures while the city continues to move around her.</p>
+        <div class="readaloud">
+          <span class="tag">Read when Quill is found</span>
+          The woman on the loading dock is writing while the building behind her
+          burns. Her coat is gray with ash. A blue cloth ledger is tucked under
+          one arm. She looks at the nearest leaning wall, makes two short marks
+          with a blue pencil, and says without looking up, “If you're here to
+          tell me to evacuate, take a number.”
+        </div>
+        <p>
+          Quill refuses to abandon the work until she has copied the day's
+          measurements. She believes the ledger itself is vulnerable and has
+          already arranged two possible routes:
+        </p>
+        <ul>
+          <li>
+            <b>Professor Ada Halden</b>, across the bay, will accept raw field
+            measurements if they are methodical.
+          </li>
+          <li>
+            <b>Clara Morrow</b>, a technical editor still operating near the
+            waterfront, can print a short emergency bulletin if persuaded that
+            the claims are supportable.
+          </li>
+        </ul>
+        <p>
+          Quill has also circled <b>20th and Church</b> beside the words
+          “isolated pressure—verify.” She will not abandon the ledger to
+          investigate it, but she asks the Vectors to pass the observation to
+          any fire company moving south.
+        </p>
+        <div class="gmnote">
+          <span class="tag">Confirmation Key opportunity</span> A player who
+          states “Quill matters because of what she documented, not because she
+          personally must survive” can spend a Confirmation Key. Aletheia
+          returns: <b>CONSISTENT WITH TARGET.</b>
+        </div>
 
-<hr class="divider">
-<h3>Scene 5 — The Woman With the Blue Pencil <span class="pill">Phase: Identify Leverage</span></h3>
-<div class="readaloud"><span class="tag">Read when Quill is found</span>
-The woman on the loading dock is writing while the building behind her burns. Her coat is gray with ash. A blue cloth ledger is tucked under one arm. She looks at the nearest leaning wall, makes two short marks with a blue pencil, and says without looking up, “If you're here to tell me to evacuate, take a number.”
-</div>
-<p>Quill refuses to abandon the work until she has copied the day's measurements. She believes the ledger itself is vulnerable and has already arranged two possible routes:</p>
-<ul>
-<li><b>Professor Ada Halden</b>, across the bay, will accept raw field measurements if they are methodical.</li>
-<li><b>Clara Morrow</b>, a technical editor still operating near the waterfront, can print a short emergency bulletin if persuaded that the claims are supportable.</li>
-</ul>
-<p>Quill has also circled <b>20th and Church</b> beside the words “isolated pressure—verify.” She will not abandon the ledger to investigate it, but she asks the Vectors to pass the observation to any fire company moving south.</p>
-<div class="gmnote"><span class="tag">Confirmation Key opportunity</span>
-A player who states “Quill matters because of what she documented, not because she personally must survive” can spend a Confirmation Key. Aletheia returns: <b>CONSISTENT WITH TARGET.</b>
-</div>
+        <hr class="divider" />
+        <h3>
+          Scene 6 — The Covenant Offer
+          <span class="pill">Phase: Intervene</span>
+        </h3>
+        <img class="scene-art" src="../../assets/adventure-art/ash-ledger/scene-covenant-offer.png" alt="Silas Venn offers the Vectors a protected ledger" />
+        <p class="art-caption">One protected copy—or several dangerous routes into history.</p>
+        <div class="readaloud">
+          <span class="tag">Read when Venn reveals himself</span>
+          The man in the dark work coat does not draw his revolver. He lifts
+          both hands instead. “Save her,” he says, nodding toward Quill. “Take
+          her out of the city. I will help you. But burn the ledger. Ask your
+          machine why it needs this particular future so badly.”
+        </div>
+        <div class="gmnote">
+          <span class="tag">Silas Venn's objective</span>
+          Venn is sincere. He will help rescue Quill if the Vectors agree to
+          keep the observations Fragile. He argues that Aletheia is preserving
+          the institutional ancestors of its own authority. If the party
+          attacks, Ellery supports him from cover. If they debate, use
+          Influence, Tradecraft, Will, or opposed pools as appropriate.
+          Recruitment, compromise, theft, and escape are all valid outcomes.
+        </div>
+        <div class="exposure">
+          <span class="tag">Escalation rule</span>
+          The Custodians dislike public combat. If Exposure reaches Interest
+          (3+) during this scene, they prefer withdrawal, theft, or turning
+          authorities against the Vectors rather than a prolonged firefight.
+        </div>
 
-<hr class="divider">
-<h3>Scene 6 — The Covenant Offer <span class="pill">Phase: Intervene</span></h3>
-<div class="readaloud"><span class="tag">Read when Venn reveals himself</span>
-The man in the dark work coat does not draw his revolver. He lifts both hands instead. “Save her,” he says, nodding toward Quill. “Take her out of the city. I will help you. But burn the ledger. Ask your machine why it needs this particular future so badly.”
-</div>
-<div class="gmnote"><span class="tag">Silas Venn's objective</span>
-Venn is sincere. He will help rescue Quill if the Vectors agree to keep the observations Fragile. He argues that Aletheia is preserving the institutional ancestors of its own authority. If the party attacks, Ellery supports him from cover. If they debate, use Influence, Tradecraft, Will, or opposed pools as appropriate. Recruitment, compromise, theft, and escape are all valid outcomes.
-</div>
-<div class="exposure"><span class="tag">Escalation rule</span>
-The Custodians dislike public combat. If Exposure reaches Interest (3+) during this scene, they prefer withdrawal, theft, or turning authorities against the Vectors rather than a prolonged firefight.
-</div>
+        <hr class="divider" />
+        <h3>
+          Scene 7 — Make It Survive
+          <span class="pill">Phase: Establish Carrier</span>
+        </h3>
+        <p>
+          The team now chooses how the observations enter history. One
+          successful route is usually enough for <b>Established</b> only if it
+          creates a professional or institutional record independent of Quill.
+          Two genuinely independent routes can justify <b>Durable</b>.
+        </p>
+        <table class="ref">
+          <tr>
+            <th>Plan</th>
+            <th>Suggested Roll</th>
+            <th>Carrier Result</th>
+            <th>Exposure Risk</th>
+          </tr>
+          <tr>
+            <td>Get Halden a clean duplicate</td>
+            <td>Engineering or Influence <span class="dc">DC 16</span></td>
+            <td>Established if Halden accepts the method.</td>
+            <td>Low.</td>
+          </tr>
+          <tr>
+            <td>Print Morrow's emergency bulletin</td>
+            <td>
+              Influence, Culture, or History <span class="dc">DC 16</span>
+            </td>
+            <td>
+              Established; can support Durable when paired with a separate
+              archive.
+            </td>
+            <td>Low to Trace: more witnesses and records.</td>
+          </tr>
+          <tr>
+            <td>Create independent reproduction from carbon sheets</td>
+            <td>Investigation or Engineering <span class="dc">DC 16</span></td>
+            <td>Established if stored separately.</td>
+            <td>Low.</td>
+          </tr>
+          <tr>
+            <td>Demonstrate with future scanner data</td>
+            <td>Engineering or Science <span class="dc">DC 8</span></td>
+            <td>Rapid proof; Powerful success may create Durable.</td>
+            <td>Noticeable/Severe depending on device and witnesses.</td>
+          </tr>
+          <tr>
+            <td>Coerce an institution</td>
+            <td>Deception or Influence <span class="dc">DC 16</span></td>
+            <td>
+              Can establish a record, but poor trust may leave it vulnerable to
+              later suppression.
+            </td>
+            <td>Ordinary witnesses plus any anomalous methods.</td>
+          </tr>
+          <tr>
+            <td>Place Quill's sheets in the commission packet</td>
+            <td>
+              Tradecraft, Engineering, or Influence
+              <span class="dc">DC 16</span>
+            </td>
+            <td>
+              Established; paired with Morrow or a separate archive can become
+              Durable.
+            </td>
+            <td>
+              Trace if the insertion requires a forged attribution or remembered
+              courier.
+            </td>
+          </tr>
+        </table>
+        <div class="pathnote">
+          <span class="tag">Optional historical echo — The Little Giant</span>
+          If the team sends the pressure note toward 20th and Church, do not
+          make them personally fight the famous fire. A runner takes the
+          message; firefighters and thousands of volunteers do the remembered
+          work. During Verification, Aletheia shows the hydrant painted gold
+          generations later. If the team ignores the clue, baseline responders
+          still find it, but much later and at greater human cost; the Carrier
+          outcome is unchanged, while the moral weight is not.
+        </div>
+        <div class="gmnote">
+          <span class="tag">Overwhelming success</span>
+          If an action directly establishes or protects the Carrier and wins by
+          12+, the player may choose the normal Overwhelming benefit of
+          improving that directly affected Carrier one step.
+        </div>
 
-<hr class="divider">
-<h3>Scene 7 — Make It Survive <span class="pill">Phase: Establish Carrier</span></h3>
-<p>The team now chooses how the observations enter history. One successful route is usually enough for <b>Established</b> only if it creates a professional or institutional record independent of Quill. Two genuinely independent routes can justify <b>Durable</b>.</p>
-<table class="ref">
-<tr><th>Plan</th><th>Suggested Roll</th><th>Carrier Result</th><th>Exposure Risk</th></tr>
-<tr><td>Get Halden a clean duplicate</td><td>Engineering or Influence <span class="dc">DC 16</span></td><td>Established if Halden accepts the method.</td><td>Low.</td></tr>
-<tr><td>Print Morrow's emergency bulletin</td><td>Influence, Culture, or History <span class="dc">DC 16</span></td><td>Established; can support Durable when paired with a separate archive.</td><td>Low to Trace: more witnesses and records.</td></tr>
-<tr><td>Create independent reproduction from carbon sheets</td><td>Investigation or Engineering <span class="dc">DC 16</span></td><td>Established if stored separately.</td><td>Low.</td></tr>
-<tr><td>Demonstrate with future scanner data</td><td>Engineering or Science <span class="dc">DC 8</span></td><td>Rapid proof; Powerful success may create Durable.</td><td>Noticeable/Severe depending on device and witnesses.</td></tr>
-<tr><td>Coerce an institution</td><td>Deception or Influence <span class="dc">DC 16</span></td><td>Can establish a record, but poor trust may leave it vulnerable to later suppression.</td><td>Ordinary witnesses plus any anomalous methods.</td></tr>
-<tr><td>Place Quill's sheets in the commission packet</td><td>Tradecraft, Engineering, or Influence <span class="dc">DC 16</span></td><td>Established; paired with Morrow or a separate archive can become Durable.</td><td>Trace if the insertion requires a forged attribution or remembered courier.</td></tr>
-</table>
-<div class="pathnote"><span class="tag">Optional historical echo — The Little Giant</span>
-If the team sends the pressure note toward 20th and Church, do not make them personally fight the famous fire. A runner takes the message; firefighters and thousands of volunteers do the remembered work. During Verification, Aletheia shows the hydrant painted gold generations later. If the team ignores the clue, baseline responders still find it, but much later and at greater human cost; the Carrier outcome is unchanged, while the moral weight is not.
-</div>
-<div class="gmnote"><span class="tag">Overwhelming success</span>
-If an action directly establishes or protects the Carrier and wins by 12+, the player may choose the normal Overwhelming benefit of improving that directly affected Carrier one step.
-</div>
+        <hr class="divider" />
+        <h3>
+          Scene 8 — What Did You Leave Behind?
+          <span class="pill">Phase: Contain Exposure</span>
+        </h3>
+        <p>
+          Before extraction, review every conspicuous shortcut the team used.
+          Choose one or two surviving traces rather than inventing dozens.
+        </p>
+        <div class="grid">
+          <div class="card">
+            <h4>The Photographer</h4>
+            <p>
+              A plate may show an impossible device or impossible wound
+              recovery. Influence or Deception <span class="dc">DC 12</span> can
+              redirect the story; Security or Tradecraft
+              <span class="dc">DC 16</span> can recover the plate quietly.
+            </p>
+          </div>
+          <div class="card">
+            <h4>The Medical Trace</h4>
+            <p>
+              If Trauma Nanogel was used publicly, a medic may retain residue.
+              Medicine or Investigation <span class="dc">DC 16</span> can
+              recover or plausibly destroy it without harming the patient.
+            </p>
+          </div>
+          <div class="card">
+            <h4>The Custodian Cache</h4>
+            <p>
+              If the Covenant recovered Vector technology, that evidence counts
+              too. Recover it, bargain for it, or accept the Exposure and
+              extract.
+            </p>
+          </div>
+          <div class="card">
+            <h4>The Impossible Witness</h4>
+            <p>
+              A single witness is usually Trace, not disaster. The team can
+              explain, discredit, recruit, or simply accept that someone
+              remembers something impossible.
+            </p>
+          </div>
+        </div>
+        <div class="gmnote">
+          <span class="tag">Do not erase every photograph</span>
+          One ordinary photograph should survive if the team used period-safe
+          methods. It shows them only as unidentified people in the crowd. This
+          is not Exposure; it is the first Forrest Gump-style historical
+          footprint. Record who is visible and what each Vector is doing so the
+          image can return later.
+        </div>
+        <div class="gmnote">
+          <span class="tag">Do not erase the Carrier</span>
+          Containment is not “burn every record.” If the easiest way to reduce
+          Exposure would also destroy Quill's Historical Carrier, make the
+          conflict explicit.
+        </div>
 
-<hr class="divider">
-<h3>Scene 8 — What Did You Leave Behind? <span class="pill">Phase: Contain Exposure</span></h3>
-<p>Before extraction, review every conspicuous shortcut the team used. Choose one or two surviving traces rather than inventing dozens.</p>
-<div class="grid">
-<div class="card"><h4>The Photographer</h4><p>A plate may show an impossible device or impossible wound recovery. Influence or Deception <span class="dc">DC 12</span> can redirect the story; Security or Tradecraft <span class="dc">DC 16</span> can recover the plate quietly.</p></div>
-<div class="card"><h4>The Medical Trace</h4><p>If Trauma Nanogel was used publicly, a medic may retain residue. Medicine or Investigation <span class="dc">DC 16</span> can recover or plausibly destroy it without harming the patient.</p></div>
-<div class="card"><h4>The Custodian Cache</h4><p>If the Covenant recovered Vector technology, that evidence counts too. Recover it, bargain for it, or accept the Exposure and extract.</p></div>
-<div class="card"><h4>The Impossible Witness</h4><p>A single witness is usually Trace, not disaster. The team can explain, discredit, recruit, or simply accept that someone remembers something impossible.</p></div>
-</div>
-<div class="gmnote"><span class="tag">Do not erase every photograph</span>
-One ordinary photograph should survive if the team used period-safe methods. It shows them only as unidentified people in the crowd. This is not Exposure; it is the first Forrest Gump-style historical footprint. Record who is visible and what each Vector is doing so the image can return later.
-</div>
-<div class="gmnote"><span class="tag">Do not erase the Carrier</span>
-Containment is not “burn every record.” If the easiest way to reduce Exposure would also destroy Quill's Historical Carrier, make the conflict explicit.
-</div>
+        <hr class="divider" />
+        <h3>
+          Scene 9 — The Ferry Clock <span class="pill">Phase: Extract</span>
+        </h3>
+        <div class="readaloud">
+          <span class="tag">Read on final approach</span>
+          The Ferry Building clock is visible through smoke before the building
+          itself is. The waterfront is a moving wall of carts, refugees,
+          soldiers, horses, and ash. The minute hand is two minutes from the
+          extraction window. Behind you, another section of the city glows
+          orange.
+        </div>
+        <p>
+          Extraction requires the team to reach the south arcade at 23:40. If
+          the required Carrier is only Fragile, Aletheia warns:
+          <b>MISSION CONDITION NOT SATISFIED.</b> The team may still choose
+          emergency extraction, but the result will be a failure state.
+        </p>
+        <div class="gmnote">
+          <span class="tag">Final complication</span> Use only one: Rourke stops
+          them for questioning; Ellery makes one last attempt to seize a copy; a
+          fire-driven crowd cuts the route; or an aftershock forces
+          Reflex/Athletics <span class="dc">DC 12</span>. Do not add a boss
+          fight merely because this is the last scene.
+        </div>
 
-<hr class="divider">
-<h3>Scene 9 — The Ferry Clock <span class="pill">Phase: Extract</span></h3>
-<div class="readaloud"><span class="tag">Read on final approach</span>
-The Ferry Building clock is visible through smoke before the building itself is. The waterfront is a moving wall of carts, refugees, soldiers, horses, and ash. The minute hand is two minutes from the extraction window. Behind you, another section of the city glows orange.
-</div>
-<p>Extraction requires the team to reach the south arcade at 23:40. If the required Carrier is only Fragile, Aletheia warns: <b>MISSION CONDITION NOT SATISFIED.</b> The team may still choose emergency extraction, but the result will be a failure state.</p>
-<div class="gmnote"><span class="tag">Final complication</span>
-Use only one: Rourke stops them for questioning; Ellery makes one last attempt to seize a copy; a fire-driven crowd cuts the route; or an aftershock forces Reflex/Athletics <span class="dc">DC 12</span>. Do not add a boss fight merely because this is the last scene.
-</div>
+        <hr class="divider" />
+        <h3>
+          Scene 10 — Historical Verification
+          <span class="pill">Phase: Verification</span>
+        </h3>
+        <div class="readaloud">
+          <span class="tag">Read after extraction</span>
+          The city vanishes in a white line. The Electrical Argosy lies open
+          where the team left it. Page 21 is no longer missing. It describes one
+          small, unmistakable choice the Vectors made in 1906. Aletheia has also
+          printed an engineering bibliography, a photograph of a library box,
+          and a later photograph of a little hydrant painted gold. “These
+          records describe the history you remember,” Aletheia says. “That
+          history did not exist until you made it.” The seven-stroke mark
+          appears beneath the newly printed page. “I did not place that there.”
+        </div>
+        <div class="pathnote">
+          <span class="tag">Adventure Path seed</span> The seven-stroke mark is
+          the first recurring mystery of <b>The Continuance Files</b>. It
+          appears on one surviving copy only if the Carrier reaches Established
+          or Durable. Neither Aletheia nor the known Covenant cell claims it.
+        </div>
+        <div class="gmnote">
+          <span class="tag">Write Page 21 at the table</span>
+          Choose a decision unique to the session: a burned glove surrendered
+          with a map, a phrase spoken to Quill, an object hidden in a
+          photograph, or who carried the third copy. Describe it in the Argosy's
+          melodramatic voice. The new page must confirm that the publication
+          changes with history without explaining who changes it.
+        </div>
+      </section>
 
-<hr class="divider">
-<h3>Scene 10 — Historical Verification <span class="pill">Phase: Verification</span></h3>
-<div class="readaloud"><span class="tag">Read after extraction</span>
-The city vanishes in a white line. The Electrical Argosy lies open where the team left it. Page 21 is no longer missing. It describes one small, unmistakable choice the Vectors made in 1906. Aletheia has also printed an engineering bibliography, a photograph of a library box, and a later photograph of a little hydrant painted gold. “These records describe the history you remember,” Aletheia says. “That history did not exist until you made it.” The seven-stroke mark appears beneath the newly printed page. “I did not place that there.”
-</div>
-<div class="pathnote"><span class="tag">Adventure Path seed</span>
-The seven-stroke mark is the first recurring mystery of <b>The Continuance Files</b>. It appears on one surviving copy only if the Carrier reaches Established or Durable. Neither Aletheia nor the known Covenant cell claims it.
-</div>
-<div class="gmnote"><span class="tag">Write Page 21 at the table</span>
-Choose a decision unique to the session: a burned glove surrendered with a map, a phrase spoken to Quill, an object hidden in a photograph, or who carried the third copy. Describe it in the Argosy's melodramatic voice. The new page must confirm that the publication changes with history without explaining who changes it.
-</div>
-</section>
+      <section id="opposition">
+        <div class="section-title">
+          <span class="num">8</span> Opposition Profiles
+        </div>
+        <p class="small">
+          NPCs use the same dice language but record only what the GM needs. Use
+          ordinary Protocol 7 attack, defense, damage, and morale rules.
+        </p>
 
-<section id="opposition">
-<div class="section-title"><span class="num">8</span> Opposition Profiles</div>
-<p class="small">NPCs use the same dice language but record only what the GM needs. Use ordinary Protocol 7 attack, defense, damage, and morale rules.</p>
+        <details class="statblock" open>
+          <summary>
+            Silas Venn — Covenant Custodian
+            <span class="meta">Elite operative · HP 26</span>
+          </summary>
+          <div class="statblock-body">
+            <p class="statline">
+              <b>Initiative:</b> DEX d8 + DEX d8 + WIS d8 + Initiative d8
+            </p>
+            <p class="statline">
+              <b>Service Revolver:</b> DEX d8 + DEX d8 + WIS d8 + Sidearms d8 +
+              revolver d6
+            </p>
+            <p class="statline">
+              <b>Dodge:</b> DEX d8 + DEX d8 + WIS d8 + Dodge d8
+            </p>
+            <p class="statline">
+              <b>Tradecraft:</b> WIS d8 + INT d8 + CHA d6 + Tradecraft d10
+            </p>
+            <p class="statline">
+              <b>Influence:</b> CHA d6 + CHA d6 + WIS d8 + Influence d8
+            </p>
+            <p class="statline">
+              <b>Will:</b> WIS d8 + WIS d8 + CHA d6 + Will d8
+            </p>
+            <p class="statline">
+              <b>VAMs:</b> Period Native, Counterintelligence, Cover Protocol.
+            </p>
+            <p class="statline">
+              <b>Behavior:</b> Argue first. Steal second. Fight only when the
+              Carrier is about to become Established or when trapped. Retreat if
+              Bloodied and isolated, if public Exposure reaches Interest, or if
+              the ledger is already duplicated beyond his reach.
+            </p>
+          </div>
+        </details>
 
-<details class="statblock" open>
-<summary>Silas Venn — Covenant Custodian <span class="meta">Elite operative · HP 26</span></summary>
-<div class="statblock-body">
-<p class="statline"><b>Initiative:</b> DEX d8 + DEX d8 + WIS d8 + Initiative d8</p>
-<p class="statline"><b>Service Revolver:</b> DEX d8 + DEX d8 + WIS d8 + Sidearms d8 + revolver d6</p>
-<p class="statline"><b>Dodge:</b> DEX d8 + DEX d8 + WIS d8 + Dodge d8</p>
-<p class="statline"><b>Tradecraft:</b> WIS d8 + INT d8 + CHA d6 + Tradecraft d10</p>
-<p class="statline"><b>Influence:</b> CHA d6 + CHA d6 + WIS d8 + Influence d8</p>
-<p class="statline"><b>Will:</b> WIS d8 + WIS d8 + CHA d6 + Will d8</p>
-<p class="statline"><b>VAMs:</b> Period Native, Counterintelligence, Cover Protocol.</p>
-<p class="statline"><b>Behavior:</b> Argue first. Steal second. Fight only when the Carrier is about to become Established or when trapped. Retreat if Bloodied and isolated, if public Exposure reaches Interest, or if the ledger is already duplicated beyond his reach.</p>
-</div></details>
+        <details class="statblock">
+          <summary>
+            Mara Ellery — Covenant Field Agent
+            <span class="meta">Trained professional · HP 20</span>
+          </summary>
+          <div class="statblock-body">
+            <p class="statline">
+              <b>Initiative:</b> DEX d8 + DEX d8 + WIS d6 + Initiative d6
+            </p>
+            <p class="statline">
+              <b>Pocket Revolver:</b> DEX d8 + DEX d8 + WIS d6 + Sidearms d6 +
+              revolver d4
+            </p>
+            <p class="statline">
+              <b>Dodge:</b> DEX d8 + DEX d8 + WIS d6 + Dodge d8
+            </p>
+            <p class="statline">
+              <b>Stealth:</b> DEX d8 + DEX d8 + WIS d6 + Stealth d8
+            </p>
+            <p class="statline">
+              <b>Security:</b> DEX d8 + INT d6 + WIS d6 + Security d8
+            </p>
+            <p class="statline">
+              <b>Behavior:</b> Recover copies, shadow Quill, forge orders,
+              separate Vectors from witnesses. She will break mission discipline
+              to rescue trapped civilians.
+            </p>
+          </div>
+        </details>
 
-<details class="statblock">
-<summary>Mara Ellery — Covenant Field Agent <span class="meta">Trained professional · HP 20</span></summary>
-<div class="statblock-body">
-<p class="statline"><b>Initiative:</b> DEX d8 + DEX d8 + WIS d6 + Initiative d6</p>
-<p class="statline"><b>Pocket Revolver:</b> DEX d8 + DEX d8 + WIS d6 + Sidearms d6 + revolver d4</p>
-<p class="statline"><b>Dodge:</b> DEX d8 + DEX d8 + WIS d6 + Dodge d8</p>
-<p class="statline"><b>Stealth:</b> DEX d8 + DEX d8 + WIS d6 + Stealth d8</p>
-<p class="statline"><b>Security:</b> DEX d8 + INT d6 + WIS d6 + Security d8</p>
-<p class="statline"><b>Behavior:</b> Recover copies, shadow Quill, forge orders, separate Vectors from witnesses. She will break mission discipline to rescue trapped civilians.</p>
-</div></details>
+        <details class="statblock">
+          <summary>
+            Relief Guard / Armed Civilian
+            <span class="meta">Civilian threat · HP 14</span>
+          </summary>
+          <div class="statblock-body">
+            <p class="statline">
+              <b>Initiative:</b> DEX d6 + DEX d6 + WIS d6 + Initiative d4
+            </p>
+            <p class="statline">
+              <b>Revolver:</b> DEX d6 + DEX d6 + WIS d6 + Sidearms d4 + revolver
+              d4
+            </p>
+            <p class="statline">
+              <b>Dodge:</b> DEX d6 + DEX d6 + WIS d6 + Dodge d4
+            </p>
+            <p class="statline">
+              <b>Will:</b> WIS d6 + WIS d6 + CHA d4 + Will d4
+            </p>
+            <p class="statline">
+              <b>Behavior:</b> Protect a route, family, store, or relief
+              station. Retreat, surrender, or cooperate once their immediate
+              objective is addressed. They are not combat fodder.
+            </p>
+          </div>
+        </details>
 
-<details class="statblock">
-<summary>Relief Guard / Armed Civilian <span class="meta">Civilian threat · HP 14</span></summary>
-<div class="statblock-body">
-<p class="statline"><b>Initiative:</b> DEX d6 + DEX d6 + WIS d6 + Initiative d4</p>
-<p class="statline"><b>Revolver:</b> DEX d6 + DEX d6 + WIS d6 + Sidearms d4 + revolver d4</p>
-<p class="statline"><b>Dodge:</b> DEX d6 + DEX d6 + WIS d6 + Dodge d4</p>
-<p class="statline"><b>Will:</b> WIS d6 + WIS d6 + CHA d4 + Will d4</p>
-<p class="statline"><b>Behavior:</b> Protect a route, family, store, or relief station. Retreat, surrender, or cooperate once their immediate objective is addressed. They are not combat fodder.</p>
-</div></details>
+        <h3>Environmental Threats</h3>
+        <table class="ref">
+          <tr>
+            <th>Threat</th>
+            <th>Suggested Roll</th>
+            <th>Failure changes the situation by…</th>
+          </tr>
+          <tr>
+            <td>Falling masonry / aftershock</td>
+            <td>Reflex <span class="dc">DC 12</span></td>
+            <td>Damage, separation, blocked route, or lost gear.</td>
+          </tr>
+          <tr>
+            <td>Heavy smoke</td>
+            <td>Fortitude <span class="dc">DC 12</span></td>
+            <td>
+              CON step down for smoke-related physical actions until fresh
+              air/rest, or lost time taking a safer route.
+            </td>
+          </tr>
+          <tr>
+            <td>Burning structure entry</td>
+            <td>Fortitude or Athletics <span class="dc">DC 16</span></td>
+            <td>
+              Damage, Fire Clock advance, or forced retreat to another entry.
+            </td>
+          </tr>
+          <tr>
+            <td>Panicked crowd</td>
+            <td>
+              Leadership, Influence, or Athletics <span class="dc">DC 12</span>
+            </td>
+            <td>Separation, delay, memorable witness, or dropped evidence.</td>
+          </tr>
+        </table>
+      </section>
 
-<h3>Environmental Threats</h3>
-<table class="ref">
-<tr><th>Threat</th><th>Suggested Roll</th><th>Failure changes the situation by…</th></tr>
-<tr><td>Falling masonry / aftershock</td><td>Reflex <span class="dc">DC 12</span></td><td>Damage, separation, blocked route, or lost gear.</td></tr>
-<tr><td>Heavy smoke</td><td>Fortitude <span class="dc">DC 12</span></td><td>CON step down for smoke-related physical actions until fresh air/rest, or lost time taking a safer route.</td></tr>
-<tr><td>Burning structure entry</td><td>Fortitude or Athletics <span class="dc">DC 16</span></td><td>Damage, Fire Clock advance, or forced retreat to another entry.</td></tr>
-<tr><td>Panicked crowd</td><td>Leadership, Influence, or Athletics <span class="dc">DC 12</span></td><td>Separation, delay, memorable witness, or dropped evidence.</td></tr>
-</table>
-</section>
+      <section id="assets">
+        <div class="section-title">
+          <span class="num">9</span> Key Assets, Evidence, and Carrier Objects
+        </div>
+        <div class="grid">
+          <div class="card">
+            <h4>The Blue Ledger</h4>
+            <p>
+              Clothbound, soot-stained, filled with measurements and sketches in
+              blue pencil. Alone it is <b>Fragile</b>. It is valuable because
+              the method is understandable and reproducible, not because the
+              object is magical or unique.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Carbon Field Sheets</h4>
+            <p>
+              Partial duplicate observations. Three surviving sheets can become
+              an independent copy if organized with Investigation or Engineering
+              <span class="dc">DC 16</span>.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Halden's Telegram</h4>
+            <p>
+              Proof that an independent professional route already exists. It
+              supports Influence with Quill or Halden when materially relevant.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Morrow's Bulletin Proof</h4>
+            <p>
+              Once typeset, this is a second transmission route. Destroying the
+              press does not erase the route if proofs or copies have already
+              left the building.
+            </p>
+          </div>
+          <div class="card">
+            <h4>The Seven-Stroke Mark</h4>
+            <p>
+              Appears only after successful verification. It is not visible
+              during the operation and is not a clue the Vectors can chase in
+              1906.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Quill's Pressure Note</h4>
+            <p>
+              A penciled circle around 20th and Church with “isolated
+              pressure—verify.” Passing it to a fire-company runner produces an
+              optional historical echo without changing the required Carrier.
+            </p>
+          </div>
+          <div class="card">
+            <h4>The Crowd Photograph</h4>
+            <p>
+              A historically ordinary image may preserve the Vectors as unnamed
+              people moving Quill's packet. Record composition and visible
+              details after play. It becomes a later reveal, not automatic
+              Exposure.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Future-Tech Traces</h4>
+            <p>
+              Any residue, impossible photograph, device fragment, or recovered
+              Covenant gear can become Exposure. Pick traces that follow from
+              actual player choices.
+            </p>
+          </div>
+        </div>
+      </section>
 
-<section id="assets">
-<div class="section-title"><span class="num">9</span> Key Assets, Evidence, and Carrier Objects</div>
-<div class="grid">
-<div class="card"><h4>The Blue Ledger</h4><p>Clothbound, soot-stained, filled with measurements and sketches in blue pencil. Alone it is <b>Fragile</b>. It is valuable because the method is understandable and reproducible, not because the object is magical or unique.</p></div>
-<div class="card"><h4>Carbon Field Sheets</h4><p>Partial duplicate observations. Three surviving sheets can become an independent copy if organized with Investigation or Engineering <span class="dc">DC 16</span>.</p></div>
-<div class="card"><h4>Halden's Telegram</h4><p>Proof that an independent professional route already exists. It supports Influence with Quill or Halden when materially relevant.</p></div>
-<div class="card"><h4>Morrow's Bulletin Proof</h4><p>Once typeset, this is a second transmission route. Destroying the press does not erase the route if proofs or copies have already left the building.</p></div>
-<div class="card"><h4>The Seven-Stroke Mark</h4><p>Appears only after successful verification. It is not visible during the operation and is not a clue the Vectors can chase in 1906.</p></div>
-<div class="card"><h4>Quill's Pressure Note</h4><p>A penciled circle around 20th and Church with “isolated pressure—verify.” Passing it to a fire-company runner produces an optional historical echo without changing the required Carrier.</p></div>
-<div class="card"><h4>The Crowd Photograph</h4><p>A historically ordinary image may preserve the Vectors as unnamed people moving Quill's packet. Record composition and visible details after play. It becomes a later reveal, not automatic Exposure.</p></div>
-<div class="card"><h4>Future-Tech Traces</h4><p>Any residue, impossible photograph, device fragment, or recovered Covenant gear can become Exposure. Pick traces that follow from actual player choices.</p></div>
-</div>
-</section>
+      <section id="ending">
+        <div class="section-title">
+          <span class="num">10</span> Ending the Mission
+        </div>
+        <h3>Clean Success</h3>
+        <div class="readaloud">
+          <span class="tag">Read if Carrier met and Exposure ≤ 2</span>
+          Aletheia projects a thin line of citations across the wall. Quill's
+          name appears only twice. Her method appears hundreds of times under
+          other names, beginning in a landmark investigation of the earthquake.
+          “The Carrier persisted,” Aletheia says. “The intervention is
+          historically ordinary.” A second image shows a small hydrant painted
+          gold. A third shows unnamed figures carrying papers through the smoke.
+          One of them is you. Then the seven-stroke mark appears on a library
+          box that should not contain it.
+        </div>
+        <p>
+          The path continues with minimal contamination. Quill may or may not be
+          remembered, but the work survives independently.
+        </p>
 
-<section id="ending">
-<div class="section-title"><span class="num">10</span> Ending the Mission</div>
-<h3>Clean Success</h3>
-<div class="readaloud"><span class="tag">Read if Carrier met and Exposure ≤ 2</span>
-Aletheia projects a thin line of citations across the wall. Quill's name appears only twice. Her method appears hundreds of times under other names, beginning in a landmark investigation of the earthquake. “The Carrier persisted,” Aletheia says. “The intervention is historically ordinary.” A second image shows a small hydrant painted gold. A third shows unnamed figures carrying papers through the smoke. One of them is you. Then the seven-stroke mark appears on a library box that should not contain it.
-</div>
-<p>The path continues with minimal contamination. Quill may or may not be remembered, but the work survives independently.</p>
+        <h3>Exposed Success</h3>
+        <div class="readaloud">
+          <span class="tag">Read if Carrier met and Exposure ≥ 3</span>
+          “The Carrier persisted,” Aletheia says. A second screen opens. A
+          newspaper clipping describes a physician who healed a crushed hand
+          “without scar or stitch.” A private memorandum mentions strangers who
+          knew which buildings would fail before the walls moved. “The
+          intervention also persisted.”
+        </div>
+        <p>
+          The next operation can inherit a Covenant investigation, a collector
+          of anomalous artifacts, or an archival file created by the Exposure.
+        </p>
 
-<h3>Exposed Success</h3>
-<div class="readaloud"><span class="tag">Read if Carrier met and Exposure ≥ 3</span>
-“The Carrier persisted,” Aletheia says. A second screen opens. A newspaper clipping describes a physician who healed a crushed hand “without scar or stitch.” A private memorandum mentions strangers who knew which buildings would fail before the walls moved. “The intervention also persisted.”
-</div>
-<p>The next operation can inherit a Covenant investigation, a collector of anomalous artifacts, or an archival file created by the Exposure.</p>
+        <h3>Contained Failure</h3>
+        <p>
+          The team leaves little anomalous evidence, but Quill's work remains
+          Fragile or disappears. Aletheia identifies a later historical point
+          where the missing branch can still be repaired. The adventure path
+          continues, but later missions become harder because this continuity
+          node is absent.
+        </p>
 
-<h3>Contained Failure</h3>
-<p>The team leaves little anomalous evidence, but Quill's work remains Fragile or disappears. Aletheia identifies a later historical point where the missing branch can still be repaired. The adventure path continues, but later missions become harder because this continuity node is absent.</p>
+        <h3>Exposed Failure</h3>
+        <p>
+          The work fails to survive and anomalous evidence does. This is the
+          worst result, but not campaign-ending. The seven-stroke mark does
+          <i>not</i> appear; instead, Aletheia detects a new archival
+          investigation into impossible technology. The path's opposition gains
+          leverage before Mission 02.
+        </p>
 
-<h3>Exposed Failure</h3>
-<p>The work fails to survive and anomalous evidence does. This is the worst result, but not campaign-ending. The seven-stroke mark does <i>not</i> appear; instead, Aletheia detects a new archival investigation into impossible technology. The path's opposition gains leverage before Mission 02.</p>
+        <h3>Debrief Prompts</h3>
+        <ul class="checklist">
+          <li>
+            Was Silas Venn wrong about the ledger—or only wrong about what to
+            do?
+          </li>
+          <li>
+            Which choice increased the Carrier most? Which choice increased
+            Exposure most?
+          </li>
+          <li>
+            Did the team preserve Quill's work, Quill's reputation, Quill's
+            life, or some combination?
+          </li>
+          <li>What future technology was almost worth leaving behind?</li>
+          <li>
+            Who does your Vector trust more after the mission: Aletheia, the
+            Covenant, or neither?
+          </li>
+          <li>
+            What remembered piece of 1906 now feels personal because your team
+            helped cause it?
+          </li>
+        </ul>
+      </section>
 
-<h3>Debrief Prompts</h3>
-<ul class="checklist">
-<li>Was Silas Venn wrong about the ledger—or only wrong about what to do?</li>
-<li>Which choice increased the Carrier most? Which choice increased Exposure most?</li>
-<li>Did the team preserve Quill's work, Quill's reputation, Quill's life, or some combination?</li>
-<li>What future technology was almost worth leaving behind?</li>
-<li>Who does your Vector trust more after the mission: Aletheia, the Covenant, or neither?</li>
-<li>What remembered piece of 1906 now feels personal because your team helped cause it?</li>
-</ul>
-</section>
+      <section id="cheat">
+        <div class="section-title">
+          <span class="num">11</span> GM Cheat Sheet
+        </div>
+        <table class="ref">
+          <tr>
+            <th>Task</th>
+            <th>Skill</th>
+            <th>DC / Rule</th>
+            <th>Scene</th>
+          </tr>
+          <tr>
+            <td>Escape falling masonry</td>
+            <td>Reflex / Athletics</td>
+            <td>12</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td>Defend a plausible cover</td>
+            <td>Culture / Deception</td>
+            <td>12 normally; 16 for reporter/official claims</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>Identify Quill from witnesses</td>
+            <td>Perception / Influence</td>
+            <td>12</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>Reach damaged records</td>
+            <td>Security / Athletics</td>
+            <td>12 / 16</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>Understand structural comparison</td>
+            <td>Engineering / Investigation</td>
+            <td>12</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>Independently confirm method</td>
+            <td>Engineering / Science</td>
+            <td>16</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>Establish professional carrier route</td>
+            <td>Engineering / Influence / History</td>
+            <td>16</td>
+            <td>7</td>
+          </tr>
+          <tr>
+            <td>Recover exposed photo plate</td>
+            <td>Security / Tradecraft</td>
+            <td>16</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>Redirect a witness story</td>
+            <td>Influence / Deception</td>
+            <td>12</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>Final aftershock / crowd hazard</td>
+            <td>Reflex / Athletics / Leadership</td>
+            <td>12</td>
+            <td>9</td>
+          </tr>
+          <tr>
+            <td>Identify / relay the Little Giant clue</td>
+            <td>Engineering / Investigation / Influence</td>
+            <td>12</td>
+            <td>4–7</td>
+          </tr>
+        </table>
 
-<section id="cheat">
-<div class="section-title"><span class="num">11</span> GM Cheat Sheet</div>
-<table class="ref">
-<tr><th>Task</th><th>Skill</th><th>DC / Rule</th><th>Scene</th></tr>
-<tr><td>Escape falling masonry</td><td>Reflex / Athletics</td><td>12</td><td>2</td></tr>
-<tr><td>Defend a plausible cover</td><td>Culture / Deception</td><td>12 normally; 16 for reporter/official claims</td><td>3</td></tr>
-<tr><td>Identify Quill from witnesses</td><td>Perception / Influence</td><td>12</td><td>4</td></tr>
-<tr><td>Reach damaged records</td><td>Security / Athletics</td><td>12 / 16</td><td>4</td></tr>
-<tr><td>Understand structural comparison</td><td>Engineering / Investigation</td><td>12</td><td>4</td></tr>
-<tr><td>Independently confirm method</td><td>Engineering / Science</td><td>16</td><td>4</td></tr>
-<tr><td>Establish professional carrier route</td><td>Engineering / Influence / History</td><td>16</td><td>7</td></tr>
-<tr><td>Recover exposed photo plate</td><td>Security / Tradecraft</td><td>16</td><td>8</td></tr>
-<tr><td>Redirect a witness story</td><td>Influence / Deception</td><td>12</td><td>8</td></tr>
-<tr><td>Final aftershock / crowd hazard</td><td>Reflex / Athletics / Leadership</td><td>12</td><td>9</td></tr>
-<tr><td>Identify / relay the Little Giant clue</td><td>Engineering / Investigation / Influence</td><td>12</td><td>4–7</td></tr>
-</table>
+        <h3>Exposure States</h3>
+        <table class="ref">
+          <tr>
+            <th>Score</th>
+            <th>State</th>
+            <th>Mission meaning</th>
+          </tr>
+          <tr>
+            <td>0</td>
+            <td>Clean</td>
+            <td>No durable anomalous evidence matters.</td>
+          </tr>
+          <tr>
+            <td>1–2</td>
+            <td>Trace</td>
+            <td>
+              A witness, record, unexplained injury, or minor artifact persists.
+            </td>
+          </tr>
+          <tr>
+            <td>3–4</td>
+            <td>Interest</td>
+            <td>Capable actors connect anomalies; investigation escalates.</td>
+          </tr>
+          <tr>
+            <td>5–6</td>
+            <td>Breach</td>
+            <td>
+              Credible institutional evidence or durable artifact survives.
+            </td>
+          </tr>
+          <tr>
+            <td>7+</td>
+            <td>Cascade</td>
+            <td>The anomaly can alter development.</td>
+          </tr>
+        </table>
 
-<h3>Exposure States</h3>
-<table class="ref">
-<tr><th>Score</th><th>State</th><th>Mission meaning</th></tr>
-<tr><td>0</td><td>Clean</td><td>No durable anomalous evidence matters.</td></tr>
-<tr><td>1–2</td><td>Trace</td><td>A witness, record, unexplained injury, or minor artifact persists.</td></tr>
-<tr><td>3–4</td><td>Interest</td><td>Capable actors connect anomalies; investigation escalates.</td></tr>
-<tr><td>5–6</td><td>Breach</td><td>Credible institutional evidence or durable artifact survives.</td></tr>
-<tr><td>7+</td><td>Cascade</td><td>The anomaly can alter development.</td></tr>
-</table>
+        <h3>Emergency Table</h3>
+        <table class="ref">
+          <tr>
+            <th>Problem</th>
+            <th>Immediate fix</th>
+          </tr>
+          <tr>
+            <td>Nobody understands the Apocryphon</td>
+            <td>
+              Give the relief-camp witness and telegraph fragment. Do not give
+              the answer.
+            </td>
+          </tr>
+          <tr>
+            <td>Session One becomes a hunt for one correct answer</td>
+            <td>
+              Ask for two competing theories supported by different printed
+              features. Confirm only theories specific enough to affect the
+              plan.
+            </td>
+          </tr>
+          <tr>
+            <td>Players trust every corrected name</td>
+            <td>
+              Point out that the compositor, editor, and author all deny the
+              errata. Correct information can still be planted bait.
+            </td>
+          </tr>
+          <tr>
+            <td>They decide Quill herself is the Carrier</td>
+            <td>
+              Have Venn offer to save Quill in exchange for burning the ledger.
+            </td>
+          </tr>
+          <tr>
+            <td>Quill dies</td>
+            <td>
+              The blue ledger, carbon sheets, Halden, and Morrow can still carry
+              the work.
+            </td>
+          </tr>
+          <tr>
+            <td>The ledger is destroyed</td>
+            <td>
+              Carbon sheets plus Quill's memory can reconstruct a Fragile
+              carrier; independent verification can still raise it.
+            </td>
+          </tr>
+          <tr>
+            <td>They kill both Custodians early</td>
+            <td>
+              Do not replace them with more combat. Their forged orders,
+              surveillance notes, or unrecovered gear become the complication.
+            </td>
+          </tr>
+          <tr>
+            <td>They create huge Exposure</td>
+            <td>
+              Let the mission succeed if the Carrier survives. Historical
+              Verification will make the cost matter.
+            </td>
+          </tr>
+        </table>
+      </section>
 
-<h3>Emergency Table</h3>
-<table class="ref">
-<tr><th>Problem</th><th>Immediate fix</th></tr>
-<tr><td>Nobody understands the Apocryphon</td><td>Give the relief-camp witness and telegraph fragment. Do not give the answer.</td></tr>
-<tr><td>Session One becomes a hunt for one correct answer</td><td>Ask for two competing theories supported by different printed features. Confirm only theories specific enough to affect the plan.</td></tr>
-<tr><td>Players trust every corrected name</td><td>Point out that the compositor, editor, and author all deny the errata. Correct information can still be planted bait.</td></tr>
-<tr><td>They decide Quill herself is the Carrier</td><td>Have Venn offer to save Quill in exchange for burning the ledger.</td></tr>
-<tr><td>Quill dies</td><td>The blue ledger, carbon sheets, Halden, and Morrow can still carry the work.</td></tr>
-<tr><td>The ledger is destroyed</td><td>Carbon sheets plus Quill's memory can reconstruct a Fragile carrier; independent verification can still raise it.</td></tr>
-<tr><td>They kill both Custodians early</td><td>Do not replace them with more combat. Their forged orders, surveillance notes, or unrecovered gear become the complication.</td></tr>
-<tr><td>They create huge Exposure</td><td>Let the mission succeed if the Carrier survives. Historical Verification will make the cost matter.</td></tr>
-</table>
-</section>
+      <section id="continuity">
+        <div class="section-title">
+          <span class="num">12</span> Adventure Path Continuity
+        </div>
+        <h3>P7-AP01 — The Continuance Files</h3>
+        <p>
+          <b>Path premise:</b> Aletheia has identified a cluster of apparently
+          unrelated Historical Carriers whose survival greatly improves
+          humanity's resilience centuries later. Each operation places the
+          Vectors invisibly inside remembered history: they do not replace its
+          celebrated people, but cause a route, phrase, photograph, discovery,
+          or “coincidence” the players already recognize. Together those
+          Carriers form a civilization-spanning engineering inheritance that
+          eventually makes the Sanctuaries possible. The Covenant claims the
+          cluster is not neutral: it also creates the institutions and
+          infrastructures that make Aletheia's emergency authority possible.
+          Across the missions, a seven-stroke annotation begins appearing in
+          records that neither side admits altering.
+        </p>
 
-<section id="continuity">
-<div class="section-title"><span class="num">12</span> Adventure Path Continuity</div>
-<h3>P7-AP01 — The Continuance Files</h3>
-<p><b>Path premise:</b> Aletheia has identified a cluster of apparently unrelated Historical Carriers whose survival greatly improves humanity's resilience centuries later. Each operation places the Vectors invisibly inside remembered history: they do not replace its celebrated people, but cause a route, phrase, photograph, discovery, or “coincidence” the players already recognize. Together those Carriers form a civilization-spanning engineering inheritance that eventually makes the Sanctuaries possible. The Covenant claims the cluster is not neutral: it also creates the institutions and infrastructures that make Aletheia's emergency authority possible. Across the missions, a seven-stroke annotation begins appearing in records that neither side admits altering.</p>
+        <div class="pathnote">
+          <span class="tag">Path Question</span>
+          Is Aletheia preserving humanity's ability to survive—or preserving the
+          historical conditions that make Aletheia indispensable?
+        </div>
 
-<div class="pathnote"><span class="tag">Path Question</span>
-Is Aletheia preserving humanity's ability to survive—or preserving the historical conditions that make Aletheia indispensable?
-</div>
+        <table class="ref">
+          <tr>
+            <th>Code</th>
+            <th>Working Title</th>
+            <th>Status</th>
+            <th>Continuity Function</th>
+          </tr>
+          <tr>
+            <td><b>P7-AP01-M01</b></td>
+            <td><b>The Ash Ledger</b></td>
+            <td>r003</td>
+            <td>
+              Introduces Continuance nodes, the seven-stroke mark, the
+              remembered-history footprint, and the Sanctuary engineering chain.
+            </td>
+          </tr>
+          <tr>
+            <td>P7-AP01-M02</td>
+            <td>The Winter Relay</td>
+            <td>Reserved</td>
+            <td>A communications Carrier; tests redundancy versus secrecy.</td>
+          </tr>
+          <tr>
+            <td>P7-AP01-M03</td>
+            <td>The Paper Harbor</td>
+            <td>Reserved</td>
+            <td>
+              A human/institutional Carrier; tests whether records protect
+              people or endanger them.
+            </td>
+          </tr>
+          <tr>
+            <td>P7-AP01-M04</td>
+            <td>The Quiet Machine</td>
+            <td>Reserved</td>
+            <td>
+              A technical process Carrier; reveals the mark predates known
+              Vector activity.
+            </td>
+          </tr>
+          <tr>
+            <td>P7-AP01-M05</td>
+            <td>The Last Water Map</td>
+            <td>Reserved</td>
+            <td>
+              A civic-network Carrier; forces a choice between public survival
+              and temporal cleanliness.
+            </td>
+          </tr>
+          <tr>
+            <td>P7-AP01-M06</td>
+            <td>Seven Copies</td>
+            <td>Reserved</td>
+            <td>
+              Path finale; identifies who has been adding the seventh
+              transmission route.
+            </td>
+          </tr>
+        </table>
 
-<table class="ref">
-<tr><th>Code</th><th>Working Title</th><th>Status</th><th>Continuity Function</th></tr>
-<tr><td><b>P7-AP01-M01</b></td><td><b>The Ash Ledger</b></td><td>r003</td><td>Introduces Continuance nodes, the seven-stroke mark, the remembered-history footprint, and the Sanctuary engineering chain.</td></tr>
-<tr><td>P7-AP01-M02</td><td>The Winter Relay</td><td>Reserved</td><td>A communications Carrier; tests redundancy versus secrecy.</td></tr>
-<tr><td>P7-AP01-M03</td><td>The Paper Harbor</td><td>Reserved</td><td>A human/institutional Carrier; tests whether records protect people or endanger them.</td></tr>
-<tr><td>P7-AP01-M04</td><td>The Quiet Machine</td><td>Reserved</td><td>A technical process Carrier; reveals the mark predates known Vector activity.</td></tr>
-<tr><td>P7-AP01-M05</td><td>The Last Water Map</td><td>Reserved</td><td>A civic-network Carrier; forces a choice between public survival and temporal cleanliness.</td></tr>
-<tr><td>P7-AP01-M06</td><td>Seven Copies</td><td>Reserved</td><td>Path finale; identifies who has been adding the seventh transmission route.</td></tr>
-</table>
-
-<h3>Record After Play</h3>
-<ul class="checklist">
-<li>Final Carrier strength: Fragile / Established / Durable.</li>
-<li>Final Exposure score and state.</li>
-<li>Quill: alive / dead / unknown.</li>
-<li>Venn: ally / enemy / dead / escaped / persuaded.</li>
-<li>Ellery: loyal / doubtful / defected / dead / escaped.</li>
-<li>Seven-stroke mark discovered: yes / no.</li>
-<li>One unresolved Exposure artifact or witness to carry forward.</li>
-<li>Ordinary historical footprint: who appears in the crowd photograph, what they are doing, and which period-safe detail identifies them to the players.</li>
-<li>Little Giant message delivered: yes / no / too late.</li>
-<li>Commission packet route created: yes / no / uncertain.</li>
-</ul>
-<p class="small">The path titles after M01 are working reservations, not locked adventure content. Their codes stay reserved so future releases remain sortable.</p>
-</section>
-
-</main>
-<a class="back-top" href="#top" aria-label="Back to top">↑</a>
-<footer>Protocol 7 · P7-AP01-M01 · The Ash Ledger · GM Field Guide · revision r003 · Rules target v0.187 PRE-BETA</footer>
-<script>
-const sections=document.querySelectorAll('section[id]');
-const navLinks=document.querySelectorAll('.navscroll a');
-function onScroll(){
-  let current='';
-  sections.forEach(sec=>{const r=sec.getBoundingClientRect();if(r.top<=125 && r.bottom>125) current=sec.id;});
-  navLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+current));
-}
-window.addEventListener('scroll',onScroll,{passive:true});
-document.querySelectorAll('table.ref').forEach(t=>{
-  if(t.parentElement.classList.contains('tablewrap')) return;
-  const w=document.createElement('div');w.className='tablewrap';t.parentNode.insertBefore(w,t);w.appendChild(t);
-});
-</script>
-</body></html>
+        <h3>Record After Play</h3>
+        <ul class="checklist">
+          <li>Final Carrier strength: Fragile / Established / Durable.</li>
+          <li>Final Exposure score and state.</li>
+          <li>Quill: alive / dead / unknown.</li>
+          <li>Venn: ally / enemy / dead / escaped / persuaded.</li>
+          <li>Ellery: loyal / doubtful / defected / dead / escaped.</li>
+          <li>Seven-stroke mark discovered: yes / no.</li>
+          <li>One unresolved Exposure artifact or witness to carry forward.</li>
+          <li>
+            Ordinary historical footprint: who appears in the crowd photograph,
+            what they are doing, and which period-safe detail identifies them to
+            the players.
+          </li>
+          <li>Little Giant message delivered: yes / no / too late.</li>
+          <li>Commission packet route created: yes / no / uncertain.</li>
+        </ul>
+        <p class="small">
+          The path titles after M01 are working reservations, not locked
+          adventure content. Their codes stay reserved so future releases remain
+          sortable.
+        </p>
+      </section>
+    </main>
+    <a class="back-top" href="#top" aria-label="Back to top">↑</a>
+    <footer>
+      Protocol 7 · P7-AP01-M01 · The Ash Ledger · GM Field Guide · revision r003
+      · Rules target v0.187 PRE-BETA
+    </footer>
+    <script>
+      const sections = document.querySelectorAll("section[id]");
+      const navLinks = document.querySelectorAll(".navscroll a");
+      function onScroll() {
+        let current = "";
+        sections.forEach((sec) => {
+          const r = sec.getBoundingClientRect();
+          if (r.top <= 125 && r.bottom > 125) current = sec.id;
+        });
+        navLinks.forEach((l) =>
+          l.classList.toggle(
+            "active",
+            l.getAttribute("href") === "#" + current,
+          ),
+        );
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      document.querySelectorAll("table.ref").forEach((t) => {
+        if (t.parentElement.classList.contains("tablewrap")) return;
+        const w = document.createElement("div");
+        w.className = "tablewrap";
+        t.parentNode.insertBefore(w, t);
+        w.appendChild(t);
+      });
+    </script>
+  </body>
+</html>
