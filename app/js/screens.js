@@ -164,6 +164,57 @@
     vitality: 'Vitality', skills: 'Skills', vams: 'VAMs', review: 'Review & Create'
   };
 
+  function presetById(id) {
+    var match = Presets.PRESETS.filter(function (p) { return p.id === id; });
+    return match[0] || null;
+  }
+
+  // Full detail behind a preset's card/badge — every die, Skill, and VAM it
+  // proposes, spelled out. Shown both on the Identity picker itself (so a
+  // player can inspect a preset before committing to it) and, via
+  // renderPresetBanner below, from every later preconfigured step (so
+  // "what did this preset actually give me" is never more than one tap
+  // away instead of only visible at the very end in Review).
+  function renderPresetLoadoutSummary(app, p, rc) {
+    var vams = app.canon.vams.vams, skills = app.canon.skills.skills;
+    var vamsById = byId(vams), skillsById = byId(skills);
+    var assignment = Presets.presetAbilityAssignment(p, rc);
+    var abilityLine = p.ability_priority.map(function (id) { return id + ' ' + assignment[id]; }).join(' · ');
+    var skillLine = Object.keys(p.skills || {}).map(function (id) {
+      return (skillsById[id] ? skillsById[id].name : id) + ' ' + p.skills[id];
+    }).join(', ') || '(none)';
+    var vamLine = p.vam_ids.map(function (id) { return vamsById[id] ? vamsById[id].name : id; }).join(', ') || '(none)';
+    var bar = Presets.presetLoadedBar(p, vams);
+    return UI.card([
+      reviewRow('Ability priority', abilityLine),
+      reviewRow('Skills', skillLine),
+      reviewRow('VAMs (' + bar + ' BAR)', vamLine)
+    ], { class: 'p7-preset-summary' });
+  }
+
+  // A small persistent strip on every preconfigured step past 'preset' so
+  // "what preset did I pick, and what's still pre-chosen" and "let me pick
+  // a different Identity entirely" are both always one tap away, instead of
+  // only reachable by clicking Back through every prior step.
+  function renderPresetBanner(app, w, rc) {
+    if (w.path !== 'preconfigured' || !w.presetId) return null;
+    var p = presetById(w.presetId);
+    if (!p) return null;
+    if (!w.presetPreviewOpen) w.presetPreviewOpen = {};
+    var open = !!w.presetPreviewOpen[p.id];
+    return UI.card([
+      UI.el('div', { class: 'p7-preset-name', text: 'Identity: ' + p.name }),
+      UI.el('div', { class: 'p7-btn-row' }, [
+        UI.button(open ? 'Hide full loadout' : 'View full loadout', function () {
+          w.presetPreviewOpen[p.id] = !open;
+          app.render();
+        }, { small: true }),
+        UI.button('Change Identity…', function () { w.step = 'preset'; app.render(); }, { small: true })
+      ]),
+      open ? renderPresetLoadoutSummary(app, p, rc) : null
+    ]);
+  }
+
   function renderCreation(app) {
     var w = ensureCreation(app);
     var rc = app.canon.rulesCore;
@@ -191,14 +242,21 @@
         UI.button('Import a Save…', function () { promptImport(app); })
       ]));
     } else if (w.step === 'preset') {
-      wrap.appendChild(UI.help('Each Identity pre-fills a suggested Ability priority, a starting Skill spread, and a VAM loadout to match its concept. Tap a card to load it, then adjust anything you like in the steps ahead.'));
+      if (!w.presetPreviewOpen) w.presetPreviewOpen = {};
+      wrap.appendChild(UI.help('Each Identity pre-fills a suggested Ability priority, a starting Skill spread, and a VAM loadout to match its concept — tap "View full loadout" on any card to see exactly what that means before you commit. Tap a card to load it, then adjust anything you like in the steps ahead.'));
       wrap.appendChild(UI.section('Choose an Identity (Level 1 · ' + rc.levels['1'].bar + ' BAR ceiling)', [
         UI.el('div', { class: 'p7-preset-grid' }, Presets.PRESETS.map(function (p) {
           var bar = Presets.presetLoadedBar(p, app.canon.vams.vams);
+          var open = !!w.presetPreviewOpen[p.id];
           return UI.card([
             UI.el('div', { class: 'p7-preset-name', text: p.name }),
             UI.el('div', { class: 'p7-preset-bar', text: bar + ' BAR' }),
             UI.el('div', { class: 'p7-preset-identity', text: p.identity }),
+            UI.button(open ? 'Hide full loadout' : 'View full loadout', function () {
+              w.presetPreviewOpen[p.id] = !open;
+              app.render();
+            }, { small: true }),
+            open ? renderPresetLoadoutSummary(app, p, rc) : null,
             UI.button('Choose ' + p.name, function () {
               w.path = 'preconfigured'; w.presetId = p.id;
               // A preset pre-fills the same neutral Ability dice every path
@@ -245,13 +303,27 @@
   function renderAbilityStep(app, w, rc) {
     var ids = rc.abilities.ids;
     var allAssigned = ids.every(function (id) { return w.abilityAssignment[id]; });
+    var swapPending = w.abilitySwapPending;
+    // Preconfigured Vector arrives with every die already assigned and an
+    // empty pool — Clear-then-reassign was the only way to change anything,
+    // which meant trading two Abilities' dice took four taps through a pool
+    // that (with nothing in it yet) didn't visibly explain why. Swap does a
+    // direct two-tap trade without ever touching the pool, matching the
+    // post-creation Ability screen's own Swap control (see renderCharacter
+    // above) so the same gesture works before and after the Vector exists.
     var box = UI.section('Assign Abilities — tap a die, then tap an Ability', [
-      UI.help('These are your Vector’s six innate dice. Tap a die from the pool below, then tap an Ability to assign it — or let Auto-Assign Remaining finish for you. You can rearrange these anytime later from the Character screen.'),
-      UI.el('div', { class: 'p7-die-pool' }, w.remainingDice.map(function (die, idx) {
-        return UI.dieChip(die, function () { w.pendingDie = { die: die, idx: idx }; app.render(); }, { selected: w.pendingDie && w.pendingDie.idx === idx });
-      })),
+      renderPresetBanner(app, w, rc),
+      UI.help(w.path === 'preconfigured'
+        ? 'Every Ability already holds a die from this Identity. Tap Swap on two Abilities to trade which dice they hold, or Clear one to send its die back to the pool below and assign it individually — nothing here is locked in. You can rearrange these anytime later from the Character screen too.'
+        : 'These are your Vector’s six innate dice. Tap a die from the pool below, then tap an Ability to assign it — or let Auto-Assign Remaining finish for you. You can rearrange these anytime later from the Character screen.'),
+      w.remainingDice.length
+        ? UI.el('div', { class: 'p7-die-pool' }, w.remainingDice.map(function (die, idx) {
+          return UI.dieChip(die, function () { w.pendingDie = { die: die, idx: idx }; app.render(); }, { selected: w.pendingDie && w.pendingDie.idx === idx });
+        }))
+        : (allAssigned ? UI.note('All six dice are assigned. Tap Swap on two Abilities to trade dice directly, or Clear one to return it here and assign it by hand.', 'default') : null),
       UI.el('div', { class: 'p7-ability-grid' }, ids.map(function (id) {
         var assigned = w.abilityAssignment[id];
+        var isPending = swapPending === id;
         return UI.card([
           UI.el('div', { class: 'p7-ability-id', text: id }),
           assigned
@@ -263,11 +335,23 @@
               w.pendingDie = null;
               app.render();
             }, { disabled: !w.pendingDie, small: true }),
-          assigned ? UI.button('clear', function () {
-            w.remainingDice.push(w.abilityAssignment[id]);
-            w.abilityAssignment[id] = null;
-            app.render();
-          }, { small: true }) : null
+          assigned ? UI.el('div', { class: 'p7-btn-row' }, [
+            UI.button(isPending ? 'Cancel' : (swapPending ? 'Swap with ' + swapPending : 'Swap…'), function () {
+              if (!swapPending) { w.abilitySwapPending = id; app.render(); return; }
+              if (swapPending === id) { w.abilitySwapPending = null; app.render(); return; }
+              var a = w.abilityAssignment[swapPending], b = w.abilityAssignment[id];
+              w.abilityAssignment[swapPending] = b;
+              w.abilityAssignment[id] = a;
+              w.abilitySwapPending = null;
+              app.render();
+            }, { small: true, variant: isPending ? 'danger' : 'secondary' }),
+            UI.button('Clear', function () {
+              w.remainingDice.push(w.abilityAssignment[id]);
+              w.abilityAssignment[id] = null;
+              if (w.abilitySwapPending === id) w.abilitySwapPending = null;
+              app.render();
+            }, { small: true })
+          ]) : null
         ], { class: 'p7-ability-card' });
       })),
       UI.button('Auto-Assign Remaining', function () {
@@ -286,6 +370,8 @@
   function renderVitalityStep(app, w, rc) {
     var ids = rc.abilities.ids;
     var box = UI.el('div');
+    var banner = renderPresetBanner(app, w, rc);
+    if (banner) box.appendChild(banner);
     box.appendChild(UI.help('This determines your starting HP. Roll or pick a face for each Ability die — the highest non-blank face becomes your Origin Ability, and its value sets your starting HP.'));
     box.appendChild(UI.section('Vitality Ritual — roll or pick the face for each Ability', ids.map(function (id) {
       var die = w.abilityAssignment[id];
@@ -333,6 +419,8 @@
     var skills = app.canon.skills.skills;
     var alloc = State.allocateSkillRanks(w.skillRanks, rc, 1);
     var box = UI.el('div');
+    var banner = renderPresetBanner(app, w, rc);
+    if (banner) box.appendChild(banner);
     box.appendChild(UI.help('Spend your Skill Rank budget (below) across the Skills your Vector trains — Ranks set each Skill’s die. Use the category row to jump to Combat, Defense, or General.'));
 
     // Same Category filter as the post-creation Skills screen (renderSkills)
@@ -381,6 +469,8 @@
     var used = State.loadedBar(w.loadedVamIds, vams);
     var auth = State.authorizationForLevel(1, app.canon.vams);
     var box = UI.el('div');
+    var banner = renderPresetBanner(app, w, rc);
+    if (banner) box.appendChild(banner);
 
     box.appendChild(UI.meter('BAR', used, ceiling));
     box.appendChild(UI.el('div', { class: 'p7-note', text: 'Authorization: ' + auth }));
@@ -423,11 +513,13 @@
     var vams = app.canon.vams.vams;
     var vamsById = byId(vams);
     var spentSkillRanks = Object.keys(w.skillRanks).reduce(function (sum, id) { return sum + ((w.skillRanks[id] && w.skillRanks[id].ranks) || 0); }, 0);
+    var chosenPreset = w.path === 'preconfigured' && w.presetId ? presetById(w.presetId) : null;
     var box = UI.section('Review & Create', [
+      renderPresetBanner(app, w, rc),
       UI.help('One last look before this becomes your Vector — every value below stays exactly as editable afterward as it is right now.'),
       UI.card([
         reviewRow('Name', w.name || '(unnamed)'),
-        reviewRow('Path', w.path === 'preconfigured' ? 'Preconfigured (' + w.presetId + ')' : 'Custom'),
+        reviewRow('Path', w.path === 'preconfigured' ? 'Preconfigured (' + (chosenPreset ? chosenPreset.name : w.presetId) + ')' : 'Custom'),
         reviewRow('Abilities', rc.abilities.ids.map(function (id) { return id + ' ' + w.abilityAssignment[id]; }).join(' · ')),
         reviewRow('Skills', spentSkillRanks + ' ranks assigned'),
         reviewRow('VAMs', State.loadedBar(w.loadedVamIds, vams) + ' BAR — ' + (w.loadedVamIds.length ? w.loadedVamIds.map(function (id) { return vamsById[id] ? vamsById[id].name : id; }).join(', ') : '(none loaded)'))
