@@ -92,6 +92,16 @@
     return el('p', { class: 'p7-note p7-note-' + (kind || 'default'), text: text });
   };
 
+  /** A short "how this screen/step works" prompt — visually distinct from
+   * C.note's warnings/confirmations so it reads as calm orientation, not
+   * an alert. Always the first thing on the screen/step that has one. */
+  C.help = function (text) {
+    return el('div', { class: 'p7-help' }, [
+      el('span', { class: 'p7-help-icon', text: 'ⓘ' }),
+      el('div', { class: 'p7-help-text', text: text })
+    ]);
+  };
+
   root.P7 = root.P7 || {};
   root.P7.UI = C;
 }(typeof window !== 'undefined' ? window : this));

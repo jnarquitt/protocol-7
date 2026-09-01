@@ -77,6 +77,8 @@
       app.setCharacter(next);
     });
 
+    container.appendChild(UI.help('This is your Vector’s core profile. Tap Swap on any Ability to trade which die it holds — that stays available for the life of the character, not just at creation. HP, Edge, and Mastered Skills come from Vitality and Advancement; use the button at the bottom of this screen to level up.'));
+
     container.appendChild(UI.section('Vector', [
       UI.card([
         UI.el('label', { class: 'p7-field-label', text: 'Vector Name (the only typed field)' }),
@@ -179,6 +181,7 @@
     ]));
 
     if (w.step === 'path') {
+      wrap.appendChild(UI.help('Custom Vector lets you assign every die, Skill, and VAM yourself. Preconfigured Vector starts you with a ready-made Identity instead — either way, every choice you make stays fully editable, both later in this wizard and after the Vector is created.'));
       wrap.appendChild(UI.section('Choose a starting path', [
         UI.el('div', { class: 'p7-btn-row' }, [
           UI.button('Custom Vector', function () { w.path = 'custom'; w.step = 'name'; app.render(); }, { variant: 'primary' }),
@@ -188,6 +191,7 @@
         UI.button('Import a Save…', function () { promptImport(app); })
       ]));
     } else if (w.step === 'preset') {
+      wrap.appendChild(UI.help('Each Identity pre-fills a suggested Ability priority, a starting Skill spread, and a VAM loadout to match its concept. Tap a card to load it, then adjust anything you like in the steps ahead.'));
       wrap.appendChild(UI.section('Choose an Identity (Level 1 · ' + rc.levels['1'].bar + ' BAR ceiling)', [
         UI.el('div', { class: 'p7-preset-grid' }, Presets.PRESETS.map(function (p) {
           var bar = Presets.presetLoadedBar(p, app.canon.vams.vams);
@@ -242,6 +246,7 @@
     var ids = rc.abilities.ids;
     var allAssigned = ids.every(function (id) { return w.abilityAssignment[id]; });
     var box = UI.section('Assign Abilities — tap a die, then tap an Ability', [
+      UI.help('These are your Vector’s six innate dice. Tap a die from the pool below, then tap an Ability to assign it — or let Auto-Assign Remaining finish for you. You can rearrange these anytime later from the Character screen.'),
       UI.el('div', { class: 'p7-die-pool' }, w.remainingDice.map(function (die, idx) {
         return UI.dieChip(die, function () { w.pendingDie = { die: die, idx: idx }; app.render(); }, { selected: w.pendingDie && w.pendingDie.idx === idx });
       })),
@@ -281,6 +286,7 @@
   function renderVitalityStep(app, w, rc) {
     var ids = rc.abilities.ids;
     var box = UI.el('div');
+    box.appendChild(UI.help('This determines your starting HP. Roll or pick a face for each Ability die — the highest non-blank face becomes your Origin Ability, and its value sets your starting HP.'));
     box.appendChild(UI.section('Vitality Ritual — roll or pick the face for each Ability', ids.map(function (id) {
       var die = w.abilityAssignment[id];
       var sides = State.sidesOf(die);
@@ -327,6 +333,7 @@
     var skills = app.canon.skills.skills;
     var alloc = State.allocateSkillRanks(w.skillRanks, rc, 1);
     var box = UI.el('div');
+    box.appendChild(UI.help('Spend your Skill Rank budget (below) across the Skills your Vector trains — Ranks set each Skill’s die. Use the category row to jump to Combat, Defense, or General.'));
 
     // Same Category filter as the post-creation Skills screen (renderSkills)
     // — tapping "Combat" here during creation shows only Combat Skills too,
@@ -377,7 +384,7 @@
 
     box.appendChild(UI.meter('BAR', used, ceiling));
     box.appendChild(UI.el('div', { class: 'p7-note', text: 'Authorization: ' + auth }));
-    box.appendChild(UI.note('Starting VAM Loadout — ' + (w.path === 'preconfigured' ? "this is the preset's default; Load/Unload freely before you create the Vector." : 'optional — load any Level 1 VAMs now, or skip and load them later.'), 'default'));
+    box.appendChild(UI.help('VAMs loaded into your BAR — ' + (w.path === 'preconfigured' ? "this is the preset's default; Load/Unload freely before you create the Vector." : 'optional — load any Level 1 VAMs now, or skip and load them later.') + ' Use the Family row to jump to a group instead of scrolling.'));
 
     // Same Family filter + grouping as the post-creation VAMs screen — all
     // 84 VAMs in one flat list meant a preset's own loaded VAMs (which can
@@ -417,7 +424,7 @@
     var vamsById = byId(vams);
     var spentSkillRanks = Object.keys(w.skillRanks).reduce(function (sum, id) { return sum + ((w.skillRanks[id] && w.skillRanks[id].ranks) || 0); }, 0);
     var box = UI.section('Review & Create', [
-      UI.note('One last look before this becomes your Vector — every value below stays exactly as editable afterward as it is right now.', 'default'),
+      UI.help('One last look before this becomes your Vector — every value below stays exactly as editable afterward as it is right now.'),
       UI.card([
         reviewRow('Name', w.name || '(unnamed)'),
         reviewRow('Path', w.path === 'preconfigured' ? 'Preconfigured (' + w.presetId + ')' : 'Custom'),
@@ -453,6 +460,8 @@
     var c = app.character, rc = app.canon.rulesCore, skills = app.canon.skills.skills;
     if (!container.skillsTab) container.skillsTab = 'trained';
     var tab = app.skillsTab || 'trained';
+
+    container.appendChild(UI.help('Skills show what your Vector is trained to do, priced in Ranks against the budget below. Switch to All to browse everything or Edit to spend Ranks; use the category row to jump straight to Combat, Defense, or General instead of scrolling.'));
 
     container.appendChild(UI.el('div', { class: 'p7-tabbar' }, ['trained', 'all', 'edit'].map(function (t) {
       return UI.chip(t === 'trained' ? 'My Trained Skills' : t.charAt(0).toUpperCase() + t.slice(1), tab === t, function () { app.skillsTab = t; app.render(); });
@@ -577,6 +586,8 @@
     var used = State.loadedBar(c.vams.loaded_ids, vams);
     var auth = State.authorizationForLevel(c.progression.level, app.canon.vams);
 
+    container.appendChild(UI.help('VAMs are the abilities loaded into your BAR — your equipped-powers budget for the session. Load and Unload freely between sessions; Field Swap trades one VAM mid-session for an Action Point cost instead. Use the Family row to jump to a group instead of scrolling.'));
+
     container.appendChild(UI.meter('BAR', used, ceiling));
     container.appendChild(UI.el('div', { class: 'p7-note', text: 'Authorization: ' + auth }));
 
@@ -636,6 +647,8 @@
   // ---------------------------------------------------------------
   function renderGear(app, container) {
     var c = app.character, gear = app.canon.gear.gear;
+    container.appendChild(UI.help('Gear is what your Vector is carrying. Filter by era to match your campaign’s setting, then Equip what’s on hand — this is for tracking what you have, not a hard equip limit.'));
+
     if (!app.gearEraFilter) app.gearEraFilter = 'all';
     var eras = ['all'].concat(app.canon.gear.era_filters);
     container.appendChild(UI.el('div', { class: 'p7-tabbar' }, eras.map(function (e) {
@@ -670,6 +683,8 @@
   function renderPlay(app, container) {
     var c = app.character, rc = app.canon.rulesCore, skills = app.canon.skills.skills;
     var maxHpVal = State.maxHp(startingHpOf(c, rc), c.progression.level, c.progression.edge_id === 'durable', rc);
+
+    container.appendChild(UI.help('Your live session dashboard. Track HP and Action Points and toggle active Conditions here, then build a roll for any Skill below — pick Advantage, Disadvantage, or Mastery Access as they apply, then hit ROLL.'));
 
     container.appendChild(UI.section('Status', [
       UI.el('div', { class: 'p7-hp-row' }, [
@@ -785,6 +800,7 @@
   // ---------------------------------------------------------------
   function renderAdvancement(app, container) {
     var c = app.character, rc = app.canon.rulesCore;
+    container.appendChild(UI.help('Preview what each Level unlocks — BAR ceiling, Edge slots, Ability growth, and Mastery slots. Tap Advance once your GM confirms you’ve leveled up; nothing here changes automatically.'));
     var maxLevel = Math.max.apply(null, Object.keys(rc.levels).map(Number));
     for (var lvl = 1; lvl <= maxLevel; lvl++) {
       container.appendChild(renderLevelCard(app, c, rc, lvl, maxLevel));
