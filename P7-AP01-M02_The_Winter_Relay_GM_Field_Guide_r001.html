@@ -1,1 +1,795 @@
-<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>The Winter Relay — GM Field Guide</title><style>body{margin:0;background:#0d1116;color:#eef3f5;font-family:Arial,sans-serif;line-height:1.55}main{max-width:940px;margin:auto;padding:16px}.hero{background:#14222d;padding:32px 18px;border-bottom:4px solid #4f819d}.hero h1{font-family:Georgia,serif;font-size:2.5rem;margin:.2rem 0}.k{color:#a9d9f1;font-weight:800;letter-spacing:.12em}.nav{position:sticky;top:0;background:#0d1116;padding:10px;overflow:auto;white-space:nowrap}.nav a{color:#b9ddec;margin-right:12px}.title,h2,h3{font-family:Georgia,serif;color:#a9d9f1}.card,.gm,.path,.warn{border:1px solid #394955;border-radius:8px;padding:14px;margin:12px 0;background:#171d23}.gm{border-color:#4b775c;background:#152019}.warn{border-color:#91353a;background:#241719}.path{border-color:#4f819d;background:#12202a}.read{background:#eef4f6;color:#172026;border-left:6px solid #4f819d;padding:14px 16px;font-family:Georgia,serif;font-style:italic;margin:14px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}table{width:100%;border-collapse:collapse;margin:14px 0}th,td{border:1px solid #394955;padding:8px;vertical-align:top;text-align:left}th{background:#172733;color:#a9d9f1}.scene{border-left:3px solid #4f819d;padding-left:14px;margin:26px 0}@media(max-width:680px){.grid{grid-template-columns:1fr}.hero h1{font-size:2rem}table{font-size:.82rem}}</style></head><body><header class=hero><div><div class=k>PROTOCOL 7 ADVENTURE PATH 01 · THE CONTINUANCE FILES</div><h1>The Winter Relay</h1><div>P7-AP01-M02 · GM Field Guide · r001 · Rules baseline v0.187</div></div></header><div class=nav><a href=#fast>Run This Tonight — Two-Minute Brief</a><a href=#history>Historical Background That Matters at the Table</a><a href=#truth>GM Truth — Cause, Effect, and Stakes</a><a href=#cast>Cast — Playable Motivations</a><a href=#clues>Clue Architecture</a><a href=#mission>Mission Walkthrough</a><a href=#opposition>Running the Covenant</a><a href=#trouble>Troubleshooting and Simulation Fixes</a><a href=#ending>Outcomes and Debrief</a><a href=#path>Continuance Record</a></div><main><section id=fast><div class=title>Run This Tonight — Two-Minute Brief</div><div class=card><h3>The whole story</h3><p>During the 1925 Nome diphtheria emergency, fictional remote operator <b>Evie Mercer</b> is keeping a battered regional radio/telegraph relay alive while medical traffic, weather warnings, route changes, and supply requests arrive in fragments. The Vectors think the mission is to get one critical message through before a storm isolates the station. That is only the immediate problem. Mercer has improvised a procedure that lets independent stations number fragments, repeat them back, reconstruct incomplete traffic, and request only missing sections. In baseline history the procedure disappears with the station logs. Aletheia needs the <b>method</b> to survive—not just tonight’s message.</p></div><div class=grid><div class=card><h3>Players think</h3><p>Restore or protect a failing relay station and make sure a medically important message gets through.</p></div><div class=card><h3>GM knows</h3><p>The message is the false finish line. The true Carrier is Mercer’s reproducible relay protocol.</p></div><div class=card><h3>Covenant offer</h3><p>They will help today’s medical traffic succeed if the Vectors agree not to spread Mercer’s procedure.</p></div><div class=card><h3>Dramatic question</h3><p>When secrecy protects history but redundancy protects lives, which kind of safety matters more?</p></div></div><div class=gm><b>GM priority:</b> The session must pivot cleanly from <b>communications emergency</b> to <b>continuity problem</b>. Give the table a real moment of relief when the message succeeds, then reveal quickly that the mission is not over.</div></section><section id=history><div class=title>Historical Background That Matters at the Table</div><p>The adventure runs alongside the real 1925 Nome diphtheria emergency. Contemporary reporting described urgent antitoxin needs, dog-team relays, and Nome’s radio station operating day and night. The adventure does not replace those events or assign their success to the Vectors.</p><p>The fictional station exists because Alaska’s distances make communication itself a survival tool. In winter, a damaged line, weak generator, exhausted operator, or garbled message can matter as much as a blocked trail.</p><div class=warn><b>Historical boundary:</b> Never reveal that the Vectors caused, improved, or secretly coordinated the famous serum run. Real historical participants retain agency and credit.</div><p>Use weather to narrow choices rather than as a random damage tax: cold makes repairs slower, travel costly, equipment unreliable, and every trip outside worth thinking about.</p></section><section id=truth><div class=title>GM Truth — Cause, Effect, and Stakes</div><table><tr><th>Question</th><th>Answer</th></tr><tr><td>Immediate crisis</td><td>A fragmented emergency transmission must be reconstructed and forwarded before worsening weather closes the easiest route.</td></tr><tr><td>False objective</td><td>Get that one message through.</td></tr><tr><td>True Carrier</td><td>Mercer’s emergency relay procedure: numbered fragments, repeat-back confirmation, independent reconstruction logs, and selective requests for missing fragments.</td></tr><tr><td>Baseline loss</td><td>The station logs scatter; the method is remembered only as local improvisation and never becomes shared practice.</td></tr><tr><td>Future importance</td><td>The procedure helps create a culture of decentralized emergency communications where local nodes keep functioning when central coordination is incomplete.</td></tr><tr><td>Covenant concern</td><td>The same logic later supports interoperable emergency networks used by Aletheia.</td></tr></table><div class=path><b>Campaign escalation:</b> M01 taught that an object is not necessarily the Carrier. M02 teaches that a Carrier becomes powerful when independent people can reproduce it without its creator.</div><h3>Revelation ladder</h3><table><tr><th>Revelation</th><th>Player feeling</th></tr><tr><td>Mercer is the operational fulcrum.</td><td>Keep her and the station functioning.</td></tr><tr><td>The traffic is incomplete but reconstructable.</td><td>We can solve this.</td></tr><tr><td>The message succeeds, but the mission does not clear.</td><td>That was only tonight’s problem.</td></tr><tr><td>Mercer created a repeatable protocol.</td><td>This can spread.</td></tr><tr><td>Independent copies create resilience and footprint.</td><td>Success itself creates risk.</td></tr><tr><td>Covenant will save lives now while blocking propagation.</td><td>Their position is not monstrous.</td></tr></table></section><section id=cast><div class=title>Cast — Playable Motivations</div><div class=grid><div class=card><h3>Evie Mercer — Relay Operator</h3><p><b>Wants:</b> Keep traffic intelligible and useful.<br><b>Fear:</b> Someone dies because a message arrives garbled.<br><b>Voice:</b> Dry, exact, impatient with drama.<br><b>Line:</b> “A message isn’t sent when you transmit it. It’s sent when somebody else can rebuild it.”</p></div><div class=card><h3>Jonas Pell — Station Hand</h3><p>Keeps the generator, mast, feed lines, and heat alive. Makes mechanical competence and physical risk matter.</p></div><div class=card><h3>Dr. Anna Rusk — Local Physician</h3><p>Needs accurate medical traffic, not heroics. Humanizes the stakes without replacing real historical physicians.</p></div><div class=card><h3>Thomas Vale — Regional Clerk</h3><p>Can circulate the procedure if convinced it is reproducible rather than one-off improvisation.</p></div><div class=card><h3>Silas Venn or Covenant Successor</h3><p>Wants today’s emergency solved and Mercer’s protocol contained. “You are turning one winter’s improvisation into the ancestor of a command network.”</p></div><div class=card><h3>Mara Ellery or Field Substitute</h3><p>Prioritizes containment, but will not knowingly sacrifice civilians simply to win the ideological argument.</p></div></div></section><section id=clues><div class=title>Clue Architecture</div><table><tr><th>Conclusion</th><th>Door 1</th><th>Door 2</th><th>Door 3</th><th>Fail-forward</th></tr><tr><td>Mercer is the fulcrum</td><td>Failed handoffs route through her logs</td><td>Pell says she tracks missing fragments</td><td>Rusk cites a prior reconstructed request</td><td>A second station asks for “Mercer’s sequence.”</td></tr><tr><td>The method is the Carrier</td><td>Another operator uses her numbering</td><td>Mercer can teach it in four steps</td><td>Covenant offers to save the message but burn procedure notes</td><td>Aletheia confirms the discontinuity remains after immediate success.</td></tr><tr><td>Independent copies matter</td><td>Vale proposes a regional circular</td><td>Neighboring station copies it</td><td>Pell makes a station training card</td><td>Mercer asks who can use it if she is gone.</td></tr></table></section><section id=mission><div class=title>Mission Walkthrough</div><div class=scene><h3>1 — Briefing: The Message That Vanishes</h3><div class=read>“The lives involved in the historical emergency are not yours to manufacture. Your discontinuity is smaller. A message route becomes unreliable at exactly the wrong time. Something useful is invented there and then forgotten.”</div><p><b>Purpose:</b> Establish the historical boundary and communications discontinuity.</p></div><div class=scene><h3>2 — Insertion: Cold That Changes Plans</h3><p>Open with a practical crisis near the station: snapped support, stalled sled, injured traveler, exposed feed line, or overloaded generator.</p><p><b>Failure changes:</b> time, gear, fatigue, witness footprint, or Storm Clock—not access to the adventure.</p></div><div class=scene><h3>3 — The Station Is Already Failing</h3><p>Mercer handles traffic while Pell fights mechanical failure. Present several useful jobs at once so every Vector can contribute. Mercer is competent but overloaded, not a helpless quest-giver.</p></div><div class=scene><h3>4 — Fragments</h3><p>A medically important transmission arrives incomplete. Some fragments repeat, one is garbled, one is missing. Mercer’s log lets the team identify exactly what they have and request only the missing content.</p><div class=gm><b>Do not make this a radio-engineering exam.</b> Players choose verification, route, time, and confidence; character skills handle technical execution.</div></div><div class=scene><h3>5 — False Victory: Message Received</h3><div class=read>The acknowledgment comes back weak, then stronger: RECEIVED COMPLETE. For the first time in an hour, Mercer leans away from the key. Pell laughs once. Somewhere beyond the dark, the message is moving without you.</div><p>Give them the relief. Then show that Aletheia’s mission indicator does not clear.</p></div><div class=scene><h3>6 — What Did Mercer Actually Invent?</h3><p>The logs reveal that Mercer has turned local habits into a compact repeatable procedure. Another station can use it without her. She considers it obvious craft, not invention.</p><p><b>Purpose:</b> Reveal the true Carrier.</p></div><div class=scene><h3>7 — The Covenant’s Offer</h3><p>Opposition offers to help keep medical traffic alive for the remainder of the crisis if the Vectors agree Mercer’s procedure stays local.</p><div class=read>“Save everyone you can tonight. Just don’t pretend that teaching every station to speak the same emergency language is a neutral act.”</div></div><div class=scene><h3>8 — Build the Carrier</h3><table><tr><th>Route</th><th>Benefit</th><th>Risk</th></tr><tr><td>Neighboring-station copy</td><td>Immediate independent replication</td><td>Witness and log footprint</td></tr><tr><td>Regional circular</td><td>Institutional propagation</td><td>Durable paper trail</td></tr><tr><td>Station training card</td><td>Survives Mercer’s absence</td><td>Fragile unless copied elsewhere</td></tr><tr><td>Player-created route</td><td>Rewards agency</td><td>Exposure based on footprint</td></tr></table></div><div class=scene><h3>9 — Storm and Interference</h3><p>Escalate according to player choices. Weather threatens the chosen route; Covenant uses forged instructions, interception, theft, or recovery of exposed future technology. Combat only when someone is physically contesting a concrete objective.</p></div><div class=scene><h3>10 — Verification: Two Copies, Same Mark</h3><p>Aletheia verifies that Mercer’s method persisted beyond the original station. Two independently created copies are displayed. Each bears the seven-stroke annotation in a place neither should share.</p><div class=path><b>Path revelation:</b> The mark is not simply attached to one artifact. It can appear across independently created copies with separate custody histories.</div></div></section><section id=opposition><div class=title>Running the Covenant</div><table><tr><th>Vectors are…</th><th>Covenant response</th></tr><tr><td>Getting the medical message through</td><td>Help or stay out of the way.</td></tr><tr><td>Studying Mercer’s method</td><td>Argue that local craft need not become institutional practice.</td></tr><tr><td>Teaching a second station</td><td>Offer compromise, then disrupt documentation.</td></tr><tr><td>Creating regional distribution</td><td>Intercept circulars, alter routing, steal duplicate logs.</td></tr><tr><td>Using obvious future technology</td><td>Prioritize anomaly recovery, even if Carrier containment suffers.</td></tr></table></section><section id=trouble><div class=title>Troubleshooting and Simulation Fixes</div><table><tr><th>Problem</th><th>Fix</th></tr><tr><td>Players think adventure ends when message arrives</td><td>Give relief, then immediately show the discontinuity remains.</td></tr><tr><td>Players think they need radio expertise</td><td>Keep technical execution character-facing and choices player-facing.</td></tr><tr><td>Players refuse to distribute the method</td><td>Valid choice. Let them pursue a Fragile/Contained outcome.</td></tr><tr><td>Players invent a better modern protocol</td><td>They may clarify Mercer’s work, not replace it with future doctrine without Exposure consequences.</td></tr><tr><td>Players attack Covenant immediately</td><td>Have Covenant first help keep medical traffic alive.</td></tr><tr><td>Repeated failures threaten total station collapse</td><td>Station remains usable at increased cost.</td></tr><tr><td>Players side with Covenant</td><td>Valid. The question becomes what minimum continuity they will preserve.</td></tr></table><h3>Pacing</h3><table><tr><th>Time</th><th>Target</th></tr><tr><td>0:00–0:30</td><td>Briefing + insertion</td></tr><tr><td>0:30–1:30</td><td>Station + fragmented message</td></tr><tr><td>1:30–2:00</td><td>False victory</td></tr><tr><td>2:00–3:00</td><td>Carrier revelation + Covenant</td></tr><tr><td>3:00–4:15</td><td>Propagation + interference</td></tr><tr><td>Final 15 min</td><td>Verification + debrief; never cut</td></tr></table></section><section id=ending><div class=title>Outcomes and Debrief</div><div class=grid><div class=card><h3>Clean Success</h3><p>Carrier Established/Durable, Exposure 0–2. Mercer’s procedure becomes ordinary regional craft.</p></div><div class=card><h3>Exposed Success</h3><p>The method survives, but anomalous records or witnesses persist.</p></div><div class=card><h3>Contained Failure</h3><p>Today’s emergency traffic succeeds, but the method remains Fragile or disappears.</p></div><div class=card><h3>Exposed Failure</h3><p>The method disappears and temporal evidence remains.</p></div></div><h3>Debrief prompts</h3><ul><li>Was the Covenant wrong to separate today’s lives from tomorrow’s network?</li><li>Did the team preserve Mercer’s work or improve it beyond what history could plausibly own?</li><li>Which mattered more: redundancy or secrecy?</li><li>What does the same seven-stroke mark on two independent copies imply?</li></ul></section><section id=path><div class=title>Continuance Record</div><p>Record Carrier state, Exposure, Mercer and Pell outcomes, Covenant relationship, surviving transmission routes, any future technology exposed, and the team’s conclusion about the paired seven-stroke marks.</p><p><b>M01 callback:</b> A Durable Ash Ledger can provide one small, historically ordinary engineering advantage in reinforcing or repairing the station. Failure in M01 removes only that convenience.</p><p><b>M03 setup:</b> M02 determines whether a distant documentary confirmation in The Paper Harbor arrives cleanly, late, or through a compromised chain.</p></section></main></body></html>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>The Winter Relay — GM Field Guide</title>
+    <style>
+      body {
+        margin: 0;
+        background: #0d1116;
+        color: #eef3f5;
+        font-family: Arial, sans-serif;
+        line-height: 1.55;
+      }
+      main {
+        max-width: 940px;
+        margin: auto;
+        padding: 16px;
+      }
+      .hero {
+        min-height: 420px;
+        display: flex;
+        align-items: flex-end;
+        background:
+          linear-gradient(90deg, #0d1116e8, #0d111670 55%, #0d1116aa),
+          url("assets/adventure-art/winter-relay/title-background.png")
+            center/cover no-repeat;
+        padding: 32px 18px;
+        border-bottom: 4px solid #4f819d;
+      }
+      .hero h1 {
+        font-family: Georgia, serif;
+        font-size: 2.5rem;
+        margin: 0.2rem 0;
+      }
+      .k {
+        color: #a9d9f1;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+      }
+      .nav {
+        position: sticky;
+        top: 0;
+        background: #0d1116;
+        padding: 10px;
+        overflow: auto;
+        white-space: nowrap;
+      }
+      .nav a {
+        color: #b9ddec;
+        margin-right: 12px;
+      }
+      .title,
+      h2,
+      h3 {
+        font-family: Georgia, serif;
+        color: #a9d9f1;
+      }
+      .card,
+      .gm,
+      .path,
+      .warn {
+        border: 1px solid #394955;
+        border-radius: 8px;
+        padding: 14px;
+        margin: 12px 0;
+        background: #171d23;
+      }
+      .gm {
+        border-color: #4b775c;
+        background: #152019;
+      }
+      .warn {
+        border-color: #91353a;
+        background: #241719;
+      }
+      .path {
+        border-color: #4f819d;
+        background: #12202a;
+      }
+      .read {
+        background: #eef4f6;
+        color: #172026;
+        border-left: 6px solid #4f819d;
+        padding: 14px 16px;
+        font-family: Georgia, serif;
+        font-style: italic;
+        margin: 14px 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 14px 0;
+      }
+      th,
+      td {
+        border: 1px solid #394955;
+        padding: 8px;
+        vertical-align: top;
+        text-align: left;
+      }
+      th {
+        background: #172733;
+        color: #a9d9f1;
+      }
+      .scene {
+        border-left: 3px solid #4f819d;
+        padding-left: 14px;
+        margin: 26px 0;
+      }
+      .portrait {
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: cover;
+        border-radius: 7px;
+        border: 1px solid #394955;
+        filter: grayscale(1);
+        margin-bottom: 8px;
+      }
+      .scene-art {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid #394955;
+        border-radius: 9px;
+        margin: 14px 0;
+      }
+      .art-caption {
+        font-size: 0.76rem;
+        color: #b9c4ca;
+        font-style: italic;
+        margin-top: -8px;
+      }
+      @media (max-width: 680px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 2rem;
+        }
+        table {
+          font-size: 0.82rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div>
+        <div class="k">
+          PROTOCOL 7 ADVENTURE PATH 01 · THE CONTINUANCE FILES
+        </div>
+        <h1>The Winter Relay</h1>
+        <div>P7-AP01-M02 · GM Field Guide · r001 · Rules baseline v0.187</div>
+      </div>
+    </header>
+    <div class="nav">
+      <a href="#fast">Run This Tonight — Two-Minute Brief</a
+      ><a href="#history">Historical Background That Matters at the Table</a
+      ><a href="#truth">GM Truth — Cause, Effect, and Stakes</a
+      ><a href="#cast">Cast — Playable Motivations</a
+      ><a href="#clues">Clue Architecture</a
+      ><a href="#mission">Mission Walkthrough</a
+      ><a href="#opposition">Running the Covenant</a
+      ><a href="#trouble">Troubleshooting and Simulation Fixes</a
+      ><a href="#ending">Outcomes and Debrief</a
+      ><a href="#path">Continuance Record</a>
+    </div>
+    <main>
+      <section id="fast">
+        <div class="title">Run This Tonight — Two-Minute Brief</div>
+        <div class="card">
+          <h3>The whole story</h3>
+          <p>
+            During the 1925 Nome diphtheria emergency, fictional remote operator
+            <b>Evie Mercer</b> is keeping a battered regional radio/telegraph
+            relay alive while medical traffic, weather warnings, route changes,
+            and supply requests arrive in fragments. The Vectors think the
+            mission is to get one critical message through before a storm
+            isolates the station. That is only the immediate problem. Mercer has
+            improvised a procedure that lets independent stations number
+            fragments, repeat them back, reconstruct incomplete traffic, and
+            request only missing sections. In baseline history the procedure
+            disappears with the station logs. Aletheia needs the
+            <b>method</b> to survive—not just tonight’s message.
+          </p>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <h3>Players think</h3>
+            <p>
+              Restore or protect a failing relay station and make sure a
+              medically important message gets through.
+            </p>
+          </div>
+          <div class="card">
+            <h3>GM knows</h3>
+            <p>
+              The message is the false finish line. The true Carrier is Mercer’s
+              reproducible relay protocol.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Covenant offer</h3>
+            <p>
+              They will help today’s medical traffic succeed if the Vectors
+              agree not to spread Mercer’s procedure.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Dramatic question</h3>
+            <p>
+              When secrecy protects history but redundancy protects lives, which
+              kind of safety matters more?
+            </p>
+          </div>
+        </div>
+        <div class="gm">
+          <b>GM priority:</b> The session must pivot cleanly from
+          <b>communications emergency</b> to <b>continuity problem</b>. Give the
+          table a real moment of relief when the message succeeds, then reveal
+          quickly that the mission is not over.
+        </div>
+      </section>
+      <section id="history">
+        <div class="title">Historical Background That Matters at the Table</div>
+        <p>
+          The adventure runs alongside the real 1925 Nome diphtheria emergency.
+          Contemporary reporting described urgent antitoxin needs, dog-team
+          relays, and Nome’s radio station operating day and night. The
+          adventure does not replace those events or assign their success to the
+          Vectors.
+        </p>
+        <p>
+          The fictional station exists because Alaska’s distances make
+          communication itself a survival tool. In winter, a damaged line, weak
+          generator, exhausted operator, or garbled message can matter as much
+          as a blocked trail.
+        </p>
+        <div class="warn">
+          <b>Historical boundary:</b> Never reveal that the Vectors caused,
+          improved, or secretly coordinated the famous serum run. Real
+          historical participants retain agency and credit.
+        </div>
+        <p>
+          Use weather to narrow choices rather than as a random damage tax: cold
+          makes repairs slower, travel costly, equipment unreliable, and every
+          trip outside worth thinking about.
+        </p>
+      </section>
+      <section id="truth">
+        <div class="title">GM Truth — Cause, Effect, and Stakes</div>
+        <table>
+          <tr>
+            <th>Question</th>
+            <th>Answer</th>
+          </tr>
+          <tr>
+            <td>Immediate crisis</td>
+            <td>
+              A fragmented emergency transmission must be reconstructed and
+              forwarded before worsening weather closes the easiest route.
+            </td>
+          </tr>
+          <tr>
+            <td>False objective</td>
+            <td>Get that one message through.</td>
+          </tr>
+          <tr>
+            <td>True Carrier</td>
+            <td>
+              Mercer’s emergency relay procedure: numbered fragments,
+              repeat-back confirmation, independent reconstruction logs, and
+              selective requests for missing fragments.
+            </td>
+          </tr>
+          <tr>
+            <td>Baseline loss</td>
+            <td>
+              The station logs scatter; the method is remembered only as local
+              improvisation and never becomes shared practice.
+            </td>
+          </tr>
+          <tr>
+            <td>Future importance</td>
+            <td>
+              The procedure helps create a culture of decentralized emergency
+              communications where local nodes keep functioning when central
+              coordination is incomplete.
+            </td>
+          </tr>
+          <tr>
+            <td>Covenant concern</td>
+            <td>
+              The same logic later supports interoperable emergency networks
+              used by Aletheia.
+            </td>
+          </tr>
+        </table>
+        <div class="path">
+          <b>Campaign escalation:</b> M01 taught that an object is not
+          necessarily the Carrier. M02 teaches that a Carrier becomes powerful
+          when independent people can reproduce it without its creator.
+        </div>
+        <h3>Revelation ladder</h3>
+        <table>
+          <tr>
+            <th>Revelation</th>
+            <th>Player feeling</th>
+          </tr>
+          <tr>
+            <td>Mercer is the operational fulcrum.</td>
+            <td>Keep her and the station functioning.</td>
+          </tr>
+          <tr>
+            <td>The traffic is incomplete but reconstructable.</td>
+            <td>We can solve this.</td>
+          </tr>
+          <tr>
+            <td>The message succeeds, but the mission does not clear.</td>
+            <td>That was only tonight’s problem.</td>
+          </tr>
+          <tr>
+            <td>Mercer created a repeatable protocol.</td>
+            <td>This can spread.</td>
+          </tr>
+          <tr>
+            <td>Independent copies create resilience and footprint.</td>
+            <td>Success itself creates risk.</td>
+          </tr>
+          <tr>
+            <td>Covenant will save lives now while blocking propagation.</td>
+            <td>Their position is not monstrous.</td>
+          </tr>
+        </table>
+      </section>
+      <section id="cast">
+        <div class="title">Cast — Playable Motivations</div>
+        <div class="grid">
+          <div class="card">
+            <img
+              class="portrait"
+              src="assets/adventure-art/winter-relay/evie-mercer.png"
+              alt="Black-and-white sketch portrait of Evie Mercer"
+            />
+            <h3>Evie Mercer — Relay Operator</h3>
+            <p>
+              <b>Wants:</b> Keep traffic intelligible and useful.<br /><b
+                >Fear:</b
+              >
+              Someone dies because a message arrives garbled.<br /><b>Voice:</b>
+              Dry, exact, impatient with drama.<br /><b>Line:</b> “A message
+              isn’t sent when you transmit it. It’s sent when somebody else can
+              rebuild it.”
+            </p>
+          </div>
+          <div class="card">
+            <img
+              class="portrait"
+              src="assets/adventure-art/winter-relay/jonas-pell.png"
+              alt="Black-and-white sketch portrait of Jonas Pell"
+            />
+            <h3>Jonas Pell — Station Hand</h3>
+            <p>
+              Keeps the generator, mast, feed lines, and heat alive. Makes
+              mechanical competence and physical risk matter.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              class="portrait"
+              src="assets/adventure-art/winter-relay/anna-rusk.png"
+              alt="Black-and-white sketch portrait of Doctor Anna Rusk"
+            />
+            <h3>Dr. Anna Rusk — Local Physician</h3>
+            <p>
+              Needs accurate medical traffic, not heroics. Humanizes the stakes
+              without replacing real historical physicians.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              class="portrait"
+              src="assets/adventure-art/winter-relay/thomas-vale.png"
+              alt="Black-and-white sketch portrait of Thomas Vale"
+            />
+            <h3>Thomas Vale — Regional Clerk</h3>
+            <p>
+              Can circulate the procedure if convinced it is reproducible rather
+              than one-off improvisation.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              class="portrait"
+              src="assets/adventure-art/ash-ledger/silas-venn.png"
+              alt="Black-and-white sketch portrait of Silas Venn"
+            />
+            <h3>Silas Venn or Covenant Successor</h3>
+            <p>
+              Wants today’s emergency solved and Mercer’s protocol contained.
+              “You are turning one winter’s improvisation into the ancestor of a
+              command network.”
+            </p>
+          </div>
+          <div class="card">
+            <img
+              class="portrait"
+              src="assets/adventure-art/ash-ledger/mara-ellery.png"
+              alt="Black-and-white sketch portrait of Mara Ellery"
+            />
+            <h3>Mara Ellery or Field Substitute</h3>
+            <p>
+              Prioritizes containment, but will not knowingly sacrifice
+              civilians simply to win the ideological argument.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section id="clues">
+        <div class="title">Clue Architecture</div>
+        <table>
+          <tr>
+            <th>Conclusion</th>
+            <th>Door 1</th>
+            <th>Door 2</th>
+            <th>Door 3</th>
+            <th>Fail-forward</th>
+          </tr>
+          <tr>
+            <td>Mercer is the fulcrum</td>
+            <td>Failed handoffs route through her logs</td>
+            <td>Pell says she tracks missing fragments</td>
+            <td>Rusk cites a prior reconstructed request</td>
+            <td>A second station asks for “Mercer’s sequence.”</td>
+          </tr>
+          <tr>
+            <td>The method is the Carrier</td>
+            <td>Another operator uses her numbering</td>
+            <td>Mercer can teach it in four steps</td>
+            <td>
+              Covenant offers to save the message but burn procedure notes
+            </td>
+            <td>
+              Aletheia confirms the discontinuity remains after immediate
+              success.
+            </td>
+          </tr>
+          <tr>
+            <td>Independent copies matter</td>
+            <td>Vale proposes a regional circular</td>
+            <td>Neighboring station copies it</td>
+            <td>Pell makes a station training card</td>
+            <td>Mercer asks who can use it if she is gone.</td>
+          </tr>
+        </table>
+      </section>
+      <section id="mission">
+        <div class="title">Mission Walkthrough</div>
+        <div class="scene">
+          <h3>1 — Briefing: The Message That Vanishes</h3>
+          <div class="read">
+            “The lives involved in the historical emergency are not yours to
+            manufacture. Your discontinuity is smaller. A message route becomes
+            unreliable at exactly the wrong time. Something useful is invented
+            there and then forgotten.”
+          </div>
+          <p>
+            <b>Purpose:</b> Establish the historical boundary and communications
+            discontinuity.
+          </p>
+        </div>
+        <div class="scene">
+          <h3>2 — Insertion: Cold That Changes Plans</h3>
+          <p>
+            Open with a practical crisis near the station: snapped support,
+            stalled sled, injured traveler, exposed feed line, or overloaded
+            generator.
+          </p>
+          <p>
+            <b>Failure changes:</b> time, gear, fatigue, witness footprint, or
+            Storm Clock—not access to the adventure.
+          </p>
+        </div>
+        <div class="scene">
+          <h3>3 — The Station Is Already Failing</h3>
+          <img
+            class="scene-art"
+            src="assets/adventure-art/winter-relay/scene-station-interior.png"
+            alt="Evie Mercer and the Vectors reconstruct emergency relay traffic"
+          />
+          <p class="art-caption">
+            Mercer keeps the signal intelligible while every other system
+            strains.
+          </p>
+          <p>
+            Mercer handles traffic while Pell fights mechanical failure. Present
+            several useful jobs at once so every Vector can contribute. Mercer
+            is competent but overloaded, not a helpless quest-giver.
+          </p>
+        </div>
+        <div class="scene">
+          <h3>4 — Fragments</h3>
+          <p>
+            A medically important transmission arrives incomplete. Some
+            fragments repeat, one is garbled, one is missing. Mercer’s log lets
+            the team identify exactly what they have and request only the
+            missing content.
+          </p>
+          <div class="gm">
+            <b>Do not make this a radio-engineering exam.</b> Players choose
+            verification, route, time, and confidence; character skills handle
+            technical execution.
+          </div>
+        </div>
+        <div class="scene">
+          <h3>5 — False Victory: Message Received</h3>
+          <div class="read">
+            The acknowledgment comes back weak, then stronger: RECEIVED
+            COMPLETE. For the first time in an hour, Mercer leans away from the
+            key. Pell laughs once. Somewhere beyond the dark, the message is
+            moving without you.
+          </div>
+          <p>
+            Give them the relief. Then show that Aletheia’s mission indicator
+            does not clear.
+          </p>
+        </div>
+        <div class="scene">
+          <h3>6 — What Did Mercer Actually Invent?</h3>
+          <p>
+            The logs reveal that Mercer has turned local habits into a compact
+            repeatable procedure. Another station can use it without her. She
+            considers it obvious craft, not invention.
+          </p>
+          <p><b>Purpose:</b> Reveal the true Carrier.</p>
+        </div>
+        <div class="scene">
+          <h3>7 — The Covenant’s Offer</h3>
+          <p>
+            Opposition offers to help keep medical traffic alive for the
+            remainder of the crisis if the Vectors agree Mercer’s procedure
+            stays local.
+          </p>
+          <div class="read">
+            “Save everyone you can tonight. Just don’t pretend that teaching
+            every station to speak the same emergency language is a neutral
+            act.”
+          </div>
+        </div>
+        <div class="scene">
+          <h3>8 — Build the Carrier</h3>
+          <table>
+            <tr>
+              <th>Route</th>
+              <th>Benefit</th>
+              <th>Risk</th>
+            </tr>
+            <tr>
+              <td>Neighboring-station copy</td>
+              <td>Immediate independent replication</td>
+              <td>Witness and log footprint</td>
+            </tr>
+            <tr>
+              <td>Regional circular</td>
+              <td>Institutional propagation</td>
+              <td>Durable paper trail</td>
+            </tr>
+            <tr>
+              <td>Station training card</td>
+              <td>Survives Mercer’s absence</td>
+              <td>Fragile unless copied elsewhere</td>
+            </tr>
+            <tr>
+              <td>Player-created route</td>
+              <td>Rewards agency</td>
+              <td>Exposure based on footprint</td>
+            </tr>
+          </table>
+        </div>
+        <div class="scene">
+          <h3>9 — Storm and Interference</h3>
+          <img
+            class="scene-art"
+            src="assets/adventure-art/winter-relay/scene-feed-line-repair.png"
+            alt="Vectors repair the relay feed line during a blizzard"
+          />
+          <p class="art-caption">
+            Outside work costs heat, time, and certainty.
+          </p>
+          <p>
+            Escalate according to player choices. Weather threatens the chosen
+            route; Covenant uses forged instructions, interception, theft, or
+            recovery of exposed future technology. Combat only when someone is
+            physically contesting a concrete objective.
+          </p>
+        </div>
+        <div class="scene">
+          <h3>10 — Verification: Two Copies, Same Mark</h3>
+          <p>
+            Aletheia verifies that Mercer’s method persisted beyond the original
+            station. Two independently created copies are displayed. Each bears
+            the seven-stroke annotation in a place neither should share.
+          </p>
+          <div class="path">
+            <b>Path revelation:</b> The mark is not simply attached to one
+            artifact. It can appear across independently created copies with
+            separate custody histories.
+          </div>
+        </div>
+      </section>
+      <section id="opposition">
+        <div class="title">Running the Covenant</div>
+        <table>
+          <tr>
+            <th>Vectors are…</th>
+            <th>Covenant response</th>
+          </tr>
+          <tr>
+            <td>Getting the medical message through</td>
+            <td>Help or stay out of the way.</td>
+          </tr>
+          <tr>
+            <td>Studying Mercer’s method</td>
+            <td>
+              Argue that local craft need not become institutional practice.
+            </td>
+          </tr>
+          <tr>
+            <td>Teaching a second station</td>
+            <td>Offer compromise, then disrupt documentation.</td>
+          </tr>
+          <tr>
+            <td>Creating regional distribution</td>
+            <td>Intercept circulars, alter routing, steal duplicate logs.</td>
+          </tr>
+          <tr>
+            <td>Using obvious future technology</td>
+            <td>
+              Prioritize anomaly recovery, even if Carrier containment suffers.
+            </td>
+          </tr>
+        </table>
+      </section>
+      <section id="trouble">
+        <div class="title">Troubleshooting and Simulation Fixes</div>
+        <table>
+          <tr>
+            <th>Problem</th>
+            <th>Fix</th>
+          </tr>
+          <tr>
+            <td>Players think adventure ends when message arrives</td>
+            <td>
+              Give relief, then immediately show the discontinuity remains.
+            </td>
+          </tr>
+          <tr>
+            <td>Players think they need radio expertise</td>
+            <td>
+              Keep technical execution character-facing and choices
+              player-facing.
+            </td>
+          </tr>
+          <tr>
+            <td>Players refuse to distribute the method</td>
+            <td>Valid choice. Let them pursue a Fragile/Contained outcome.</td>
+          </tr>
+          <tr>
+            <td>Players invent a better modern protocol</td>
+            <td>
+              They may clarify Mercer’s work, not replace it with future
+              doctrine without Exposure consequences.
+            </td>
+          </tr>
+          <tr>
+            <td>Players attack Covenant immediately</td>
+            <td>Have Covenant first help keep medical traffic alive.</td>
+          </tr>
+          <tr>
+            <td>Repeated failures threaten total station collapse</td>
+            <td>Station remains usable at increased cost.</td>
+          </tr>
+          <tr>
+            <td>Players side with Covenant</td>
+            <td>
+              Valid. The question becomes what minimum continuity they will
+              preserve.
+            </td>
+          </tr>
+        </table>
+        <h3>Pacing</h3>
+        <table>
+          <tr>
+            <th>Time</th>
+            <th>Target</th>
+          </tr>
+          <tr>
+            <td>0:00–0:30</td>
+            <td>Briefing + insertion</td>
+          </tr>
+          <tr>
+            <td>0:30–1:30</td>
+            <td>Station + fragmented message</td>
+          </tr>
+          <tr>
+            <td>1:30–2:00</td>
+            <td>False victory</td>
+          </tr>
+          <tr>
+            <td>2:00–3:00</td>
+            <td>Carrier revelation + Covenant</td>
+          </tr>
+          <tr>
+            <td>3:00–4:15</td>
+            <td>Propagation + interference</td>
+          </tr>
+          <tr>
+            <td>Final 15 min</td>
+            <td>Verification + debrief; never cut</td>
+          </tr>
+        </table>
+      </section>
+      <section id="ending">
+        <div class="title">Outcomes and Debrief</div>
+        <div class="grid">
+          <div class="card">
+            <h3>Clean Success</h3>
+            <p>
+              Carrier Established/Durable, Exposure 0–2. Mercer’s procedure
+              becomes ordinary regional craft.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Exposed Success</h3>
+            <p>
+              The method survives, but anomalous records or witnesses persist.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Contained Failure</h3>
+            <p>
+              Today’s emergency traffic succeeds, but the method remains Fragile
+              or disappears.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Exposed Failure</h3>
+            <p>The method disappears and temporal evidence remains.</p>
+          </div>
+        </div>
+        <h3>Debrief prompts</h3>
+        <ul>
+          <li>
+            Was the Covenant wrong to separate today’s lives from tomorrow’s
+            network?
+          </li>
+          <li>
+            Did the team preserve Mercer’s work or improve it beyond what
+            history could plausibly own?
+          </li>
+          <li>Which mattered more: redundancy or secrecy?</li>
+          <li>
+            What does the same seven-stroke mark on two independent copies
+            imply?
+          </li>
+        </ul>
+      </section>
+      <section id="path">
+        <div class="title">Continuance Record</div>
+        <p>
+          Record Carrier state, Exposure, Mercer and Pell outcomes, Covenant
+          relationship, surviving transmission routes, any future technology
+          exposed, and the team’s conclusion about the paired seven-stroke
+          marks.
+        </p>
+        <p>
+          <b>M01 callback:</b> A Durable Ash Ledger can provide one small,
+          historically ordinary engineering advantage in reinforcing or
+          repairing the station. Failure in M01 removes only that convenience.
+        </p>
+        <p>
+          <b>M03 setup:</b> M02 determines whether a distant documentary
+          confirmation in The Paper Harbor arrives cleanly, late, or through a
+          compromised chain.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
