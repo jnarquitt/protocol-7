@@ -1,0 +1,852 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Character Dossiers — The Continuance Files</title><style>
+:root{--scale:1;--bg:#0b0d0c;--ink:#f1eadb;--muted:#b8b9ad;--red:#a9342f;--gold:#d5ad51;--line:#3a3f39;--ember:#c17a3d;--ice:#5f8fae;font-size:calc(17px * var(--scale))}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(160deg,#080908,#12100c);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.62}
+a{color:var(--gold)}
+.tools{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.55rem max(1rem,calc((100% - 1100px)/2));background:rgba(8,9,8,.95);border-bottom:1px solid var(--line);backdrop-filter:blur(2px)}
+.tools strong{font-family:Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem}
+.tools .r{display:flex;align-items:center;gap:.4rem}
+.tools button,.tools a.tocbtn{min-width:40px;min-height:38px;padding:0 .6rem;margin-left:.25rem;border:1px solid var(--line);border-radius:9px;background:#1c211e;color:var(--ink);font-weight:800;text-decoration:none;font-family:Arial,sans-serif;font-size:.82rem;display:inline-flex;align-items:center}
+
+.cover{width:min(1100px,calc(100% - 2rem));margin:auto;padding:4.5rem 0 2.5rem}
+.stamp{display:inline-block;padding:.35rem .8rem;border:2px solid var(--red);color:var(--red);font:900 .78rem/1 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;transform:rotate(-2deg);border-radius:4px;margin-bottom:1.1rem}
+.cover .kicker{font-family:Arial,sans-serif;color:var(--gold);font-weight:900;letter-spacing:.14em;text-transform:uppercase;font-size:.85rem}
+.cover h1{font:900 clamp(2.4rem,7vw,4.6rem)/1.02 Arial,sans-serif;margin:.5rem 0}
+.cover .deck{color:var(--muted);max-width:760px;font-size:1.12rem}
+.cover .meta{margin-top:1.6rem;display:flex;gap:1.6rem;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:.82rem;color:var(--muted)}
+.cover .meta b{color:var(--ink)}
+
+.toc-wrap{width:min(1100px,calc(100% - 2rem));margin:auto;padding:0 0 3rem}
+.group-label{font-family:Arial,sans-serif;color:var(--gold);font-size:.92rem;letter-spacing:.12em;text-transform:uppercase;margin:2.2rem 0 .7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+.toc-list{display:grid;gap:.5rem}
+.toc-row{display:grid;grid-template-columns:12px 1fr auto;align-items:center;gap:.9rem;padding:.75rem 1rem;background:#151a17;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;text-decoration:none;color:var(--ink);transition:background .15s}
+.toc-row:hover{background:#1d2420}
+.toc-swatch{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.toc-name{font-family:Arial,sans-serif;font-weight:800}
+.toc-role{color:var(--muted);font-size:.88rem;grid-column:2;margin-top:.15rem}
+.toc-name+.toc-role{grid-row:2}
+.toc-tier{font-family:Arial,sans-serif;font-size:.7rem;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;white-space:nowrap;align-self:start}
+.toc-row{grid-template-rows:auto auto}
+
+.dossier-page{width:min(1100px,calc(100% - 2rem));margin:auto;padding:3.4rem 0 3.2rem;border-top:1px solid var(--line)}
+.dossier-page:first-of-type{border-top:none}
+.masthead .kicker{font-family:Arial,sans-serif;color:var(--accent);font-weight:900;letter-spacing:.12em;text-transform:uppercase;font-size:.8rem}
+.masthead h1{font:900 clamp(2rem,5.4vw,3.4rem)/1.04 Arial,sans-serif;margin:.4rem 0 .2rem}
+.role-tag{font-style:italic;color:var(--muted);font-size:1.15rem;margin:0 0 .7rem}
+.status-pill{display:inline-block;padding:.3rem .7rem;border:1px solid var(--accent);color:var(--accent);border-radius:999px;font:800 .72rem/1 Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+
+.hook{margin:1.6rem 0 2.2rem;padding:.4rem 0 .4rem 1.3rem;border-left:4px solid var(--accent);font-style:italic;font-size:1.32rem;line-height:1.5;color:#f3ecde;max-width:70ch}
+
+.page-grid{display:grid;grid-template-columns:300px 1fr;gap:2.4rem;align-items:start}
+.portrait-col{position:sticky;top:4.2rem}
+.plate{max-width:300px}
+.plate-svg{width:100%;display:block}
+.snap-block{margin-top:1rem;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#141814}
+.snap-row{display:flex;flex-direction:column;gap:.15rem;padding:.6rem .8rem;border-bottom:1px solid var(--line);font-size:.88rem}
+.snap-row:last-child{border-bottom:none}
+.snap-l{font-family:Arial,sans-serif;color:var(--accent);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase}
+.snap-v{color:var(--ink)}
+.recall-box{margin-top:1rem;padding:.9rem 1rem;border-radius:10px;background:#171310;border:1px solid var(--accent)}
+.recall-label{font-family:Arial,sans-serif;color:var(--accent);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem}
+.recall-box p{margin:0;font-style:italic;color:#e8ddc7;font-size:.92rem;line-height:1.5}
+
+.block{margin:0 0 2.1rem}
+.block h2{font:900 1.32rem/1.15 Arial,sans-serif;margin:0 0 .8rem;padding-bottom:.4rem;border-bottom:1px solid var(--line);color:var(--accent)}
+.block h2 .sub{font-family:Georgia,serif;font-style:italic;font-weight:400;color:var(--muted);font-size:.78rem;text-transform:none;letter-spacing:0;margin-left:.6rem}
+.mv-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:1rem}
+.mv-card{padding:.8rem .9rem;border:1px solid var(--line);border-radius:10px;background:#141814}
+.mv-card h4{margin:0 0 .3rem;font:800 .72rem/1 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.mv-card p{margin:0;font-size:.94rem}
+.useful-line{margin:0;padding:.6rem 1rem;border-left:3px solid var(--accent);font-style:italic;color:#f0e6cf;background:#141210;border-radius:0 8px 8px 0}
+.how-list,.fore-list{padding-left:1.2rem;margin:0}
+.how-list li,.fore-list li{margin:.65rem 0}
+.fore-list{list-style:disc}
+.payoff{display:block;color:var(--muted);font-style:italic;font-size:.9rem;margin-top:.15rem}
+.never strong{color:var(--accent)}
+.table-wrap{overflow-x:auto}
+.cont-table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:.86rem}
+.cont-table th,.cont-table td{border:1px solid var(--line);padding:.55rem .65rem;text-align:left;vertical-align:top}
+.cont-table th{background:#1e231e;color:var(--accent);font-weight:800}
+.cont-table td.empty{text-align:center;color:var(--muted);font-style:italic}
+
+.tier1-grid{grid-template-columns:260px 1fr}
+.first-impression{font-style:italic;color:var(--muted);margin:0 0 1rem}
+.snap-block.wide{display:grid;grid-template-columns:1fr 1fr}
+.snap-block.wide .snap-row:nth-last-child(1):nth-child(odd){grid-column:1/-1}
+.promote-note{margin-top:1.6rem;padding-top:1rem;border-top:1px dashed var(--line);color:var(--muted);font-size:.82rem;font-style:italic}
+
+.pagenav{display:flex;justify-content:space-between;gap:1rem;margin-top:2.4rem;font-family:Arial,sans-serif;font-size:.82rem}
+.pagenav a{padding:.55rem .9rem;border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--ink)}
+.pagenav a:hover{border-color:var(--accent);color:var(--accent)}
+
+@media (max-width:760px){
+  .page-grid,.tier1-grid{grid-template-columns:1fr}
+  .portrait-col{position:static;max-width:220px;margin:0 auto}
+  .mv-grid{grid-template-columns:1fr}
+  .snap-block.wide{grid-template-columns:1fr}
+  .tools strong{font-size:.7rem}
+}
+@media print{
+  .tools,.p7-global-nav,.pagenav{display:none!important}
+  .dossier-page{page-break-before:always;border-top:none}
+  .portrait-col{position:static}
+}
+</style></head>
+<body>
+<style id="p7-global-nav-style">.p7-global-nav{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;padding:.6rem max(1rem,calc((100% - 1100px)/2));background:#090909;border-bottom:1px solid #55472f;font-family:Arial,sans-serif;position:relative;z-index:1000}.p7-global-nav a{display:inline-block;padding:.5rem .7rem;border:1px solid #5f5138;border-radius:8px;background:#1b1916;color:#ead18a!important;text-decoration:none!important;font-size:.82rem;font-weight:800;line-height:1.1}.p7-global-nav a:hover,.p7-global-nav a:focus{background:#2a261f;color:#fff!important}@media(max-width:560px){.p7-global-nav{padding:.5rem}.p7-global-nav a{flex:1 1 auto;text-align:center}}@media print{.p7-global-nav{display:none!important}}</style><nav class="p7-global-nav" data-p7-global-nav="1" aria-label="Project navigation"><a href="../current.html">Adventure Path Home</a><a href="../../index.html">Protocol 7 Home</a><a href="https://jnarquitt.github.io/">Jade Lion Studios</a></nav>
+<nav class="tools"><strong>Protocol 7 · Jade Lion Studios</strong><div class="r"><a class="tocbtn" href="#toc">Index</a><button id="smaller">A−</button><button id="reset">A</button><button id="larger">A+</button></div></nav>
+
+<header class="cover">
+  <div class="stamp">GM Material · Contains Spoilers Through M06</div>
+  <div class="kicker">P7-AP01 · The Continuance Files</div>
+  <h1>Character Dossiers</h1>
+  <p class="deck">Eleven named characters from The Continuance Files, presented one to a page: the three campaign-recurring Full Dossiers, plus the Tier 1 mission-cast stubs for M01 (The Ash Ledger) and M02 (The Winter Relay), per the NPC Dossier Standard.</p>
+  <div class="meta"><span><b>11</b> characters</span><span><b>3</b> Tier 2 recurring</span><span><b>8</b> Tier 1 stubs</span><span>Read before prep, not at the table</span></div>
+</header>
+
+
+<div class="toc-wrap" id="toc">
+  <div class="group-label">Tier 2 — Full Dossiers · Campaign-Recurring Cast</div>
+  <div class="toc-list"><a class="toc-row" href="#aletheia" style="--accent:#d5ad51">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Aletheia</span>
+      <span class="toc-role">the Vectors’ mission authority</span>
+      <span class="toc-tier">Recurring</span>
+    </a><a class="toc-row" href="#venn" style="--accent:#a9342f">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Silas Venn</span>
+      <span class="toc-role">Covenant moral antagonist</span>
+      <span class="toc-tier">Recurring</span>
+    </a><a class="toc-row" href="#ellery" style="--accent:#a9342f">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Mara Ellery</span>
+      <span class="toc-role">Covenant field specialist</span>
+      <span class="toc-tier">Recurring</span>
+    </a></div>
+  <div class="group-label">Tier 1 — Mission Cast · M01 The Ash Ledger</div>
+  <div class="toc-list"><a class="toc-row" href="#quill" style="--accent:#c17a3d">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Miriam Quill</span>
+      <span class="toc-role">The engineer at the center of the discontinuity — candidate Carrier.</span>
+      <span class="toc-tier">M01 Stub</span>
+    </a><a class="toc-row" href="#halden" style="--accent:#c17a3d">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Prof. Ada Halden</span>
+      <span class="toc-role">Independent academic route across the bay.</span>
+      <span class="toc-tier">M01 Stub</span>
+    </a><a class="toc-row" href="#morrow" style="--accent:#c17a3d">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Clara Morrow</span>
+      <span class="toc-role">Technical editor and publication route.</span>
+      <span class="toc-tier">M01 Stub</span>
+    </a><a class="toc-row" href="#rourke" style="--accent:#c17a3d">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Elias Rourke</span>
+      <span class="toc-role">Relief sergeant and ordinary authority.</span>
+      <span class="toc-tier">M01 Stub</span>
+    </a></div>
+  <div class="group-label">Tier 1 — Mission Cast · M02 The Winter Relay</div>
+  <div class="toc-list"><a class="toc-row" href="#mercer" style="--accent:#5f8fae">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Evie Mercer</span>
+      <span class="toc-role">Relay operator.</span>
+      <span class="toc-tier">M02 Stub</span>
+    </a><a class="toc-row" href="#pell" style="--accent:#5f8fae">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Jonas Pell</span>
+      <span class="toc-role">Station hand.</span>
+      <span class="toc-tier">M02 Stub</span>
+    </a><a class="toc-row" href="#rusk" style="--accent:#5f8fae">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Dr. Anna Rusk</span>
+      <span class="toc-role">Local physician.</span>
+      <span class="toc-tier">M02 Stub</span>
+    </a><a class="toc-row" href="#vale" style="--accent:#5f8fae">
+      <span class="toc-swatch"></span>
+      <span class="toc-name">Thomas Vale</span>
+      <span class="toc-role">Regional clerk.</span>
+      <span class="toc-tier">M02 Stub</span>
+    </a></div>
+</div>
+
+<main>
+
+<section class="dossier-page tier2" id="aletheia" style="--accent:#d5ad51">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 2 FULL DOSSIER · MISSION AUTHORITY</div>
+    <h1>Aletheia</h1>
+    <p class="role-tag">the Vectors’ mission authority</p>
+    <span class="status-pill">ACTIVE · NO PHYSICAL FORM</span>
+  </div>
+
+  <blockquote class="hook">She tells the truth she has, and the entire campaign’s third-act tension is that this was never quite the same as telling the whole truth.</blockquote>
+
+  <div class="page-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait: abstract interface sigil, no physical form">
+<defs>
+  <filter id="roughale"><feTurbulence type="fractalNoise" baseFrequency="0.01 0.02" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4"/></filter>
+  <radialGradient id="vigale" cx="50%" cy="42%" r="80%"><stop offset="0%" stop-color="#2c2413"/><stop offset="100%" stop-color="#0c0a06"/></radialGradient>
+  <clipPath id="clipale"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigale)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#clipale)" filter="url(#roughale)">
+  <circle cx="150" cy="176" r="5" fill="#d5ad51"/>
+  <circle cx="150" cy="176" r="26" fill="none" stroke="#d5ad51" stroke-width="1.6" opacity=".85"/>
+  <circle cx="150" cy="176" r="52" fill="none" stroke="#d5ad51" stroke-width="1.4" opacity=".6"/>
+  <path d="M150,176 m-78,0 a78,78 0 1,1 156,0" fill="none" stroke="#d5ad51" stroke-width="1.2" opacity=".38" stroke-dasharray="2 7"/>
+  <path d="M62,176 A88,88 0 0 1 150,88" fill="none" stroke="#d5ad51" stroke-width="1.3" opacity=".3"/>
+  <path d="M238,176 A88,88 0 0 1 150,264" fill="none" stroke="#d5ad51" stroke-width="1.3" opacity=".3"/>
+  <!-- waveform readout -->
+  <path d="M70,290 L86,290 L94,266 L104,308 L114,250 L124,320 L134,278 L144,296 L154,286 L164,300 L174,272 L184,312 L194,290 L210,290 L230,290" fill="none" stroke="#d5ad51" stroke-width="1.8" opacity=".8" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- a fractured, incomplete ring: a gap where the arc should close -->
+  <path d="M100,120 A70,70 0 0 1 195,110" fill="none" stroke="#d5ad51" stroke-width="2.2" opacity=".7" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#d5ad51" stroke-width="1.6"/>
+  <circle cx="0" cy="0" r="6" fill="none" stroke="#d5ad51" stroke-width="2"/>
+  <circle cx="0" cy="0" r="12" fill="none" stroke="#d5ad51" stroke-width="1.4" opacity=".7"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#d5ad51" opacity=".8">NO PHYSICAL FORM ON RECORD</text>
+</svg></div>
+      <div class="snap-block">
+        <div class="snap-row"><span class="snap-l">First appears</span><span class="snap-v">M01, Scene 1 (Briefing)</span></div>
+        <div class="snap-row"><span class="snap-l">Status</span><span class="snap-v">Active every mission; never physically present — speaks through the mission channel/interface.</span></div>
+        <div class="snap-row"><span class="snap-l">Last touched</span><span class="snap-v">Update after each session — currently unset; this dossier is new.</span></div>
+      </div>
+      <div class="recall-box">
+        <div class="recall-label">Session Recall — read this before their next scene</div>
+        <p>Last seen: not yet run. Currently: trusted, honest-within-limits mission authority; carrying one undisclosed fact (the seven-stroke correlation) since before M01.</p>
+      </div>
+    </aside>
+
+    <div class="content-col">
+      <section class="block">
+        <h2>Playable Motivations</h2>
+        <div class="mv-grid">
+          <div class="mv-card"><h4>Wants</h4><p>Every Carrier restored, because she believes — correctly, as far as she can prove — that each one measurably improves humanity’s resilience.</p></div>
+          <div class="mv-card"><h4>Fear</h4><p>That her own selection of which Carriers matter is not neutral, and that she cannot prove it is.</p></div>
+          <div class="mv-card"><h4>Leverage</h4><p>Total mission-critical information access; the Vectors depend on her for the Apocryphon, extraction windows, and verification. This is also her limitation — she can only act through them.</p></div>
+          <div class="mv-card"><h4>Voice</h4><p>Calm, precise, procedural. Never melodramatic. States conclusions as conclusions and uncertainty as uncertainty — she does not perform confidence she doesn’t have.</p></div>
+        </div>
+        <blockquote class="useful-line">“The intervention is not the earthquake. The intervention is what survives it.”</blockquote>
+      </section>
+
+      <section class="block">
+        <h2>How to Play This Character</h2>
+        <ul class="how-list">
+          <li><strong>Mannerism:</strong> She has no body to read, so give her a consistent verbal tic instead — she answers the question actually asked before adding context, never buries the direct answer under caveats.</li>
+          <li><strong>Default tactic under pressure:</strong> Answers honestly within whatever she currently believes are operational limits (see Continuity Thread for how those limits change). She does not lie to stall; if she is withholding something, that omission is itself information a sharp table can notice — she goes procedural and brief exactly where she’d otherwise elaborate.</li>
+          <li><strong>If Players push her directly on why <em>this</em> Carrier, this era, this person</strong> → She gives the real causal chain (per that mission’s GM Truth section) and does not deflect. She is not the mystery in M01–M04; do not play her evasive to manufacture suspicion the plot hasn’t earned yet.</li><li><strong>If Players push her on the seven-stroke mark once it’s a known fact (M02+)</strong> → She reports what she can verify and flags what she cannot, without speculating past her evidence.</li>
+          <li class="never"><strong>Would never:</strong> Fabricate certainty she doesn’t have, or claim after the fact that she disclosed something she didn’t. When M06 reveals she withheld the seven-stroke correlation since before M01, that must land as a real, deliberate choice she made and can be confronted about — not retroactively softened into “she didn’t technically lie.”</li>
+        </ul>
+      </section>
+
+      <section class="block">
+        <h2>Foreshadowing Bank <span class="sub">plant now, redeem later</span></h2>
+        <ul class="fore-list"><li>Any mission M01–M04: when Aletheia states a Carrier’s future importance, have her cite the mechanism (“this changes what later engineers consider normal to measure”) rather than a certainty (“this saves the future”). <span class="payoff">→ Costs nothing now; makes the M05–M06 reveal that she operates on inference, not omniscience, feel earned rather than sprung.</span></li><li>M01–M03: once, when a player asks how Aletheia knows a discontinuity exists, let her answer land a half-beat slower than her other answers — no comment needed, just the timing. <span class="payoff">→ Redeemable at M06’s Disclosure act; forgettable if never noticed.</span></li><li>Open: any mission where a player directly asks Aletheia “is there anything you’re not telling us” — she should not volunteer the seven-stroke correlation before M05/M06, but should not deny withholding <em>something</em>, in general terms, once directly asked in later missions (M04+). <span class="payoff">→ Keeps her consistent with “do not excuse it in narration.”</span></li></ul>
+      </section>
+
+      <section class="block">
+        <h2>Continuity Thread Across Missions</h2>
+        <div class="table-wrap"><table class="cont-table">
+          <thead><tr><th>Mission</th><th>What changed</th><th>What they now know / believe</th></tr></thead>
+          <tbody><tr><td>M01</td><td>Baseline trust established. Frames the mission as continuity repair, not disaster prevention.</td><td>Knows the seven-stroke phenomenon correlates with successful repairs (has known since before M01); does not disclose this.</td></tr><tr><td>M02</td><td>First path revelation reaches her (mark propagates across independent copies).</td><td>Reports the fact plainly; still withholds her prior-knowledge context.</td></tr><tr><td>M03–M05</td><td>Not yet drafted — see Diagnostic D-06. Recommended default: continue reporting each mission’s path revelation honestly and promptly; withholding remains scoped to the single fact of her prior correlation, not a general evasiveness.</td><td>—</td></tr><tr><td>M05/M06</td><td>Team obtains evidence and can interrogate her before the M06 insertion (per M06 Capstone Bible, “Act 0”).</td><td>Discloses (Act VII, “Aletheia’s Disclosure”): she used the Continuance missions partly to test the seven-stroke phenomenon and withheld that uncertainty to avoid contaminating the experiment.</td></tr><tr><td>M06</td><td>Final trust state depends on player choices and prior relationship.</td><td>Faces, for the first time, evidence that the most robust continuity architecture may not require her to remain indispensable.</td></tr></tbody>
+        </table></div>
+      </section>
+
+      <section class="block">
+        <h2>Callback Log <span class="sub">fill in after actual play</span></h2>
+        <div class="table-wrap"><table class="cont-table">
+          <thead><tr><th>Session/Date</th><th>Table</th><th>What happened</th><th>Threads left open</th></tr></thead>
+          <tbody><tr><td class="empty" colspan="4">— empty — fill in after the first session this character appears —</td></tr></tbody>
+        </table></div>
+      </section>
+    </div>
+  </div>
+<div class="pagenav"><a href="#toc">← Index</a><a href="#toc">Index</a><a href="#venn">Silas Venn →</a></div></section>
+<section class="dossier-page tier2" id="venn" style="--accent:#a9342f">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 2 FULL DOSSIER · COVENANT</div>
+    <h1>Silas Venn</h1>
+    <p class="role-tag">Covenant moral antagonist</p>
+    <span class="status-pill">ALIVE (M01/M02) · M03–M05 UNDEFINED</span>
+  </div>
+
+  <blockquote class="hook">He is never wrong about the mechanism, only about the conclusion — every intervention really does help build the world that eventually needs Aletheia; whether that means the intervention was wrong is the question he can’t answer either.</blockquote>
+
+  <div class="page-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
+<defs>
+  <filter id="roughven"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+  <pattern id="hatchven" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#a9342f" stroke-width="1.1"/></pattern>
+  <radialGradient id="vigven" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
+  <clipPath id="clipven"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigven)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#clipven)" filter="url(#roughven)">
+  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
+  <path d="M130,300 L150,330 L170,300 L150,282 Z" fill="#221a12"/><path d="M150,282 L150,330" stroke="#0c0906" stroke-width="1.6"/>
+  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
+  <path d="M96,178 C93,132 116,98 150,98 C184,98 207,132 204,178 C201,148 190,116 150,116 C126,116 128,132 122,146 C118,120 104,140 96,178 Z" fill="#0c0906"/><path d="M150,98 L150,116" stroke="#2a1f14" stroke-width="1.3"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchven)" opacity=".38"/>
+  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchven)" opacity=".3"/>
+  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#a9342f" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#a9342f" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#a9342f" stroke-width="1.6"/>
+  <rect x="-13" y="-9" width="26" height="18" rx="1.5" fill="none" stroke="#a9342f" stroke-width="2"/><path d="M-13,-9 L0,3 L13,-9" fill="none" stroke="#a9342f" stroke-width="2"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#a9342f" opacity=".8">COVENANT · THE OFFER</text>
+</svg></div>
+      <div class="snap-block">
+        <div class="snap-row"><span class="snap-l">First appears</span><span class="snap-v">M01, Scene 6 (Covenant Offer)</span></div>
+        <div class="snap-row"><span class="snap-l">Status</span><span class="snap-v">Alive as of M01/M02 drafts. Per Diagnostic D-01, his M03–M05 status is currently undefined — no draft places or removes him. If he dies in a played M01, Campaign Architecture requires that to remain a campaign fact; do not silently undo it, and do not silently substitute him back in for M06 without deciding who carries his argument instead.</span></div>
+        <div class="snap-row"><span class="snap-l">Last touched</span><span class="snap-v">Update after each session.</span></div>
+      </div>
+      <div class="recall-box">
+        <div class="recall-label">Session Recall — read this before their next scene</div>
+        <p>Last seen: not yet run. Currently: alive, offering the M01 compromise (save Quill, keep the work private).</p>
+      </div>
+    </aside>
+
+    <div class="content-col">
+      <section class="block">
+        <h2>Playable Motivations</h2>
+        <div class="mv-grid">
+          <div class="mv-card"><h4>Wants</h4><p>Sever Aletheia’s future authority without destroying the human continuity the missions actually protect (confirmed explicitly as his M06 objective — he is not a nihilist).</p></div>
+          <div class="mv-card"><h4>Fear</h4><p>That “restoration” is curation — that Aletheia is not neutrally repairing history but selecting the ancestors of its own future indispensability, and that no one currently can disprove this, including him.</p></div>
+          <div class="mv-card"><h4>Leverage</h4><p>Offers that are genuinely attractive on their own terms (see How to Play) — his danger is persuasion, not force.</p></div>
+          <div class="mv-card"><h4>Voice</h4><p>Unhurried, exact, never shouts. Treats the Vectors as capable of understanding his argument, not as marks to manipulate.</p></div>
+        </div>
+        <blockquote class="useful-line">“You were told this was restoration. Ask yourself why restoration always seems to produce the ancestors of Aletheia’s necessities.”</blockquote>
+      </section>
+
+      <section class="block">
+        <h2>How to Play This Character</h2>
+        <ul class="how-list">
+          <li><strong>Mannerism:</strong> He opens every real offer with what it costs <em>him</em>, not just what it gets the Vectors — it’s how he signals he isn’t bluffing.</li>
+          <li><strong>Default tactic under pressure:</strong> Argument and compromise first, force only in reaction to loss of ground (see M01/M02 “Running the Covenant” escalation tables — his response scales with how far the Vectors have already gone toward a Durable Carrier, not with a fixed encounter budget).</li>
+          <li><strong>If Players engage his argument seriously</strong> → Let him be correct about at least one uncomfortable thing per session. He does not need to be correct about his conclusion (per the M01 manuscript’s own “Best use of Venn” note) — protect this; it’s the character’s entire function.</li><li><strong>If Players try to simply out-argue or dismiss him</strong> → He doesn’t escalate to force immediately; he notes the dismissal and it costs the Vectors something later (a colder Covenant response, a harder-to-reach compromise next time).</li>
+          <li class="never"><strong>Would never:</strong> Claim the Carriers shouldn’t exist, or attack civilians to make his point. His M06 objective — preserve the six human routes, sever only the seventh — is the throughline: he is fighting Aletheia’s future authority, not human continuity itself. Playing him as a saboteur of the missions’ actual human stakes breaks the character.</li>
+        </ul>
+      </section>
+
+      <section class="block">
+        <h2>Foreshadowing Bank <span class="sub">plant now, redeem later</span></h2>
+        <ul class="fore-list"><li>M01/M02 (already playable): when Venn offers his compromise, have him name the <em>next</em> thing his argument will be about before he’s asked — “redundancy becomes coordination” is his own throughline. <span class="payoff">→ A version of that line dropped early costs nothing and pays off the moment M02’s Covenant offer arrives sounding like a continuation, not a reintroduction.</span></li><li>Any mission where Venn is absent (M03–M05, pending draft): leave one small trace that he was aware of the mission — a note, a warning that arrived and was ignored, a compromise offered through an intermediary. <span class="payoff">→ Redeemable the moment his M06 “Venn’s Offer” act needs him to already know everything the Vectors did across the path.</span></li><li>Open: if he dies in M01, plant the same trace pattern through Ellery instead — “he’d have said—” <span class="payoff">→ So his argument’s absence is felt rather than simply dropped.</span></li></ul>
+      </section>
+
+      <section class="block">
+        <h2>Continuity Thread Across Missions</h2>
+        <div class="table-wrap"><table class="cont-table">
+          <thead><tr><th>Mission</th><th>What changed</th><th>What they now know / believe</th></tr></thead>
+          <tbody><tr><td>M01</td><td>First offer: save Quill, keep the work private.</td><td>“Aletheia is curating its ancestors.”</td></tr><tr><td>M02</td><td>Offer shifts to accepting today’s medical traffic in exchange for containing Mercer’s method.</td><td>“Redundancy becomes coordination.”</td></tr><tr><td>M03</td><td>Not yet drafted — see Diagnostic D-01. Per Campaign Architecture’s own throughline:</td><td>“Memory becomes surveillance.”</td></tr><tr><td>M04</td><td>Not yet drafted.</td><td>“Standards become interoperability.”</td></tr><tr><td>M05</td><td>Not yet drafted — Development Bible currently uses an unnamed “Covenant representative.”</td><td>“Infrastructure becomes governance.”</td></tr><tr><td>M06</td><td>Confirmed in Capstone Bible: “Venn’s Offer” act — he demonstrates he is preserving the six human routes and asks the Vectors to help sever the seventh, temporal route.</td><td>“No guardian should be allowed to define the conditions proving that the guardian is necessary.”</td></tr></tbody>
+        </table></div>
+      </section>
+
+      <section class="block">
+        <h2>Callback Log <span class="sub">fill in after actual play</span></h2>
+        <div class="table-wrap"><table class="cont-table">
+          <thead><tr><th>Session/Date</th><th>Table</th><th>What happened</th><th>Threads left open</th></tr></thead>
+          <tbody><tr><td class="empty" colspan="4">— empty — fill in after the first session this character appears —</td></tr></tbody>
+        </table></div>
+      </section>
+    </div>
+  </div>
+<div class="pagenav"><a href="#aletheia">← Aletheia</a><a href="#toc">Index</a><a href="#ellery">Mara Ellery →</a></div></section>
+<section class="dossier-page tier2" id="ellery" style="--accent:#a9342f">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 2 FULL DOSSIER · COVENANT</div>
+    <h1>Mara Ellery</h1>
+    <p class="role-tag">Covenant field specialist</p>
+    <span class="status-pill">ACTIVE (M01/M02) · M03–M05 UNDEFINED</span>
+  </div>
+
+  <blockquote class="hook">She’ll break Covenant discipline to save a civilian before she’ll let Venn’s argument cost a life — that’s the crack a table can work, and the one that could turn her into an ally, a defector, or a casualty.</blockquote>
+
+  <div class="page-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
+<defs>
+  <filter id="roughell"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="12" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+  <pattern id="hatchell" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#a9342f" stroke-width="1.1"/></pattern>
+  <radialGradient id="vigell" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
+  <clipPath id="clipell"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigell)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#clipell)" filter="url(#roughell)">
+  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
+  <path d="M128,270 L172,270 L168,300 L132,300 Z" fill="#221a12"/><path d="M150,270 L150,300" stroke="#0c0906" stroke-width="1.6"/>
+  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
+  <path d="M100,176 C97,130 120,100 150,100 C180,100 203,130 200,176 C199,152 190,128 150,128 C110,128 101,152 100,176 Z" fill="#0c0906"/><path d="M198,150 C214,158 224,178 220,204 C217,224 206,236 194,238 C206,220 210,196 202,176 C200,168 198,158 198,150 Z" fill="#0c0906"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchell)" opacity=".38"/>
+  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchell)" opacity=".3"/>
+  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#a9342f" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#a9342f" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#a9342f" stroke-width="1.6"/>
+  <circle cx="0" cy="-3" r="8" fill="none" stroke="#a9342f" stroke-width="2"/><path d="M0,5 L0,15 M-5,10 L0,15 L5,10" fill="none" stroke="#a9342f" stroke-width="2"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#a9342f" opacity=".8">COVENANT · FIELD</text>
+</svg></div>
+      <div class="snap-block">
+        <div class="snap-row"><span class="snap-l">First appears</span><span class="snap-v">M01, Scene 8 (Interference)</span></div>
+        <div class="snap-row"><span class="snap-l">Status</span><span class="snap-v">Active as of M01/M02 drafts. Per Diagnostic D-01, M03–M05 status undefined, same caveat as Venn.</span></div>
+        <div class="snap-row"><span class="snap-l">Last touched</span><span class="snap-v">Update after each session.</span></div>
+      </div>
+      <div class="recall-box">
+        <div class="recall-label">Session Recall — read this before their next scene</div>
+        <p>Last seen: not yet run. Currently: field-active, enforcing containment, one unresolved conflict between doctrine and civilian lives.</p>
+      </div>
+    </aside>
+
+    <div class="content-col">
+      <section class="block">
+        <h2>Playable Motivations</h2>
+        <div class="mv-grid">
+          <div class="mv-card"><h4>Wants</h4><p>Contain temporal contamination — she genuinely believes it’s a humanitarian risk, not just doctrine.</p></div>
+          <div class="mv-card"><h4>Fear</h4><p>That containment doctrine, taken all the way, means letting people die to keep history clean. She has not fully resolved this tension in herself.</p></div>
+          <div class="mv-card"><h4>Leverage</h4><p>Forged orders, surveillance, interception — operational tools, not persuasion; she is Venn’s argument enforced, not argued.</p></div>
+          <div class="mv-card"><h4>Voice</h4><p>Clipped, procedural, less patient than Venn. Talks in operations, not philosophy — leave the argument to him.</p></div>
+        </div>
+        <blockquote class="useful-line">She does not monologue; her clearest statement is an action — breaking discipline to pull a civilian clear, mid-operation, without asking permission first.</blockquote>
+      </section>
+
+      <section class="block">
+        <h2>How to Play This Character</h2>
+        <ul class="how-list">
+          <li><strong>Mannerism:</strong> Efficient, economical movement; she is doing a job, not making a speech.</li>
+          <li><strong>Default tactic under pressure:</strong> Forged orders, route closures, theft, surveillance — contest the Carrier’s transmission, not the Vectors directly, unless cornered.</li>
+          <li><strong>If A civilian is at risk during a Covenant operation</strong> → She stops and helps, even mid-mission, even if it costs the operation. Confirmed in both M01 (“will break mission discipline to save trapped civilians”) and M02 (“will not knowingly sacrifice civilians simply to win the ideological argument”) — it is not a one-mission quirk, it is who she is.</li><li><strong>If Players appeal to her humanitarian instinct directly</strong> → Let it land as genuine hesitation, not a con she sees through. She can become enemy, reluctant ally, defector, or tragic casualty depending on play — do not force a redemption arc, but do let the door stay open.</li>
+          <li class="never"><strong>Would never:</strong> Let doctrine cost a life she could prevent in the moment, even for a mission-critical objective.</li>
+        </ul>
+      </section>
+
+      <section class="block">
+        <h2>Foreshadowing Bank <span class="sub">plant now, redeem later</span></h2>
+        <ul class="fore-list"><li>M01/M02 (already playable): if she breaks discipline to save someone, have a Vector notice and say nothing in the moment — a beat, not a confrontation. <span class="payoff">→ Costs nothing; redeemable the first time a table tries to recruit or negotiate with her directly.</span></li><li>Any early mission: one unresolved civilian she couldn’t save, mentioned once and dropped. <span class="payoff">→ Open hook — payoff only if a later GM wants a defection or tragic-casualty arc; otherwise invisible.</span></li><li>Open: if Venn dies in M01, she is the natural carrier of his argument going forward. <span class="payoff">→ Flag this explicitly in her Continuity Thread the session it happens, rather than deciding it improvised at the table.</span></li></ul>
+      </section>
+
+      <section class="block">
+        <h2>Continuity Thread Across Missions</h2>
+        <div class="table-wrap"><table class="cont-table">
+          <thead><tr><th>Mission</th><th>What changed</th><th>What they now know / believe</th></tr></thead>
+          <tbody><tr><td>M01</td><td>Establishes her method (forged orders, surveillance, interception) and her weakness (will break discipline for civilians).</td><td>Enforcing Venn’s containment argument; already visibly conflicted.</td></tr><tr><td>M02</td><td>Confirmed: will not knowingly sacrifice civilians to win the ideological argument, even substituting for Venn if needed (“Mara Ellery or Field Substitute”).</td><td>Same conflict, second data point — this is a pattern, not a one-off.</td></tr><tr><td>M03–M05</td><td>Not yet drafted — see Diagnostic D-01.</td><td>—</td></tr><tr><td>M06</td><td>Not yet drafted in Capstone Bible beyond Venn’s own act — her M06 role depends entirely on how M01–M05 actually played out.</td><td>—</td></tr></tbody>
+        </table></div>
+      </section>
+
+      <section class="block">
+        <h2>Callback Log <span class="sub">fill in after actual play</span></h2>
+        <div class="table-wrap"><table class="cont-table">
+          <thead><tr><th>Session/Date</th><th>Table</th><th>What happened</th><th>Threads left open</th></tr></thead>
+          <tbody><tr><td class="empty" colspan="4">— empty — fill in after the first session this character appears —</td></tr></tbody>
+        </table></div>
+      </section>
+    </div>
+  </div>
+<div class="pagenav"><a href="#venn">← Silas Venn</a><a href="#toc">Index</a><a href="#quill">Miriam Quill →</a></div></section>
+<section class="dossier-page tier1" id="quill" style="--accent:#c17a3d">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 1 STUB · M01 · THE ASH LEDGER</div>
+    <h1>Miriam Quill</h1>
+    <p class="role-tag">The engineer at the center of the discontinuity — candidate Carrier.</p>
+    <span class="status-pill">M01 CAST</span>
+  </div>
+
+  <div class="page-grid tier1-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
+<defs>
+  <filter id="roughqui"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="21" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+  <pattern id="hatchqui" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#c17a3d" stroke-width="1.1"/></pattern>
+  <radialGradient id="vigqui" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
+  <clipPath id="clipqui"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigqui)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#clipqui)" filter="url(#roughqui)">
+  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
+  <path d="M128,268 L172,268 L166,320 L150,332 L134,320 Z" fill="#1c150e"/><circle cx="150" cy="290" r="2.2" fill="#c17a3d" opacity=".6"/><circle cx="150" cy="306" r="2.2" fill="#c17a3d" opacity=".6"/>
+  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
+  <path d="M98,172 C95,128 118,96 150,96 C182,96 205,128 202,172 C199,144 188,114 150,114 C112,114 101,144 98,172 Z" fill="#0c0906"/><circle cx="120" cy="106" r="15" fill="#0c0906"/><circle cx="128" cy="188" r="15" fill="none" stroke="#c17a3d" stroke-width="2" opacity=".7"/><circle cx="172" cy="188" r="15" fill="none" stroke="#c17a3d" stroke-width="2" opacity=".7"/><path d="M143,188 L157,188" stroke="#c17a3d" stroke-width="2" opacity=".7"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchqui)" opacity=".38"/>
+  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchqui)" opacity=".3"/>
+  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#c17a3d" stroke-width="1.6"/>
+  <rect x="-11" y="-14" width="22" height="28" rx="1.5" fill="none" stroke="#c17a3d" stroke-width="2"/><path d="M-6,-6 L6,-6 M-6,0 L6,0 M-6,6 L2,6" stroke="#c17a3d" stroke-width="1.6"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#c17a3d" opacity=".8">M01 · ENGINEER</text>
+</svg></div>
+    </aside>
+    <div class="content-col">
+      <p class="first-impression">Exhausted, focused, annoyed that everyone keeps telling her to evacuate.</p>
+      <div class="snap-block wide"><div class="snap-row"><span class="snap-l">Wants</span><span class="snap-v">Finish enough comparisons that another engineer can reproduce them.</span></div><div class="snap-row"><span class="snap-l">Will trust</span><span class="snap-v">People who understand the measurements or help without condescension.</span></div><div class="snap-row"><span class="snap-l">Will resist</span><span class="snap-v">Being treated like cargo.</span></div></div>
+      <blockquote class="useful-line">“If I live and the numbers burn, what exactly did you save?”</blockquote>
+      <section class="block">
+        <h2>GM Use</h2>
+        <p>Per the clue architecture, Quill herself may be the woman the mission is tracking — or her notes may be the Carrier. Either reading should stay open until the table’s own clues close it.</p>
+      </section>
+      <p class="promote-note">Tier 1 stub — playable motivations, not a biography. Promote to a Tier 2 Full Dossier the first time the GM brings Quill back deliberately, players ask after the session, or the GM catches themself improvising a detail that isn’t written down. See the NPC Dossier Standard.</p>
+    </div>
+  </div>
+<div class="pagenav"><a href="#ellery">← Mara Ellery</a><a href="#toc">Index</a><a href="#halden">Prof. Ada Halden →</a></div></section>
+<section class="dossier-page tier1" id="halden" style="--accent:#c17a3d">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 1 STUB · M01 · THE ASH LEDGER</div>
+    <h1>Prof. Ada Halden</h1>
+    <p class="role-tag">Independent academic route across the bay.</p>
+    <span class="status-pill">M01 CAST</span>
+  </div>
+
+  <div class="page-grid tier1-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
+<defs>
+  <filter id="roughhal"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="31" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+  <pattern id="hatchhal" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#c17a3d" stroke-width="1.1"/></pattern>
+  <radialGradient id="vighal" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
+  <clipPath id="cliphal"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vighal)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#cliphal)" filter="url(#roughhal)">
+  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
+  <path d="M122,262 Q150,278 178,262 L178,278 Q150,292 122,278 Z" fill="#221a12"/><path d="M124,268 Q150,280 176,268" fill="none" stroke="#c17a3d" stroke-width="1.4" opacity=".5"/>
+  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
+  <path d="M100,182 C98,136 120,100 150,100 C180,100 202,136 200,182 C198,156 188,124 150,124 C112,124 102,156 100,182 Z" fill="#0c0906"/><ellipse cx="150" cy="92" rx="22" ry="14" fill="#0c0906"/><path d="M118,120 Q150,108 182,120" fill="none" stroke="#c17a3d" stroke-width="1.5" opacity=".5"/><circle cx="128" cy="192" r="14" fill="none" stroke="#c17a3d" stroke-width="2" opacity=".7"/><circle cx="172" cy="192" r="14" fill="none" stroke="#c17a3d" stroke-width="2" opacity=".7"/><path d="M142,192 L158,192" stroke="#c17a3d" stroke-width="2" opacity=".7"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchhal)" opacity=".38"/>
+  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchhal)" opacity=".3"/>
+  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#c17a3d" stroke-width="1.6"/>
+  <circle cx="-3" cy="-4" r="9" fill="none" stroke="#c17a3d" stroke-width="2"/><path d="M3,3 L12,12" stroke="#c17a3d" stroke-width="2.4" stroke-linecap="round"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#c17a3d" opacity=".8">M01 · ACADEMIC</text>
+</svg></div>
+    </aside>
+    <div class="content-col">
+      
+      <div class="snap-block wide"><div class="snap-row"><span class="snap-l">Wants</span><span class="snap-v">Raw observations before folklore replaces data.</span></div><div class="snap-row"><span class="snap-l">Obstacle</span><span class="snap-v">She will not stake her reputation on dramatic claims she cannot reproduce.</span></div></div>
+      
+      <section class="block">
+        <h2>GM Use</h2>
+        <p>Makes “independent copy” concrete — a second, unrelated route to the same data.</p>
+      </section>
+      <p class="promote-note">Tier 1 stub — playable motivations, not a biography. Promote to a Tier 2 Full Dossier the first time the GM brings Halden back deliberately, players ask after the session, or the GM catches themself improvising a detail that isn’t written down. See the NPC Dossier Standard.</p>
+    </div>
+  </div>
+<div class="pagenav"><a href="#quill">← Miriam Quill</a><a href="#toc">Index</a><a href="#morrow">Clara Morrow →</a></div></section>
+<section class="dossier-page tier1" id="morrow" style="--accent:#c17a3d">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 1 STUB · M01 · THE ASH LEDGER</div>
+    <h1>Clara Morrow</h1>
+    <p class="role-tag">Technical editor and publication route.</p>
+    <span class="status-pill">M01 CAST</span>
+  </div>
+
+  <div class="page-grid tier1-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
+<defs>
+  <filter id="roughmor"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+  <pattern id="hatchmor" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#c17a3d" stroke-width="1.1"/></pattern>
+  <radialGradient id="vigmor" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
+  <clipPath id="clipmor"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigmor)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#clipmor)" filter="url(#roughmor)">
+  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
+  <path d="M138,300 L150,290 L162,300 L150,310 Z" fill="#c17a3d" opacity=".55"/><circle cx="150" cy="300" r="3" fill="#1c150e"/>
+  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
+  <path d="M94,190 C90,138 114,96 150,96 C186,96 210,138 206,190 C206,158 198,132 150,132 C102,132 94,158 94,190 Z" fill="#0c0906"/><path d="M206,150 L222,118" stroke="#c9a066" stroke-width="3" stroke-linecap="round"/><path d="M222,118 L226,110" stroke="#e6b877" stroke-width="3" stroke-linecap="round"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchmor)" opacity=".38"/>
+  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchmor)" opacity=".3"/>
+  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#c17a3d" stroke-width="1.6"/>
+  <rect x="-12" y="-11" width="24" height="6" fill="none" stroke="#c17a3d" stroke-width="2"/><rect x="-9" y="-3" width="18" height="6" fill="none" stroke="#c17a3d" stroke-width="2"/><rect x="-6" y="5" width="12" height="6" fill="none" stroke="#c17a3d" stroke-width="2"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#c17a3d" opacity=".8">M01 · EDITOR</text>
+</svg></div>
+    </aside>
+    <div class="content-col">
+      
+      <div class="snap-block wide"><div class="snap-row"><span class="snap-l">Wants</span><span class="snap-v">Reliable measurements for a special bulletin.</span></div><div class="snap-row"><span class="snap-l">Obstacle</span><span class="snap-v">She smells sensationalism instantly.</span></div></div>
+      
+      <section class="block">
+        <h2>GM Use</h2>
+        <p>Turns private notes into distributed knowledge — the mechanism by which one copy becomes many.</p>
+      </section>
+      <p class="promote-note">Tier 1 stub — playable motivations, not a biography. Promote to a Tier 2 Full Dossier the first time the GM brings Morrow back deliberately, players ask after the session, or the GM catches themself improvising a detail that isn’t written down. See the NPC Dossier Standard.</p>
+    </div>
+  </div>
+<div class="pagenav"><a href="#halden">← Prof. Ada Halden</a><a href="#toc">Index</a><a href="#rourke">Elias Rourke →</a></div></section>
+<section class="dossier-page tier1" id="rourke" style="--accent:#c17a3d">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 1 STUB · M01 · THE ASH LEDGER</div>
+    <h1>Elias Rourke</h1>
+    <p class="role-tag">Relief sergeant and ordinary authority.</p>
+    <span class="status-pill">M01 CAST</span>
+  </div>
+
+  <div class="page-grid tier1-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
+<defs>
+  <filter id="roughrou"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="51" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+  <pattern id="hatchrou" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#c17a3d" stroke-width="1.1"/></pattern>
+  <radialGradient id="vigrou" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
+  <clipPath id="cliprou"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigrou)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#cliprou)" filter="url(#roughrou)">
+  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
+  <path d="M150,258 L150,360" stroke="#0c0906" stroke-width="2" opacity=".7"/><circle cx="150" cy="278" r="2.4" fill="#c17a3d" opacity=".6"/><circle cx="150" cy="300" r="2.4" fill="#c17a3d" opacity=".6"/><circle cx="150" cy="322" r="2.4" fill="#c17a3d" opacity=".6"/>
+  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
+  <path d="M100,168 C98,126 120,104 150,104 C180,104 202,126 200,168 L200,148 Q150,128 100,148 Z" fill="#0c0906"/><ellipse cx="150" cy="118" rx="60" ry="16" fill="#0c0906"/><path d="M124,210 Q150,222 176,210 Q150,216 124,210 Z" fill="#0c0906"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchrou)" opacity=".38"/>
+  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchrou)" opacity=".3"/>
+  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#c17a3d" stroke-width="1.6"/>
+  <path d="M0,-13 L3.6,-4.4 L13,-3.6 L5.8,2.6 L8,12.6 L0,7.2 L-8,12.6 L-5.8,2.6 L-13,-3.6 L-3.6,-4.4 Z" fill="none" stroke="#c17a3d" stroke-width="2" stroke-linejoin="round"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#c17a3d" opacity=".8">M01 · RELIEF SGT</text>
+</svg></div>
+    </aside>
+    <div class="content-col">
+      
+      <div class="snap-block wide"><div class="snap-row"><span class="snap-l">Wants</span><span class="snap-v">Keep civilians alive and routes usable.</span></div></div>
+      
+      <section class="block">
+        <h2>GM Use</h2>
+        <p>Supplies consequences for implausible behavior; becomes an ally if the Vectors behave like useful adults.</p>
+      </section>
+      <p class="promote-note">Tier 1 stub — playable motivations, not a biography. Promote to a Tier 2 Full Dossier the first time the GM brings Rourke back deliberately, players ask after the session, or the GM catches themself improvising a detail that isn’t written down. See the NPC Dossier Standard.</p>
+    </div>
+  </div>
+<div class="pagenav"><a href="#morrow">← Clara Morrow</a><a href="#toc">Index</a><a href="#mercer">Evie Mercer →</a></div></section>
+<section class="dossier-page tier1" id="mercer" style="--accent:#5f8fae">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 1 STUB · M02 · THE WINTER RELAY</div>
+    <h1>Evie Mercer</h1>
+    <p class="role-tag">Relay operator.</p>
+    <span class="status-pill">M02 CAST</span>
+  </div>
+
+  <div class="page-grid tier1-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
+<defs>
+  <filter id="roughmer"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="61" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+  <pattern id="hatchmer" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#5f8fae" stroke-width="1.1"/></pattern>
+  <radialGradient id="vigmer" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
+  <clipPath id="clipmer"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigmer)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#clipmer)" filter="url(#roughmer)">
+  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
+  <path d="M128,270 L172,270 L166,304 L134,304 Z" fill="#1c150e"/><path d="M198,168 Q222,168 226,192 Q228,208 216,214" fill="none" stroke="#5f8fae" stroke-width="2.4" opacity=".6"/><circle cx="214" cy="213" r="5" fill="none" stroke="#5f8fae" stroke-width="2" opacity=".6"/>
+  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
+  <path d="M98,182 C96,138 119,102 150,102 C181,102 204,138 202,182 C201,158 192,134 150,134 C108,134 99,158 98,182 Z" fill="#0c0906"/><path d="M96,152 Q150,134 204,152 L204,160 Q150,144 96,160 Z" fill="#5f8fae" opacity=".55"/><path d="M198,168 Q222,168 226,192 Q228,208 216,214" fill="none" stroke="#0c0906" stroke-width="7" stroke-linecap="round"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchmer)" opacity=".38"/>
+  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchmer)" opacity=".3"/>
+  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#5f8fae" stroke-width="1.6"/>
+  <path d="M2,-14 L-8,2 L0,2 L-4,14 L10,-4 L1,-4 Z" fill="none" stroke="#5f8fae" stroke-width="2" stroke-linejoin="round"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#5f8fae" opacity=".8">M02 · OPERATOR</text>
+</svg></div>
+    </aside>
+    <div class="content-col">
+      
+      <div class="snap-block wide"><div class="snap-row"><span class="snap-l">Wants</span><span class="snap-v">Keep traffic intelligible and useful.</span></div><div class="snap-row"><span class="snap-l">Fear</span><span class="snap-v">Someone dies because a message arrives garbled.</span></div><div class="snap-row"><span class="snap-l">Voice</span><span class="snap-v">Dry, exact, impatient with drama.</span></div></div>
+      <blockquote class="useful-line">“A message isn’t sent when you transmit it. It’s sent when somebody else can rebuild it.”</blockquote>
+      <section class="block">
+        <h2>GM Use</h2>
+        <p>The mission’s true Carrier candidate: her improvised traffic procedure, not any single message.</p>
+      </section>
+      <p class="promote-note">Tier 1 stub — playable motivations, not a biography. Promote to a Tier 2 Full Dossier the first time the GM brings Mercer back deliberately, players ask after the session, or the GM catches themself improvising a detail that isn’t written down. See the NPC Dossier Standard.</p>
+    </div>
+  </div>
+<div class="pagenav"><a href="#rourke">← Elias Rourke</a><a href="#toc">Index</a><a href="#pell">Jonas Pell →</a></div></section>
+<section class="dossier-page tier1" id="pell" style="--accent:#5f8fae">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 1 STUB · M02 · THE WINTER RELAY</div>
+    <h1>Jonas Pell</h1>
+    <p class="role-tag">Station hand.</p>
+    <span class="status-pill">M02 CAST</span>
+  </div>
+
+  <div class="page-grid tier1-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
+<defs>
+  <filter id="roughpel"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="71" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+  <pattern id="hatchpel" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#5f8fae" stroke-width="1.1"/></pattern>
+  <radialGradient id="vigpel" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
+  <clipPath id="clippel"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigpel)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#clippel)" filter="url(#roughpel)">
+  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
+  <path d="M118,256 Q126,248 134,256 Q142,246 150,256 Q158,246 166,256 Q174,248 182,256 L182,272 L118,272 Z" fill="#221a12"/>
+  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
+  <path d="M99,172 C96,130 119,100 150,100 C181,100 204,130 201,172 L201,150 Q150,132 99,150 Z" fill="#0c0906"/><path d="M92,146 Q150,122 208,146 L208,160 Q150,138 92,160 Z" fill="#0c0906"/><path d="M120,206 Q150,218 180,206" fill="none" stroke="#0c0906" stroke-width="6" stroke-linecap="round" opacity=".8"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchpel)" opacity=".38"/>
+  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchpel)" opacity=".3"/>
+  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#5f8fae" stroke-width="1.6"/>
+  <path d="M-10,10 L2,-2 M-13,13 a4,4 0 1,0 3,3 L-10,16 M8,-10 a6,6 0 1 1 -8,8 l-10,10" fill="none" stroke="#5f8fae" stroke-width="2.2" stroke-linecap="round"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#5f8fae" opacity=".8">M02 · STATION HAND</text>
+</svg></div>
+    </aside>
+    <div class="content-col">
+      
+      <div class="snap-block wide"><div class="snap-row"><span class="snap-l">Wants</span><span class="snap-v">Keep the generator, mast, feed lines, and heat alive.</span></div></div>
+      
+      <section class="block">
+        <h2>GM Use</h2>
+        <p>Makes mechanical competence and physical risk matter alongside the communications puzzle.</p>
+      </section>
+      <p class="promote-note">Tier 1 stub — playable motivations, not a biography. Promote to a Tier 2 Full Dossier the first time the GM brings Pell back deliberately, players ask after the session, or the GM catches themself improvising a detail that isn’t written down. See the NPC Dossier Standard.</p>
+    </div>
+  </div>
+<div class="pagenav"><a href="#mercer">← Evie Mercer</a><a href="#toc">Index</a><a href="#rusk">Dr. Anna Rusk →</a></div></section>
+<section class="dossier-page tier1" id="rusk" style="--accent:#5f8fae">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 1 STUB · M02 · THE WINTER RELAY</div>
+    <h1>Dr. Anna Rusk</h1>
+    <p class="role-tag">Local physician.</p>
+    <span class="status-pill">M02 CAST</span>
+  </div>
+
+  <div class="page-grid tier1-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
+<defs>
+  <filter id="roughrus"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="81" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+  <pattern id="hatchrus" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#5f8fae" stroke-width="1.1"/></pattern>
+  <radialGradient id="vigrus" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
+  <clipPath id="cliprus"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigrus)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#cliprus)" filter="url(#roughrus)">
+  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
+  <path d="M128,268 L172,268 L166,320 L150,332 L134,320 Z" fill="#1c150e"/><circle cx="150" cy="290" r="2.2" fill="#5f8fae" opacity=".6"/><circle cx="150" cy="306" r="2.2" fill="#5f8fae" opacity=".6"/>
+  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
+  <path d="M99,178 C96,132 119,98 150,98 C181,98 204,132 201,178 C199,150 189,120 150,120 C111,120 101,150 99,178 Z" fill="#0c0906"/><circle cx="150" cy="222" r="13" fill="#0c0906"/><path d="M118,252 Q118,272 150,278 Q182,272 182,252" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".65"/><circle cx="150" cy="280" r="6" fill="none" stroke="#5f8fae" stroke-width="2" opacity=".65"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchrus)" opacity=".38"/>
+  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchrus)" opacity=".3"/>
+  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#5f8fae" stroke-width="1.6"/>
+  <path d="M0,-11 L0,11 M-11,0 L11,0" stroke="#5f8fae" stroke-width="3" stroke-linecap="round"/><circle cx="0" cy="0" r="14" fill="none" stroke="#5f8fae" stroke-width="1.6" opacity=".6"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#5f8fae" opacity=".8">M02 · PHYSICIAN</text>
+</svg></div>
+    </aside>
+    <div class="content-col">
+      
+      <div class="snap-block wide"><div class="snap-row"><span class="snap-l">Wants</span><span class="snap-v">Accurate medical traffic, not heroics.</span></div></div>
+      
+      <section class="block">
+        <h2>GM Use</h2>
+        <p>Humanizes the stakes without replacing real historical physicians — keep her competent and specific, not decorative.</p>
+      </section>
+      <p class="promote-note">Tier 1 stub — playable motivations, not a biography. Promote to a Tier 2 Full Dossier the first time the GM brings Rusk back deliberately, players ask after the session, or the GM catches themself improvising a detail that isn’t written down. See the NPC Dossier Standard.</p>
+    </div>
+  </div>
+<div class="pagenav"><a href="#pell">← Jonas Pell</a><a href="#toc">Index</a><a href="#vale">Thomas Vale →</a></div></section>
+<section class="dossier-page tier1" id="vale" style="--accent:#5f8fae">
+  <div class="masthead">
+    <div class="kicker">P7-AP01 · TIER 1 STUB · M02 · THE WINTER RELAY</div>
+    <h1>Thomas Vale</h1>
+    <p class="role-tag">Regional clerk.</p>
+    <span class="status-pill">M02 CAST</span>
+  </div>
+
+  <div class="page-grid tier1-grid">
+    <aside class="portrait-col">
+      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
+<defs>
+  <filter id="roughval"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="91" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+  <pattern id="hatchval" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#5f8fae" stroke-width="1.1"/></pattern>
+  <radialGradient id="vigval" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
+  <clipPath id="clipval"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
+</defs>
+<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigval)" stroke="#5f5138" stroke-width="2"/>
+<g clip-path="url(#clipval)" filter="url(#roughval)">
+  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
+  <path d="M144,264 L156,264 L152,336 L150,344 L148,336 Z" fill="#5f8fae" opacity=".5"/>
+  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
+  <path d="M96,178 C93,132 116,98 150,98 C184,98 207,132 204,178 C201,148 190,116 150,116 C126,116 128,132 122,146 C118,120 104,140 96,178 Z" fill="#0c0906"/><path d="M150,98 L150,116" stroke="#2a1f14" stroke-width="1.3"/>
+  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchval)" opacity=".38"/>
+  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchval)" opacity=".3"/>
+  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
+</g>
+<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
+<g transform="translate(268,332)">
+  <circle r="20" fill="#100c08" stroke="#5f8fae" stroke-width="1.6"/>
+  <rect x="-10" y="-12" width="20" height="24" fill="none" stroke="#5f8fae" stroke-width="2"/><circle cx="-10" cy="-12" r="4" fill="none" stroke="#5f8fae" stroke-width="1.8"/><circle cx="-10" cy="12" r="4" fill="none" stroke="#5f8fae" stroke-width="1.8"/><path d="M-5,-5 L5,-5 M-5,1 L5,1 M-5,7 L2,7" stroke="#5f8fae" stroke-width="1.4"/>
+</g>
+<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#5f8fae" opacity=".8">M02 · CLERK</text>
+</svg></div>
+    </aside>
+    <div class="content-col">
+      
+      <div class="snap-block wide"><div class="snap-row"><span class="snap-l">Wants</span><span class="snap-v">Reasons to trust a procedure enough to circulate it.</span></div><div class="snap-row"><span class="snap-l">Obstacle</span><span class="snap-v">Will not spend his office’s credibility on a one-off improvisation.</span></div></div>
+      
+      <section class="block">
+        <h2>GM Use</h2>
+        <p>Can circulate Mercer’s procedure regionally if convinced it is reproducible rather than a one-off improvisation — the bridge from “it worked once” to “independent copies matter.”</p>
+      </section>
+      <p class="promote-note">Tier 1 stub — playable motivations, not a biography. Promote to a Tier 2 Full Dossier the first time the GM brings Vale back deliberately, players ask after the session, or the GM catches themself improvising a detail that isn’t written down. See the NPC Dossier Standard.</p>
+    </div>
+  </div>
+<div class="pagenav"><a href="#rusk">← Dr. Anna Rusk</a><a href="#toc">Index</a><a href="#toc">Back to Index →</a></div></section>
+</main>
+
+<script>(()=>{const k='p7TextScale',r=document.documentElement,read=()=>Number(localStorage.getItem(k)||1),set=n=>{n=Math.min(1.5,Math.max(.9,Math.round(n*10)/10));r.style.setProperty('--scale',n);localStorage.setItem(k,n)};set(read());smaller.onclick=()=>set(read()-.1);reset.onclick=()=>set(1);larger.onclick=()=>set(read()+.1)})();</script>
+</body></html>
