@@ -37,10 +37,13 @@ a{color:var(--gold)}
 
 .hook{margin:1.6rem 0 2.2rem;padding:.4rem 0 .4rem 1.3rem;border-left:4px solid var(--accent);font-style:italic;font-size:1.32rem;line-height:1.5;color:#f3ecde;max-width:70ch}
 
-.page-grid{display:grid;grid-template-columns:300px 1fr;gap:2.4rem;align-items:start}
+.page-grid{display:grid;grid-template-columns:340px 1fr;gap:2.4rem;align-items:start}
 .portrait-col{position:sticky;top:4.2rem}
-.plate{max-width:300px}
+.plate{max-width:340px}
 .plate-svg{width:100%;display:block}
+.plate-photo-link{display:block;border-radius:8px;overflow:hidden;border:2px solid var(--line)}
+.plate-photo{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;display:block;background:#1c1712}
+.plate-caption{margin-top:.5rem;font-size:.72rem;color:var(--muted);font-style:italic;text-align:center}
 .snap-block{margin-top:1rem;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#141814}
 .snap-row{display:flex;flex-direction:column;gap:.15rem;padding:.6rem .8rem;border-bottom:1px solid var(--line);font-size:.88rem}
 .snap-row:last-child{border-bottom:none}
@@ -69,7 +72,7 @@ a{color:var(--gold)}
 .cont-table th{background:#1e231e;color:var(--accent);font-weight:800}
 .cont-table td.empty{text-align:center;color:var(--muted);font-style:italic}
 
-.tier1-grid{grid-template-columns:260px 1fr}
+.tier1-grid{grid-template-columns:340px 1fr}
 .first-impression{font-style:italic;color:var(--muted);margin:0 0 1rem}
 .snap-block.wide{display:grid;grid-template-columns:1fr 1fr}
 .snap-block.wide .snap-row:nth-last-child(1):nth-child(odd){grid-column:1/-1}
@@ -278,32 +281,7 @@ a{color:var(--gold)}
 
   <div class="page-grid">
     <aside class="portrait-col">
-      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
-<defs>
-  <filter id="roughven"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
-  <pattern id="hatchven" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#a9342f" stroke-width="1.1"/></pattern>
-  <radialGradient id="vigven" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
-  <clipPath id="clipven"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
-</defs>
-<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigven)" stroke="#5f5138" stroke-width="2"/>
-<g clip-path="url(#clipven)" filter="url(#roughven)">
-  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
-  <path d="M130,300 L150,330 L170,300 L150,282 Z" fill="#221a12"/><path d="M150,282 L150,330" stroke="#0c0906" stroke-width="1.6"/>
-  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
-  <path d="M96,178 C93,132 116,98 150,98 C184,98 207,132 204,178 C201,148 190,116 150,116 C126,116 128,132 122,146 C118,120 104,140 96,178 Z" fill="#0c0906"/><path d="M150,98 L150,116" stroke="#2a1f14" stroke-width="1.3"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchven)" opacity=".38"/>
-  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchven)" opacity=".3"/>
-  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#a9342f" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
-  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#a9342f" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
-</g>
-<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
-<g transform="translate(268,332)">
-  <circle r="20" fill="#100c08" stroke="#a9342f" stroke-width="1.6"/>
-  <rect x="-13" y="-9" width="26" height="18" rx="1.5" fill="none" stroke="#a9342f" stroke-width="2"/><path d="M-13,-9 L0,3 L13,-9" fill="none" stroke="#a9342f" stroke-width="2"/>
-</g>
-<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#a9342f" opacity=".8">COVENANT · THE OFFER</text>
-</svg></div>
+      <div class="plate"><a class="plate-photo-link" href="../../assets/adventure-art/ash-ledger/silas-venn.png" target="_blank" rel="noopener"><img class="plate-photo" src="../../assets/adventure-art/ash-ledger/silas-venn.png" alt="Illustrated field-dossier plate for Silas Venn" loading="lazy" width="1254" height="1254"></a><div class="plate-caption">Recovered field dossier plate — click to view full resolution</div></div>
       <div class="snap-block">
         <div class="snap-row"><span class="snap-l">First appears</span><span class="snap-v">M01, Scene 6 (Covenant Offer)</span></div>
         <div class="snap-row"><span class="snap-l">Status</span><span class="snap-v">Alive as of M01/M02 drafts. Per Diagnostic D-01, his M03–M05 status is currently undefined — no draft places or removes him. If he dies in a played M01, Campaign Architecture requires that to remain a campaign fact; do not silently undo it, and do not silently substitute him back in for M06 without deciding who carries his argument instead.</span></div>
@@ -372,32 +350,7 @@ a{color:var(--gold)}
 
   <div class="page-grid">
     <aside class="portrait-col">
-      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
-<defs>
-  <filter id="roughell"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="12" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
-  <pattern id="hatchell" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#a9342f" stroke-width="1.1"/></pattern>
-  <radialGradient id="vigell" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
-  <clipPath id="clipell"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
-</defs>
-<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigell)" stroke="#5f5138" stroke-width="2"/>
-<g clip-path="url(#clipell)" filter="url(#roughell)">
-  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
-  <path d="M128,270 L172,270 L168,300 L132,300 Z" fill="#221a12"/><path d="M150,270 L150,300" stroke="#0c0906" stroke-width="1.6"/>
-  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
-  <path d="M100,176 C97,130 120,100 150,100 C180,100 203,130 200,176 C199,152 190,128 150,128 C110,128 101,152 100,176 Z" fill="#0c0906"/><path d="M198,150 C214,158 224,178 220,204 C217,224 206,236 194,238 C206,220 210,196 202,176 C200,168 198,158 198,150 Z" fill="#0c0906"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchell)" opacity=".38"/>
-  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchell)" opacity=".3"/>
-  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#a9342f" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
-  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#a9342f" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
-</g>
-<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
-<g transform="translate(268,332)">
-  <circle r="20" fill="#100c08" stroke="#a9342f" stroke-width="1.6"/>
-  <circle cx="0" cy="-3" r="8" fill="none" stroke="#a9342f" stroke-width="2"/><path d="M0,5 L0,15 M-5,10 L0,15 L5,10" fill="none" stroke="#a9342f" stroke-width="2"/>
-</g>
-<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#a9342f" opacity=".8">COVENANT · FIELD</text>
-</svg></div>
+      <div class="plate"><a class="plate-photo-link" href="../../assets/adventure-art/ash-ledger/mara-ellery.png" target="_blank" rel="noopener"><img class="plate-photo" src="../../assets/adventure-art/ash-ledger/mara-ellery.png" alt="Illustrated field-dossier plate for Mara Ellery" loading="lazy" width="1254" height="1254"></a><div class="plate-caption">Recovered field dossier plate — click to view full resolution</div></div>
       <div class="snap-block">
         <div class="snap-row"><span class="snap-l">First appears</span><span class="snap-v">M01, Scene 8 (Interference)</span></div>
         <div class="snap-row"><span class="snap-l">Status</span><span class="snap-v">Active as of M01/M02 drafts. Per Diagnostic D-01, M03–M05 status undefined, same caveat as Venn.</span></div>
@@ -464,32 +417,7 @@ a{color:var(--gold)}
 
   <div class="page-grid tier1-grid">
     <aside class="portrait-col">
-      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
-<defs>
-  <filter id="roughqui"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="21" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
-  <pattern id="hatchqui" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#c17a3d" stroke-width="1.1"/></pattern>
-  <radialGradient id="vigqui" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
-  <clipPath id="clipqui"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
-</defs>
-<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigqui)" stroke="#5f5138" stroke-width="2"/>
-<g clip-path="url(#clipqui)" filter="url(#roughqui)">
-  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
-  <path d="M128,268 L172,268 L166,320 L150,332 L134,320 Z" fill="#1c150e"/><circle cx="150" cy="290" r="2.2" fill="#c17a3d" opacity=".6"/><circle cx="150" cy="306" r="2.2" fill="#c17a3d" opacity=".6"/>
-  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
-  <path d="M98,172 C95,128 118,96 150,96 C182,96 205,128 202,172 C199,144 188,114 150,114 C112,114 101,144 98,172 Z" fill="#0c0906"/><circle cx="120" cy="106" r="15" fill="#0c0906"/><circle cx="128" cy="188" r="15" fill="none" stroke="#c17a3d" stroke-width="2" opacity=".7"/><circle cx="172" cy="188" r="15" fill="none" stroke="#c17a3d" stroke-width="2" opacity=".7"/><path d="M143,188 L157,188" stroke="#c17a3d" stroke-width="2" opacity=".7"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchqui)" opacity=".38"/>
-  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchqui)" opacity=".3"/>
-  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
-  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
-</g>
-<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
-<g transform="translate(268,332)">
-  <circle r="20" fill="#100c08" stroke="#c17a3d" stroke-width="1.6"/>
-  <rect x="-11" y="-14" width="22" height="28" rx="1.5" fill="none" stroke="#c17a3d" stroke-width="2"/><path d="M-6,-6 L6,-6 M-6,0 L6,0 M-6,6 L2,6" stroke="#c17a3d" stroke-width="1.6"/>
-</g>
-<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#c17a3d" opacity=".8">M01 · ENGINEER</text>
-</svg></div>
+      <div class="plate"><a class="plate-photo-link" href="../../assets/adventure-art/ash-ledger/miriam-quill.png" target="_blank" rel="noopener"><img class="plate-photo" src="../../assets/adventure-art/ash-ledger/miriam-quill.png" alt="Illustrated field-dossier plate for Miriam Quill" loading="lazy" width="1254" height="1254"></a><div class="plate-caption">Recovered field dossier plate — click to view full resolution</div></div>
     </aside>
     <div class="content-col">
       <p class="first-impression">Exhausted, focused, annoyed that everyone keeps telling her to evacuate.</p>
@@ -513,32 +441,7 @@ a{color:var(--gold)}
 
   <div class="page-grid tier1-grid">
     <aside class="portrait-col">
-      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
-<defs>
-  <filter id="roughhal"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="31" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
-  <pattern id="hatchhal" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#c17a3d" stroke-width="1.1"/></pattern>
-  <radialGradient id="vighal" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
-  <clipPath id="cliphal"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
-</defs>
-<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vighal)" stroke="#5f5138" stroke-width="2"/>
-<g clip-path="url(#cliphal)" filter="url(#roughhal)">
-  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
-  <path d="M122,262 Q150,278 178,262 L178,278 Q150,292 122,278 Z" fill="#221a12"/><path d="M124,268 Q150,280 176,268" fill="none" stroke="#c17a3d" stroke-width="1.4" opacity=".5"/>
-  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
-  <path d="M100,182 C98,136 120,100 150,100 C180,100 202,136 200,182 C198,156 188,124 150,124 C112,124 102,156 100,182 Z" fill="#0c0906"/><ellipse cx="150" cy="92" rx="22" ry="14" fill="#0c0906"/><path d="M118,120 Q150,108 182,120" fill="none" stroke="#c17a3d" stroke-width="1.5" opacity=".5"/><circle cx="128" cy="192" r="14" fill="none" stroke="#c17a3d" stroke-width="2" opacity=".7"/><circle cx="172" cy="192" r="14" fill="none" stroke="#c17a3d" stroke-width="2" opacity=".7"/><path d="M142,192 L158,192" stroke="#c17a3d" stroke-width="2" opacity=".7"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchhal)" opacity=".38"/>
-  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchhal)" opacity=".3"/>
-  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
-  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
-</g>
-<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
-<g transform="translate(268,332)">
-  <circle r="20" fill="#100c08" stroke="#c17a3d" stroke-width="1.6"/>
-  <circle cx="-3" cy="-4" r="9" fill="none" stroke="#c17a3d" stroke-width="2"/><path d="M3,3 L12,12" stroke="#c17a3d" stroke-width="2.4" stroke-linecap="round"/>
-</g>
-<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#c17a3d" opacity=".8">M01 · ACADEMIC</text>
-</svg></div>
+      <div class="plate"><a class="plate-photo-link" href="../../assets/adventure-art/ash-ledger/ada-halden.png" target="_blank" rel="noopener"><img class="plate-photo" src="../../assets/adventure-art/ash-ledger/ada-halden.png" alt="Illustrated field-dossier plate for Prof. Ada Halden" loading="lazy" width="1254" height="1254"></a><div class="plate-caption">Recovered field dossier plate — click to view full resolution</div></div>
     </aside>
     <div class="content-col">
       
@@ -562,32 +465,7 @@ a{color:var(--gold)}
 
   <div class="page-grid tier1-grid">
     <aside class="portrait-col">
-      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
-<defs>
-  <filter id="roughmor"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
-  <pattern id="hatchmor" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#c17a3d" stroke-width="1.1"/></pattern>
-  <radialGradient id="vigmor" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
-  <clipPath id="clipmor"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
-</defs>
-<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigmor)" stroke="#5f5138" stroke-width="2"/>
-<g clip-path="url(#clipmor)" filter="url(#roughmor)">
-  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
-  <path d="M138,300 L150,290 L162,300 L150,310 Z" fill="#c17a3d" opacity=".55"/><circle cx="150" cy="300" r="3" fill="#1c150e"/>
-  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
-  <path d="M94,190 C90,138 114,96 150,96 C186,96 210,138 206,190 C206,158 198,132 150,132 C102,132 94,158 94,190 Z" fill="#0c0906"/><path d="M206,150 L222,118" stroke="#c9a066" stroke-width="3" stroke-linecap="round"/><path d="M222,118 L226,110" stroke="#e6b877" stroke-width="3" stroke-linecap="round"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchmor)" opacity=".38"/>
-  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchmor)" opacity=".3"/>
-  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
-  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
-</g>
-<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
-<g transform="translate(268,332)">
-  <circle r="20" fill="#100c08" stroke="#c17a3d" stroke-width="1.6"/>
-  <rect x="-12" y="-11" width="24" height="6" fill="none" stroke="#c17a3d" stroke-width="2"/><rect x="-9" y="-3" width="18" height="6" fill="none" stroke="#c17a3d" stroke-width="2"/><rect x="-6" y="5" width="12" height="6" fill="none" stroke="#c17a3d" stroke-width="2"/>
-</g>
-<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#c17a3d" opacity=".8">M01 · EDITOR</text>
-</svg></div>
+      <div class="plate"><a class="plate-photo-link" href="../../assets/adventure-art/ash-ledger/clara-morrow.png" target="_blank" rel="noopener"><img class="plate-photo" src="../../assets/adventure-art/ash-ledger/clara-morrow.png" alt="Illustrated field-dossier plate for Clara Morrow" loading="lazy" width="1254" height="1254"></a><div class="plate-caption">Recovered field dossier plate — click to view full resolution</div></div>
     </aside>
     <div class="content-col">
       
@@ -611,32 +489,7 @@ a{color:var(--gold)}
 
   <div class="page-grid tier1-grid">
     <aside class="portrait-col">
-      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
-<defs>
-  <filter id="roughrou"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="51" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
-  <pattern id="hatchrou" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#c17a3d" stroke-width="1.1"/></pattern>
-  <radialGradient id="vigrou" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
-  <clipPath id="cliprou"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
-</defs>
-<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigrou)" stroke="#5f5138" stroke-width="2"/>
-<g clip-path="url(#cliprou)" filter="url(#roughrou)">
-  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
-  <path d="M150,258 L150,360" stroke="#0c0906" stroke-width="2" opacity=".7"/><circle cx="150" cy="278" r="2.4" fill="#c17a3d" opacity=".6"/><circle cx="150" cy="300" r="2.4" fill="#c17a3d" opacity=".6"/><circle cx="150" cy="322" r="2.4" fill="#c17a3d" opacity=".6"/>
-  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
-  <path d="M100,168 C98,126 120,104 150,104 C180,104 202,126 200,168 L200,148 Q150,128 100,148 Z" fill="#0c0906"/><ellipse cx="150" cy="118" rx="60" ry="16" fill="#0c0906"/><path d="M124,210 Q150,222 176,210 Q150,216 124,210 Z" fill="#0c0906"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchrou)" opacity=".38"/>
-  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchrou)" opacity=".3"/>
-  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
-  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#c17a3d" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
-</g>
-<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
-<g transform="translate(268,332)">
-  <circle r="20" fill="#100c08" stroke="#c17a3d" stroke-width="1.6"/>
-  <path d="M0,-13 L3.6,-4.4 L13,-3.6 L5.8,2.6 L8,12.6 L0,7.2 L-8,12.6 L-5.8,2.6 L-13,-3.6 L-3.6,-4.4 Z" fill="none" stroke="#c17a3d" stroke-width="2" stroke-linejoin="round"/>
-</g>
-<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#c17a3d" opacity=".8">M01 · RELIEF SGT</text>
-</svg></div>
+      <div class="plate"><a class="plate-photo-link" href="../../assets/adventure-art/ash-ledger/elias-rourke.png" target="_blank" rel="noopener"><img class="plate-photo" src="../../assets/adventure-art/ash-ledger/elias-rourke.png" alt="Illustrated field-dossier plate for Elias Rourke" loading="lazy" width="1254" height="1254"></a><div class="plate-caption">Recovered field dossier plate — click to view full resolution</div></div>
     </aside>
     <div class="content-col">
       
@@ -660,32 +513,7 @@ a{color:var(--gold)}
 
   <div class="page-grid tier1-grid">
     <aside class="portrait-col">
-      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
-<defs>
-  <filter id="roughmer"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="61" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
-  <pattern id="hatchmer" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#5f8fae" stroke-width="1.1"/></pattern>
-  <radialGradient id="vigmer" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
-  <clipPath id="clipmer"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
-</defs>
-<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigmer)" stroke="#5f5138" stroke-width="2"/>
-<g clip-path="url(#clipmer)" filter="url(#roughmer)">
-  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
-  <path d="M128,270 L172,270 L166,304 L134,304 Z" fill="#1c150e"/><path d="M198,168 Q222,168 226,192 Q228,208 216,214" fill="none" stroke="#5f8fae" stroke-width="2.4" opacity=".6"/><circle cx="214" cy="213" r="5" fill="none" stroke="#5f8fae" stroke-width="2" opacity=".6"/>
-  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
-  <path d="M98,182 C96,138 119,102 150,102 C181,102 204,138 202,182 C201,158 192,134 150,134 C108,134 99,158 98,182 Z" fill="#0c0906"/><path d="M96,152 Q150,134 204,152 L204,160 Q150,144 96,160 Z" fill="#5f8fae" opacity=".55"/><path d="M198,168 Q222,168 226,192 Q228,208 216,214" fill="none" stroke="#0c0906" stroke-width="7" stroke-linecap="round"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchmer)" opacity=".38"/>
-  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchmer)" opacity=".3"/>
-  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
-  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
-</g>
-<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
-<g transform="translate(268,332)">
-  <circle r="20" fill="#100c08" stroke="#5f8fae" stroke-width="1.6"/>
-  <path d="M2,-14 L-8,2 L0,2 L-4,14 L10,-4 L1,-4 Z" fill="none" stroke="#5f8fae" stroke-width="2" stroke-linejoin="round"/>
-</g>
-<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#5f8fae" opacity=".8">M02 · OPERATOR</text>
-</svg></div>
+      <div class="plate"><a class="plate-photo-link" href="../../assets/adventure-art/winter-relay/evie-mercer.png" target="_blank" rel="noopener"><img class="plate-photo" src="../../assets/adventure-art/winter-relay/evie-mercer.png" alt="Illustrated field-dossier plate for Evie Mercer" loading="lazy" width="1254" height="1254"></a><div class="plate-caption">Recovered field dossier plate — click to view full resolution</div></div>
     </aside>
     <div class="content-col">
       
@@ -709,32 +537,7 @@ a{color:var(--gold)}
 
   <div class="page-grid tier1-grid">
     <aside class="portrait-col">
-      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
-<defs>
-  <filter id="roughpel"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="71" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
-  <pattern id="hatchpel" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#5f8fae" stroke-width="1.1"/></pattern>
-  <radialGradient id="vigpel" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
-  <clipPath id="clippel"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
-</defs>
-<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigpel)" stroke="#5f5138" stroke-width="2"/>
-<g clip-path="url(#clippel)" filter="url(#roughpel)">
-  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
-  <path d="M118,256 Q126,248 134,256 Q142,246 150,256 Q158,246 166,256 Q174,248 182,256 L182,272 L118,272 Z" fill="#221a12"/>
-  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
-  <path d="M99,172 C96,130 119,100 150,100 C181,100 204,130 201,172 L201,150 Q150,132 99,150 Z" fill="#0c0906"/><path d="M92,146 Q150,122 208,146 L208,160 Q150,138 92,160 Z" fill="#0c0906"/><path d="M120,206 Q150,218 180,206" fill="none" stroke="#0c0906" stroke-width="6" stroke-linecap="round" opacity=".8"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchpel)" opacity=".38"/>
-  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchpel)" opacity=".3"/>
-  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
-  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
-</g>
-<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
-<g transform="translate(268,332)">
-  <circle r="20" fill="#100c08" stroke="#5f8fae" stroke-width="1.6"/>
-  <path d="M-10,10 L2,-2 M-13,13 a4,4 0 1,0 3,3 L-10,16 M8,-10 a6,6 0 1 1 -8,8 l-10,10" fill="none" stroke="#5f8fae" stroke-width="2.2" stroke-linecap="round"/>
-</g>
-<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#5f8fae" opacity=".8">M02 · STATION HAND</text>
-</svg></div>
+      <div class="plate"><a class="plate-photo-link" href="../../assets/adventure-art/winter-relay/jonas-pell.png" target="_blank" rel="noopener"><img class="plate-photo" src="../../assets/adventure-art/winter-relay/jonas-pell.png" alt="Illustrated field-dossier plate for Jonas Pell" loading="lazy" width="1254" height="1254"></a><div class="plate-caption">Recovered field dossier plate — click to view full resolution</div></div>
     </aside>
     <div class="content-col">
       
@@ -758,32 +561,7 @@ a{color:var(--gold)}
 
   <div class="page-grid tier1-grid">
     <aside class="portrait-col">
-      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
-<defs>
-  <filter id="roughrus"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="81" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
-  <pattern id="hatchrus" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#5f8fae" stroke-width="1.1"/></pattern>
-  <radialGradient id="vigrus" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
-  <clipPath id="cliprus"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
-</defs>
-<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigrus)" stroke="#5f5138" stroke-width="2"/>
-<g clip-path="url(#cliprus)" filter="url(#roughrus)">
-  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
-  <path d="M128,268 L172,268 L166,320 L150,332 L134,320 Z" fill="#1c150e"/><circle cx="150" cy="290" r="2.2" fill="#5f8fae" opacity=".6"/><circle cx="150" cy="306" r="2.2" fill="#5f8fae" opacity=".6"/>
-  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
-  <path d="M99,178 C96,132 119,98 150,98 C181,98 204,132 201,178 C199,150 189,120 150,120 C111,120 101,150 99,178 Z" fill="#0c0906"/><circle cx="150" cy="222" r="13" fill="#0c0906"/><path d="M118,252 Q118,272 150,278 Q182,272 182,252" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".65"/><circle cx="150" cy="280" r="6" fill="none" stroke="#5f8fae" stroke-width="2" opacity=".65"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchrus)" opacity=".38"/>
-  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchrus)" opacity=".3"/>
-  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
-  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
-</g>
-<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
-<g transform="translate(268,332)">
-  <circle r="20" fill="#100c08" stroke="#5f8fae" stroke-width="1.6"/>
-  <path d="M0,-11 L0,11 M-11,0 L11,0" stroke="#5f8fae" stroke-width="3" stroke-linecap="round"/><circle cx="0" cy="0" r="14" fill="none" stroke="#5f8fae" stroke-width="1.6" opacity=".6"/>
-</g>
-<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#5f8fae" opacity=".8">M02 · PHYSICIAN</text>
-</svg></div>
+      <div class="plate"><a class="plate-photo-link" href="../../assets/adventure-art/winter-relay/anna-rusk.png" target="_blank" rel="noopener"><img class="plate-photo" src="../../assets/adventure-art/winter-relay/anna-rusk.png" alt="Illustrated field-dossier plate for Dr. Anna Rusk" loading="lazy" width="1254" height="1254"></a><div class="plate-caption">Recovered field dossier plate — click to view full resolution</div></div>
     </aside>
     <div class="content-col">
       
@@ -807,32 +585,7 @@ a{color:var(--gold)}
 
   <div class="page-grid tier1-grid">
     <aside class="portrait-col">
-      <div class="plate"><svg viewBox="0 0 300 360" class="plate-svg" role="img" aria-label="Illustrated dossier portrait">
-<defs>
-  <filter id="roughval"><feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="91" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
-  <pattern id="hatchval" width="5" height="5" patternTransform="rotate(48)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="5" stroke="#5f8fae" stroke-width="1.1"/></pattern>
-  <radialGradient id="vigval" cx="46%" cy="34%" r="80%"><stop offset="0%" stop-color="#2c231a"/><stop offset="100%" stop-color="#100c08"/></radialGradient>
-  <clipPath id="clipval"><path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z"/></clipPath>
-</defs>
-<path d="M4,40 Q4,4 40,4 L260,4 Q296,4 296,40 L296,356 L4,356 Z" fill="url(#vigval)" stroke="#5f5138" stroke-width="2"/>
-<g clip-path="url(#clipval)" filter="url(#roughval)">
-  <path d="M55,362 C57,296 82,264 122,252 L130,300 L170,300 L178,252 C218,264 243,296 245,362 Z" fill="#171310"/>
-  <path d="M144,264 L156,264 L152,336 L150,344 L148,336 Z" fill="#5f8fae" opacity=".5"/>
-  <path d="M133,228 L133,258 Q150,272 167,258 L167,228 Z" fill="#171310"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 C112,238 102,214 101,186 C100,152 118,124 150,124 Z" fill="#171310"/>
-  <path d="M96,178 C93,132 116,98 150,98 C184,98 207,132 204,178 C201,148 190,116 150,116 C126,116 128,132 122,146 C118,120 104,140 96,178 Z" fill="#0c0906"/><path d="M150,98 L150,116" stroke="#2a1f14" stroke-width="1.3"/>
-  <path d="M150,124 C182,124 200,152 199,186 C198,214 188,238 150,242 L150,124 Z" fill="url(#hatchval)" opacity=".38"/>
-  <path d="M150,282 C170,282 218,296 245,362 L150,362 Z" fill="url(#hatchval)" opacity=".3"/>
-  <path d="M108,150 C106,180 112,210 130,232" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
-  <path d="M60,340 C64,308 82,282 118,266" fill="none" stroke="#5f8fae" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>
-</g>
-<rect x="4" y="40" width="292" height="316" fill="none" stroke="#3a3f39"/>
-<g transform="translate(268,332)">
-  <circle r="20" fill="#100c08" stroke="#5f8fae" stroke-width="1.6"/>
-  <rect x="-10" y="-12" width="20" height="24" fill="none" stroke="#5f8fae" stroke-width="2"/><circle cx="-10" cy="-12" r="4" fill="none" stroke="#5f8fae" stroke-width="1.8"/><circle cx="-10" cy="12" r="4" fill="none" stroke="#5f8fae" stroke-width="1.8"/><path d="M-5,-5 L5,-5 M-5,1 L5,1 M-5,7 L2,7" stroke="#5f8fae" stroke-width="1.4"/>
-</g>
-<text x="20" y="26" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="#5f8fae" opacity=".8">M02 · CLERK</text>
-</svg></div>
+      <div class="plate"><a class="plate-photo-link" href="../../assets/adventure-art/winter-relay/thomas-vale.png" target="_blank" rel="noopener"><img class="plate-photo" src="../../assets/adventure-art/winter-relay/thomas-vale.png" alt="Illustrated field-dossier plate for Thomas Vale" loading="lazy" width="1254" height="1254"></a><div class="plate-caption">Recovered field dossier plate — click to view full resolution</div></div>
     </aside>
     <div class="content-col">
       
