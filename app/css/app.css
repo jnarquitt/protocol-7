@@ -170,11 +170,15 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
 .p7-progress-dot-active { background: var(--p7-gold); }
 .p7-creation-step-label { color: var(--p7-text-dim); font-size: 0.85em; font-weight: 600; letter-spacing: 0.03em; }
 
-/* Review & Create: labeled rows in a card instead of a raw text dump. */
-.p7-review-row { display: flex; justify-content: space-between; gap: 14px; padding: 6px 0; border-bottom: 1px solid var(--p7-border); }
+/* Review & Create: labeled rows in a card instead of a raw text dump.
+   flex-wrap + min-width:0 on the value is what keeps a long value (e.g. a
+   preset's comma-joined VAM list, nested inside the narrow preset-card
+   grid on "View full loadout") from being squeezed into a sliver and
+   pushed off the right edge of a phone screen instead of wrapping. */
+.p7-review-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 14px; padding: 6px 0; border-bottom: 1px solid var(--p7-border); }
 .p7-review-row:last-child { border-bottom: none; }
 .p7-review-label { color: var(--p7-text-dim); font-size: 0.85em; flex-shrink: 0; }
-.p7-review-value { font-weight: 600; text-align: right; }
+.p7-review-value { font-weight: 600; text-align: right; flex: 1 1 auto; min-width: 0; overflow-wrap: break-word; word-break: break-word; }
 
 .p7-fatal { padding: 30px; color: var(--p7-danger); font-weight: 700; }
 .p7-roll-preview { font-size: 0.85em; color: var(--p7-text-dim); padding: 8px; background: var(--p7-bg-panel); border-radius: 8px; }
