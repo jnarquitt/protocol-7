@@ -7,10 +7,18 @@ GitHub Pages serves Protocol 7 and The Continuance Files from this repository.
 `continuance-files/current.html`
 
 ## M01 — The Ash Ledger
-- Current promoted GM guide before this work: r003.
-- Candidate presentation/structure revision: r004.
-- r003 remains preserved.
-- r004 must not be described as mechanically updated beyond v0.187 until an explicit rules audit is completed.
+- Current promoted GM guide: r004.
+- Previous r003 remains preserved.
+- r004 applies the Jade Lion/ZPA presentation and structure standard while preserving r003 mechanics.
+- Rules target remains Protocol 7 v0.187 PRE-BETA until an explicit mechanics audit is completed.
+
+## Repository Verification
+- r004 exists on `main`.
+- `continuance-files/current.html` points to r004.
+- Promotion commit is present remotely.
+
+## Remaining Release Verification
+The rendered GitHub Pages r004 page still requires visual confirmation for layout, source loading, assets, navigation, and cheat-sheet-only printing before calling the presentation fully behavior-verified.
 
 ## Verification Standard
 A release/promotion is complete only when:
@@ -19,6 +27,3 @@ A release/promotion is complete only when:
 3. the intended commit is visible remotely;
 4. links/assets resolve from the published path;
 5. behavior is visually checked when the change is visual.
-
-## Deployment
-GitHub Pages publication follows repository state. Do not claim the rendered public page is verified until it has been opened after the commit is available.
