@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<meta name="theme-color" content="#151713">
+<title>Jade Lion Studios — Playtest Hub</title>
+<style>
+:root{--paper:#f3ead8;--paper2:#e6d8bd;--ink:#27231c;--jade:#315f50;--jade2:#6f9a84;--gold:#a7792f;--gold2:#d8bd7d;--char:#151713;--char2:#22231f;--line:#c8b58e;--red:#8b332c;--muted:#746b5c}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at top,#2b2c27 0,#171814 38%,#10110f 100%);color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.5;min-height:100vh}.gate{position:fixed;inset:0;z-index:999;background:linear-gradient(145deg,#11120f,#24251f);display:grid;place-items:center;padding:24px}.gate.hidden{display:none}.gate-card{width:min(440px,100%);background:var(--paper);border:1px solid var(--gold);box-shadow:0 30px 80px rgba(0,0,0,.45);padding:34px 30px;text-align:center}.gate-mark{width:74px;height:74px;margin:0 auto 18px;border:2px solid var(--gold);transform:rotate(45deg);display:grid;place-items:center;background:rgba(49,95,80,.08)}.gate-mark span{transform:rotate(-45deg);font:bold 1.25rem/1 system-ui,sans-serif;color:var(--jade)}.gate .eyebrow,.mast .eyebrow{font:800 .72rem/1.2 system-ui,sans-serif;letter-spacing:.17em;text-transform:uppercase;color:var(--gold);margin-bottom:7px}.gate h1{margin:.2rem 0 .4rem;font-size:2.2rem}.gate p{color:var(--muted);margin:.4rem 0 1.1rem}.gate form{display:flex;gap:8px}.gate input{flex:1;min-width:0;padding:.78rem .85rem;border:1px solid #a89570;background:#fffaf0;font:700 1rem system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}.gate button,.button{border:0;background:var(--jade);color:#fff;padding:.8rem 1rem;font:800 .85rem/1 system-ui,sans-serif;text-decoration:none;letter-spacing:.04em;cursor:pointer}.gate-error{min-height:1.4em;color:var(--red);font:700 .78rem system-ui,sans-serif;margin-top:.7rem}.topbar{background:#0e0f0d;color:#d9cfbb;border-bottom:1px solid #5b513d;padding:.65rem max(1rem,calc((100% - 1080px)/2));display:flex;justify-content:space-between;gap:12px;align-items:center;font:700 .72rem/1.2 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase}.topbar strong{color:#e4c87b}.topbar a{color:#b8ccbF;text-decoration:none}.wrap{width:min(1080px,calc(100% - 28px));margin:auto}.mast{padding:66px 0 34px;color:#f3ead8}.mast h1{font-size:clamp(3rem,8vw,6.3rem);line-height:.9;margin:.2rem 0 .65rem;letter-spacing:-.035em}.mast .lead{max-width:790px;font-size:1.12rem;color:#d3c7b0}.mast .status{display:inline-block;margin-top:12px;border:1px solid #7a6948;padding:.42rem .65rem;font:800 .72rem/1 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e1c67d}.paper{background:linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.03)),var(--paper);box-shadow:0 0 70px rgba(0,0,0,.28);padding:36px clamp(16px,4vw,46px) 48px;margin-bottom:54px}.section-kicker{font:800 .7rem/1.2 system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--jade);margin-bottom:5px}.paper h2{font-size:2rem;margin:.1rem 0 .4rem}.intro{color:#62594c;max-width:780px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:24px}.card{background:#fbf5e8;border:1px solid var(--line);border-top:4px solid var(--jade);padding:20px;display:flex;flex-direction:column;min-height:240px}.card.gold{border-top-color:var(--gold)}.card.red{border-top-color:var(--red)}.card .label{font:800 .68rem/1.2 system-ui,sans-serif;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}.card h3{font-size:1.45rem;margin:.4rem 0 .45rem;color:#443926}.card p{margin:.2rem 0 1rem;color:#5f5649}.card .actions{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px}.card .button{background:var(--jade)}.card .button.alt{background:#6f5630}.card .button.ghost{background:transparent;border:1px solid #9c8862;color:#4f4638}.note{margin-top:24px;padding:16px 18px;border:1px dashed #9b8559;background:#ecdfc6;color:#554b3d;font-size:.92rem}.foot{color:#a99e8a;text-align:center;font:700 .72rem/1.5 system-ui,sans-serif;padding:0 18px 38px}.foot b{color:#d8bd7d}@media(max-width:720px){.grid{grid-template-columns:1fr}.mast{padding-top:42px}.topbar{align-items:flex-start;flex-direction:column}.gate form{flex-direction:column}.gate button{width:100%}.card{min-height:0}}@media print{.topbar,.gate,.actions{display:none!important}body{background:#fff}.mast{color:#111;padding:20px 0}.mast .lead,.mast .status{color:#333}.paper{box-shadow:none;margin:0}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="gate" id="gate" aria-modal="true" role="dialog" aria-labelledby="gate-title">
+  <div class="gate-card">
+    <div class="gate-mark"><span>JLS</span></div>
+    <div class="eyebrow">Jade Lion Studios</div>
+    <h1 id="gate-title">Playtest Access</h1>
+    <p>Enter the short playtest access code.</p>
+    <form id="gate-form">
+      <input id="gate-code" autocomplete="off" autocapitalize="characters" aria-label="Access code" placeholder="Access code">
+      <button type="submit">Enter</button>
+    </form>
+    <div class="gate-error" id="gate-error" aria-live="polite"></div>
+  </div>
+</div>
+<header class="topbar"><span><strong>JADE LION STUDIOS</strong> · PLAYTEST PROGRAM</span><a href="../">Protocol 7 Project Page</a></header>
+<main class="wrap">
+  <section class="mast">
+    <div class="eyebrow">Stories · Worlds · Systems</div>
+    <h1>PLAYTEST HUB</h1>
+    <p class="lead">One place for current Jade Lion tabletop playtest material: the Protocol 7 game, the Protocol Dice Engine, the live session app, Adventure Path material, rules, settings, and supporting artifacts.</p>
+    <span class="status">Active Development · Playtest Material</span>
+  </section>
+  <section class="paper">
+    <div class="section-kicker">Choose What You Want to Test</div>
+    <h2>Current Playtest Material</h2>
+    <p class="intro">Start with the app if you want to build and run a Vector at the table. Use the rules guide for system reference. The Protocol Dice Engine material explores the underlying resolution system outside the core Protocol 7 setting, while The Continuance Files is the current Adventure Path.</p>
+    <div class="grid">
+      <article class="card">
+        <div class="label">Protocol 7 · Table Play</div>
+        <h3>Vector App</h3>
+        <p>Create and advance a Vector, manage Skills, VAMs, BAR, Gear, AP, movement, active defense, rolls, and local character persistence.</p>
+        <div class="actions"><a class="button" href="../app/index.html">Launch App</a></div>
+      </article>
+      <article class="card gold">
+        <div class="label">Protocol 7 · Rules</div>
+        <h3>Current Rules</h3>
+        <p>Use the living interactive rules guide during play, or check the printable rulebook status when you want a document-style reference.</p>
+        <div class="actions"><a class="button" href="../rules.html">Interactive Rules</a><a class="button ghost" href="../rulebook.html">Printable Status</a></div>
+      </article>
+      <article class="card red">
+        <div class="label">Protocol Dice Engine · System</div>
+        <h3>Dice Engine</h3>
+        <p>Explore the underlying resolution engine beyond the Protocol 7 setting, including guidance for adapting it to other worlds and campaign styles.</p>
+        <div class="actions"><a class="button" href="../Protocol_7_Dice_Engine_Other_Settings_Guide_r001.html">Open Dice Engine Guide</a></div>
+      </article>
+      <article class="card">
+        <div class="label">Adventure Path · The Continuance Files</div>
+        <h3>Adventure Path</h3>
+        <p>GM missions, player briefings, campaign material, and in-world Apocryphon artifacts for the current historical-operations campaign.</p>
+        <div class="actions"><a class="button" href="../continuance-files/current.html">Open Continuance Files</a></div>
+      </article>
+      <article class="card gold">
+        <div class="label">Protocol Dice Engine · Worked Setting</div>
+        <h3>Rustwind</h3>
+        <p>A worked example showing how the Protocol Dice Engine can support a setting outside the core Protocol 7 campaign framework.</p>
+        <div class="actions"><a class="button" href="../Rustwind_A_Protocol_Dice_Engine_Setting_r001.html">Open Rustwind</a></div>
+      </article>
+      <article class="card red">
+        <div class="label">Playtest Orientation</div>
+        <h3>What to Report</h3>
+        <p>When something feels unclear, slow, overpowered, underpowered, awkward on mobile, or simply less fun than expected, note what you were trying to do and what happened.</p>
+        <div class="actions"><a class="button ghost" href="../">Protocol 7 Overview</a></div>
+      </article>
+    </div>
+    <div class="note"><b>Access note:</b> the <b>JLS</b> code is a lightweight courtesy gate for invited playtesters, not secure authentication. This site is hosted as static GitHub Pages content, so the gate should be treated as “please don’t wander in casually,” not as protection for confidential material.</div>
+  </section>
+</main>
+<footer class="foot"><b>JADE LION STUDIOS</b><br>Protocol 7 · Protocol Dice Engine · The Continuance Files</footer>
+<script>
+(()=>{const gate=document.getElementById('gate'),form=document.getElementById('gate-form'),code=document.getElementById('gate-code'),err=document.getElementById('gate-error'),key='jlsPlaytestAccess';if(sessionStorage.getItem(key)==='granted')gate.classList.add('hidden');form.addEventListener('submit',e=>{e.preventDefault();if(code.value.trim().toUpperCase()==='JLS'){sessionStorage.setItem(key,'granted');gate.classList.add('hidden');err.textContent=''}else{err.textContent='That code was not recognized.';code.select()}});})();
+</script>
+</body>
+</html>
