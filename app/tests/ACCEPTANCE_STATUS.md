@@ -168,5 +168,12 @@ zero console errors).
 and is *not* resolved — the same pool is rerolled until there is a margin.
 `RollBuilder.evaluateDifficulty` returns `tie: true, success: null`;
 `RollBuilder.rerollPool` rerolls every die of the same pool (physical mode
-clears all faces for re-entry). Covered by PLAY-04. Opposed combat is
-unchanged: the attacker must *exceed* the defender's total (rules source).
+clears all faces for re-entry). Covered by PLAY-04.
+
+The same ruling applies to opposed rolls (attack vs. active defense):
+a tie is neither hit nor miss — both sides reroll until there is a margin.
+`State.resolveAttack` returns `tie: true, hit: null`; the resolver offers
+"Reroll my pool" and the GM enters their new total. Covered by PLAY-07.
+This is how the table has been playtesting; the rules source text ("If
+attacker total does not exceed defense, no normal damage") predates it
+and should be updated to match.

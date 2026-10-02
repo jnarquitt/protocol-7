@@ -1331,7 +1331,7 @@
             (ev.success ? 'SUCCESS' : 'FAILURE') + ' vs ' + res.difficulty + ' — ' + (ev.success ? 'winning' : 'failing') + ' margin ' + Math.abs(ev.margin) + (ev.band ? ' (' + ev.band + ')' : '') }));
         }
       } else {
-        children.push(UI.el('div', { class: 'p7-action-hint', text: 'Opposed roll: compare with the other side’s total in the resolver below. Winning margins: ' + rc.margin_bands.map(function (b) { return b.label + ' ' + b.min + (b.max === null ? '+' : '–' + b.max); }).join(', ') + '.' }));
+        children.push(UI.el('div', { class: 'p7-action-hint', text: 'Opposed roll: compare with the other side’s total in the resolver below (ties reroll). Winning margins: ' + rc.margin_bands.map(function (b) { return b.label + ' ' + b.min + (b.max === null ? '+' : '–' + b.max); }).join(', ') + '.' }));
       }
       if (sparkIdx.length) children.push(UI.note(feature.name + ' is ready: tap “Reroll” on a die showing a natural 1. You must keep the new result.', 'success'));
       if (drivenReady) {
@@ -1352,7 +1352,7 @@
     var maxHpVal = State.maxHp(startingHpOf(c, rc), c.progression.level, c.progression.edge_id === 'durable', rc);
     var setOpp = function (v) { p.opponentTotal = Math.max(0, v); p.combatResult = null; app.render(); };
     var box = UI.section('Attack & Defense', [
-      UI.el('div', { class: 'p7-action-hint', text: 'Opposed: the attacker must beat the defender’s total. Damage = the winning margin — no separate damage die, and armor already counted in the defense roll.' }),
+      UI.el('div', { class: 'p7-action-hint', text: 'Opposed: the higher total wins and damage = the winning margin — no separate damage die, and armor already counted in the defense roll. Ties: both sides reroll.' }),
       UI.el('div', { text: 'Your last roll: ' + (myTotal === null ? '— roll above first' : myTotal + ' (' + p.result.skillName + ')') }),
       UI.el('div', { class: 'p7-btn-row p7-btn-row-tight p7-opp-row' }, [
         UI.el('span', { class: 'p7-stepper-label', text: 'Their total' }),
@@ -1369,7 +1369,17 @@
     ]);
     var r = p.combatResult;
     if (r) {
-      if (r.role === 'attack') {
+      if (r.tie) {
+        var physical = p.result.mode === 'physical';
+        box.appendChild(UI.note('TIE at ' + myTotal + ' — no margin, nothing resolves. Both sides reroll: reroll your pool, and the GM enters their new total.', 'warn'));
+        box.appendChild(UI.button(physical ? 'Reroll my pool — enter new faces' : 'Reroll my pool (same ' + rolled.results.length + ' dice)', function () {
+          p.result.rolled = RollBuilder.rerollPool(rolled, rc, physical ? null : Math.random);
+          p.result.tieRerolls = (p.result.tieRerolls || 0) + 1;
+          p.rerollPick = false;
+          p.combatResult = null;
+          app.render();
+        }, { variant: 'primary' }));
+      } else if (r.role === 'attack') {
         box.appendChild(UI.note(r.hit ? 'HIT — you deal ' + r.damage + ' damage (winning margin).' : 'MISS — your total did not beat their defense.', r.hit ? 'success' : 'warn'));
       } else if (r.hit) {
         box.appendChild(UI.note('You are HIT for ' + r.damage + ' damage.', 'warn'));

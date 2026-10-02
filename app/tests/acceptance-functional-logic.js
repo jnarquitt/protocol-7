@@ -230,6 +230,12 @@ Data.loadCanonicalData().then(function (canon) {
     !session.edge_used && !session.vitality_spark_used && session.current_ap === rulesCore.action_economy.ap_max,
     selfDice.length + ' self-die VAMs (Cover Protocol yes, ally-targeted Command Link no); new session restores Edge, Spark and full AP');
 
+  // ---- PLAY-07 Opposed ties reroll (designer ruling 2026-10-02) ----
+  const atkWin = State.resolveAttack(15, 11), atkLose = State.resolveAttack(11, 15), atkTie = State.resolveAttack(13, 13);
+  record('PLAY-07', atkWin.hit === true && atkWin.damage === 4 && atkLose.hit === false && atkLose.damage === 0 &&
+    atkTie.tie === true && atkTie.hit === null && atkTie.damage === 0,
+    '15 vs 11 hits for 4; 11 vs 15 misses; 13 vs 13 is a tie — no hit, no miss, both sides reroll');
+
   // ---- Summary ----
   const passCount = results.filter(r => r.pass === true).length;
   const failCount = results.filter(r => r.pass === false).length;

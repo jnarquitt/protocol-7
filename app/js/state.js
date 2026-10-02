@@ -333,10 +333,14 @@
    * Active-defense combat resolution (COMBAT authority in rulesCore):
    * a hit requires attacker total > defender total; damage is the margin.
    * No universal critical subsystem, no separate weapon damage die.
+   * A tie resolves nothing — both sides reroll until there is a margin
+   * (designer playtest ruling 2026-10-02, same as Difficulty ties).
    */
   function resolveAttack(attackTotal, defenseTotal) {
-    var hit = attackTotal > defenseTotal;
-    return { hit: hit, damage: hit ? attackTotal - defenseTotal : 0, margin: attackTotal - defenseTotal };
+    var margin = attackTotal - defenseTotal;
+    if (margin === 0) return { tie: true, hit: null, damage: 0, margin: 0 };
+    var hit = margin > 0;
+    return { tie: false, hit: hit, damage: hit ? margin : 0, margin: margin };
   }
 
   /** Apply damage/healing to current HP, clamped to [0, maxHpValue]. */
