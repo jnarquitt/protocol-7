@@ -246,9 +246,9 @@
 
   /**
    * Compare a total to a Difficulty from rulesCore.difficulty. Winning
-   * margin bands come from rulesCore.margin_bands. Meeting the Difficulty
-   * exactly counts as success with no winning margin (band null) — the
-   * rules source lists bands from margin 1 and does not otherwise say.
+   * margin bands come from rulesCore.margin_bands. Difficulty is a target
+   * number: meeting it exactly is a success (designer ruling 2026-10-02),
+   * with no winning margin (band null), since bands start at margin 1.
    */
   function evaluateDifficulty(total, difficulty, rulesCore) {
     var margin = total - difficulty;

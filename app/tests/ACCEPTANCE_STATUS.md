@@ -163,7 +163,8 @@ Spark in physical mode, Prone cancel/waive/Stand, movement cap, new
 session, all three shortcuts, Mastery die, no horizontal overflow, reload,
 zero console errors).
 
-**Open rules question:** the rules source does not say whether a total
-exactly equal to the Difficulty succeeds. PLAY treats it as success with no
-winning margin ("met exactly"); `RollBuilder.evaluateDifficulty` is the one
-place to change if the designer rules otherwise.
+**Rules ruling (designer, 2026-10-02):** Difficulty is a target number —
+a total exactly equal to the Difficulty succeeds (shown as "met exactly",
+no winning margin). Implemented in `RollBuilder.evaluateDifficulty`;
+covered by PLAY-04. (Opposed combat is unchanged: the attacker must
+*exceed* the defender's total.)
