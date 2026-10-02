@@ -167,6 +167,63 @@ Data.loadCanonicalData().then(function (canon) {
   record('REG-03', allocL1.legal === false && allocL1.budget === 20 && allocL3.legal === true && allocL3.budget === 28,
     '28 spent ranks: illegal at Level 1 (budget=' + allocL1.budget + '), legal at Level 3 (budget=' + allocL3.budget + ' = 20 + 4*(3-1))');
 
+  // ---- PLAY-01..06 Play tab logic (Play Tab Interaction Standard / Session checklist G & H) ----
+  const sk = id => skills.filter(s => s.id === id)[0];
+  const playChar = State.createCharacter({ name: 'P', abilityDice: { STR: 'd8', DEX: 'd8', CON: 'd6', INT: 'd6', WIS: 'd4', CHA: 'd4' }, originAbilityId: 'DEX' }, rulesCore);
+
+  // PLAY-01 Physical-dice parity: same pool, faces entered by hand, scored identically to an app roll.
+  const manual = RollBuilder.startManualRoll(fullPool.pool, rulesCore);
+  let filled = manual;
+  fullPool.pool.forEach((d, i) => { filled = RollBuilder.setFace(filled, i, State.sidesOf(d.die), rulesCore); });
+  const maxRolled = RollBuilder.rollPool(fullPool.pool, rulesCore, () => 0.999);
+  let illegalFaceRejected = false;
+  try { RollBuilder.setFace(manual, 0, 99, rulesCore); } catch (e) { illegalFaceRejected = true; }
+  record('PLAY-01', manual.complete === false && filled.complete === true && filled.total === maxRolled.total && illegalFaceRejected,
+    'manual entry of max faces totals ' + filled.total + ' = app roll of max faces ' + maxRolled.total + '; incomplete until every die has a face; illegal face rejected');
+
+  // PLAY-02 Reroll keeps die count and source, only changes the chosen face.
+  const lowRoll = RollBuilder.rollPool(fullPool.pool, rulesCore, () => 0);
+  const rerolled = RollBuilder.rerollDie(lowRoll, 0, rulesCore, () => 0.999);
+  const physicalReroll = RollBuilder.rerollDie(lowRoll, 0, rulesCore, null);
+  record('PLAY-02', rerolled.results.length === lowRoll.results.length && rerolled.results[0].face === State.sidesOf(fullPool.pool[0].die) &&
+    rerolled.results[0].previous_face === 1 && rerolled.results.slice(1).every((r, i) => r.face === lowRoll.results[i + 1].face) &&
+    physicalReroll.complete === false,
+    'reroll replaced only die 0 (1 -> ' + rerolled.results[0].face + '); physical reroll leaves it blank for re-entry');
+
+  // PLAY-03 Vitality Spark only for Skills listing the Origin and only on natural 1s; Perfect Equilibrium for any Skill.
+  const dexSkill = skills.filter(s => s.abilities.indexOf('DEX') !== -1)[0];
+  const noDexSkill = skills.filter(s => s.abilities.indexOf('DEX') === -1)[0];
+  const ones = [{ face: 1 }, { face: 5 }, { face: 1 }];
+  const sparkDex = State.naturalOneRerollIndices(playChar, dexSkill, ones);
+  const sparkNoDex = State.naturalOneRerollIndices(playChar, noDexSkill, ones);
+  const usedChar = JSON.parse(JSON.stringify(playChar)); usedChar.play.vitality_spark_used = true;
+  const eqChar = JSON.parse(JSON.stringify(playChar)); eqChar.vitality.all_blanks_exception = true; eqChar.vitality.origin_ability_id = null;
+  record('PLAY-03', JSON.stringify(sparkDex) === '[0,2]' && sparkNoDex.length === 0 &&
+    State.naturalOneRerollIndices(usedChar, dexSkill, ones).length === 0 &&
+    State.sessionFeature(eqChar).kind === 'equilibrium' && State.naturalOneRerollIndices(eqChar, noDexSkill, ones).length === 2,
+    'Spark: ' + dexSkill.name + ' (lists DEX) -> dice ' + sparkDex + ', ' + noDexSkill.name + ' -> none, used -> none; Perfect Equilibrium works on ' + noDexSkill.name);
+
+  // PLAY-04 Difficulty evaluation uses rulesCore.difficulty / margin_bands.
+  const evWin = RollBuilder.evaluateDifficulty(20, rulesCore.difficulty.moderate, rulesCore);
+  const evLose = RollBuilder.evaluateDifficulty(10, rulesCore.difficulty.moderate, rulesCore);
+  const evTie = RollBuilder.evaluateDifficulty(12, rulesCore.difficulty.moderate, rulesCore);
+  record('PLAY-04', evWin.success && evWin.margin === 8 && evWin.band === 'Powerful' && !evLose.success && evLose.band === 'Narrow' && evTie.success && evTie.band === null,
+    '20 vs 12 = +8 ' + evWin.band + '; 10 vs 12 = ' + evLose.margin + ' ' + evLose.band + '; 12 vs 12 = met exactly (no band)');
+
+  // PLAY-05 Scoped IMPOSE_DISADVANTAGE Conditions only propose for their listed Skills.
+  const disoriented = canon.conditions.conditions.filter(c => c.id === 'COND-DISORIENTED')[0];
+  const onPerception = RollBuilder.buildRollPool({ skillId: 'SKL-PERCEPTION', skillsRegistry: skills, characterState: playChar, rulesCore, activeConditions: [disoriented] });
+  const onAthletics = RollBuilder.buildRollPool({ skillId: 'SKL-ATHLETICS', skillsRegistry: skills, characterState: playChar, rulesCore, activeConditions: [disoriented] });
+  record('PLAY-05', onPerception.removedDice.length === 1 && onPerception.conditionSources[0].id === 'COND-DISORIENTED' && onAthletics.removedDice.length === 0,
+    'Disoriented proposes Disadvantage on Perception (removed ' + onPerception.removedDice[0].die + ') but not on Athletics');
+
+  // PLAY-06 Only self-targeted VAM dice are offered for the Vector's own roll; New Session restores once-per-session uses.
+  const selfDice = State.selfDieVams(vams.map(v => v.id), vams).map(v => v.id);
+  const session = State.startNewSession({ current_ap: 0, reaction_available: false, borrowed_next_ap: 1, conditions: [], edge_used: true, vitality_spark_used: true }, rulesCore);
+  record('PLAY-06', selfDice.indexOf('VAM-DEF-003') !== -1 && selfDice.indexOf('VAM-CMD-001') === -1 &&
+    !session.edge_used && !session.vitality_spark_used && session.current_ap === rulesCore.action_economy.ap_max,
+    selfDice.length + ' self-die VAMs (Cover Protocol yes, ally-targeted Command Link no); new session restores Edge, Spark and full AP');
+
   // ---- Summary ----
   const passCount = results.filter(r => r.pass === true).length;
   const failCount = results.filter(r => r.pass === false).length;

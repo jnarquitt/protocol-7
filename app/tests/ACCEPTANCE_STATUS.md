@@ -123,3 +123,47 @@ Review) that renders the same Load/Unload/BAR-legality controls as the
 post-creation VAMS screen, seeded from the chosen preset's `vam_ids` (empty
 for Custom), fully editable before Review. Review now lists the resulting
 loadout instead of omitting VAMs entirely.
+
+## Play tab completion pass (2026-10-02)
+
+Built out PLAY against `P7_v0.188_PLAY_TAB_INTERACTION_STANDARD_r001.md`, the
+Screen Map's Play section, and Session Checklist G/H. Previously PLAY passed
+`gearCandidates: []` / `vamCandidates: []` to the builder, ignored active
+Conditions, had no Difficulty, physical-dice mode, BAR, Edge or Vitality
+Spark surface, and resolved combat via `alert()`.
+
+**Now on PLAY:** Status (HP ±1/±5, AP pips, Reaction, BAR meter, active
+Conditions, Vitality Spark / Perfect Equilibrium and session Edge with
+once-per-session tracking + confirmed "Start New Session"); Actions (Move
+30 ft per AP to 90, Attack with each equipped weapon, Defend Skills, Field
+Swap, Condition-removal actions such as Stand from the registry); one
+Roll launcher (Skill → Gear [≤1, relevant ✓] / self-targeted VAM die /
+Mastery access source → Advantage, Disadvantage, Inspired, per-Condition
+GM waiver → Difficulty 8–24 or opposed) with a pool preview grouped by
+source; App ROLL or physical-dice face entry; result with every die,
+blanks visibly 0, total, success/margin band, Spark/Driven rerolls, and a
+reserved Matched Blanks area; Attack & Defense resolver that can apply
+winning-margin damage to HP; Loaded VAM reference cards.
+
+**Shortcuts (standard §"Other tabs"):** Skills "Roll in Play →", equipped
+Gear "Use in Play →", loaded VAM "Use in Play →" all go through
+`App.openInPlay()`, configure the launcher, navigate and scroll to it —
+nothing rolls outside PLAY.
+
+**Data/logic:** `play.vitality_spark_used` (optional, absent = unused)
+added to the character schema; `roll-builder.js` gained scoring/manual
+entry/reroll/Difficulty helpers (still exactly one pool builder — A38
+updated to assert that directly) and now honours `IMPOSE_DISADVANTAGE`
+Conditions (Suppressed, Disoriented — the latter only for its listed
+Skills). New logic tests PLAY-01…06 in `acceptance-functional-logic.js`.
+
+**Interactive evidence:** headless Chrome at 360×800 driving the served
+app: 31/31 checks (attack/AP, pool composition, A24 pool truth, Driven,
+Spark in physical mode, Prone cancel/waive/Stand, movement cap, new
+session, all three shortcuts, Mastery die, no horizontal overflow, reload,
+zero console errors).
+
+**Open rules question:** the rules source does not say whether a total
+exactly equal to the Difficulty succeeds. PLAY treats it as success with no
+winning margin ("met exactly"); `RollBuilder.evaluateDifficulty` is the one
+place to change if the designer rules otherwise.

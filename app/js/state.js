@@ -250,7 +250,8 @@
         reaction_available: true,
         borrowed_next_ap: 0,
         conditions: [],
-        edge_used: false
+        edge_used: false,
+        vitality_spark_used: false
       },
       mission: { exposure: 0, carrier_state: null },
       meta: { created_at: now, updated_at: now, source_preset_id: opts.presetId || null }
@@ -343,6 +344,76 @@
     return Math.max(0, Math.min(maxHpValue, currentHp + delta));
   }
 
+  /**
+   * Vitality Origin amendment: an all-blanks Vector has Perfect Equilibrium
+   * (any Skill roll); otherwise the Origin Ability grants Vitality Spark
+   * (Skill rolls whose three Ability dice include that Ability). Both are
+   * once per session, tracked by play.vitality_spark_used.
+   */
+  function sessionFeature(character) {
+    var v = character.vitality || {};
+    var used = !!character.play.vitality_spark_used;
+    if (v.all_blanks_exception) return { kind: 'equilibrium', name: 'Perfect Equilibrium', originAbilityId: null, used: used };
+    if (v.origin_ability_id) return { kind: 'spark', name: 'Vitality Spark', originAbilityId: v.origin_ability_id, used: used };
+    return null;
+  }
+
+  /**
+   * Indices of dice the Vitality feature may reroll for this roll: only
+   * dice showing a natural 1, and (for Spark) only when the rolled Skill's
+   * three listed Abilities include the Origin. Empty when used or ineligible.
+   */
+  function naturalOneRerollIndices(character, skill, results) {
+    var f = sessionFeature(character);
+    if (!f || f.used) return [];
+    if (f.kind === 'spark' && skill.abilities.indexOf(f.originAbilityId) === -1) return [];
+    return results.map(function (r, i) { return r.face === 1 ? i : -1; }).filter(function (i) { return i !== -1; });
+  }
+
+  /** The selected Edge if it is a once-per-session Edge, plus whether it has been spent. */
+  function sessionEdge(character, rulesCore) {
+    var id = character.progression.edge_id;
+    var edge = rulesCore.edges.filter(function (e) { return e.id === id; })[0];
+    if (!edge || edge.kind !== 'session') return null;
+    return { edge: edge, used: !!character.play.edge_used };
+  }
+
+  /** New session: once-per-session resources come back; turn state resets too. */
+  function startNewSession(play, rulesCore) {
+    return Object.assign(startNewTurn(Object.assign({}, play, { borrowed_next_ap: 0 }), rulesCore), {
+      edge_used: false,
+      vitality_spark_used: false
+    });
+  }
+
+  /**
+   * Equipped Gear whose listed Skill matches the Skill being rolled. Gear
+   * records name their Skill by display name ("Light Melee"), not ID.
+   */
+  function relevantGear(skill, selectedGearIds, gearCatalog) {
+    return gearCatalog.filter(function (g) {
+      return selectedGearIds.indexOf(g.id) !== -1 && g.die && g.skill === skill.name;
+    });
+  }
+
+  /**
+   * Loaded VAMs with an explicit ADD_DIE effect for the Vector's own roll.
+   * Effects with a `target` (linked allies) add dice to someone else's
+   * pool, so they are not offered here.
+   */
+  function selfDieVams(loadedVamIds, vamCatalog) {
+    return vamCatalog.filter(function (v) {
+      return loadedVamIds.indexOf(v.id) !== -1 && (v.effects || []).some(function (e) { return e.op === 'ADD_DIE' && e.die && !e.target; });
+    });
+  }
+
+  /** Loaded VAMs that can grant Mastery access (ALLOW_MASTERY / MASTERY_ENABLED_ROLL). */
+  function masteryAccessVams(loadedVamIds, vamCatalog) {
+    return vamCatalog.filter(function (v) {
+      return loadedVamIds.indexOf(v.id) !== -1 && (v.effects || []).some(function (e) { return e.op === 'ALLOW_MASTERY' || e.op === 'MASTERY_ENABLED_ROLL'; });
+    });
+  }
+
   return {
     SCHEMA_VERSION: SCHEMA_VERSION,
     RULES_VERSION: RULES_VERSION,
@@ -368,6 +439,13 @@
     resolveReaction: resolveReaction,
     startNewTurn: startNewTurn,
     resolveAttack: resolveAttack,
-    applyHpChange: applyHpChange
+    applyHpChange: applyHpChange,
+    sessionFeature: sessionFeature,
+    naturalOneRerollIndices: naturalOneRerollIndices,
+    sessionEdge: sessionEdge,
+    startNewSession: startNewSession,
+    relevantGear: relevantGear,
+    selfDieVams: selfDieVams,
+    masteryAccessVams: masteryAccessVams
   };
 }));

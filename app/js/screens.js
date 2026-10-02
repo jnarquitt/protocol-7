@@ -610,7 +610,7 @@
         app.setCharacter(next);
       }, { small: true, disabled: !canMaster }));
     } else {
-      children.push(UI.button('Roll', function () { app.rollSkillId = s.id; app.goTo('play'); }, { small: true, variant: 'primary' }));
+      children.push(UI.button('Roll in Play →', function () { app.openInPlay({ skillId: s.id }); }, { small: true, variant: 'primary' }));
     }
     return UI.card(children, { class: 'p7-skill-card' });
   }
@@ -725,12 +725,15 @@
     renderVamFamilyGroups(container, app.canon.vams.families, app.vamFamilyFilter, visible, function (v) {
       var loaded = c.vams.loaded_ids.indexOf(v.id) !== -1;
       var otherLoadedBar = used - (loaded ? v.bar : 0);
-      return renderVamCard(v, loaded, c.progression.level, otherLoadedBar, rc, function () {
+      var card = renderVamCard(v, loaded, c.progression.level, otherLoadedBar, rc, function () {
         var next = JSON.parse(JSON.stringify(c));
         if (loaded) next.vams.loaded_ids = next.vams.loaded_ids.filter(function (id) { return id !== v.id; });
         else next.vams.loaded_ids.push(v.id);
         app.setCharacter(next);
       });
+      // Loaded VAMs are actionable — the shortcut hands them to Play rather than resolving anything here.
+      if (loaded) card.appendChild(UI.button('Use in Play →', function () { app.openInPlay({ vamId: v.id }); }, { small: true }));
+      return card;
     });
   }
 
@@ -762,129 +765,656 @@
             if (selected) next.gear.selected_ids = next.gear.selected_ids.filter(function (id) { return id !== g.id; });
             else next.gear.selected_ids.push(g.id);
             app.setCharacter(next);
-          }, { small: true, variant: selected ? 'danger' : 'primary' })
+          }, { small: true, variant: selected ? 'danger' : 'primary' }),
+          selected && g.die && g.skill ? UI.button('Use in Play →', function () { app.openInPlay({ gearId: g.id }); }, { small: true }) : null
         ], { class: 'p7-gear-card' });
       })));
     });
   }
 
   // ---------------------------------------------------------------
-  // PLAY screen
+  // PLAY screen — the sole action-resolution surface (Play Tab
+  // Interaction Standard: "Build the Vector elsewhere. Play the Vector on
+  // PLAY."). Other tabs hand a Skill/Gear/VAM over via app.openInPlay();
+  // every pool is assembled, previewed and rolled only here, always
+  // through RollBuilder.buildRollPool → rollPool/startManualRoll.
+  //
+  // Everything in app.playUi is transient UI state (what is selected in
+  // the launcher, the last result). Anything that must survive a reload —
+  // HP, AP, Reaction, Conditions, once-per-session uses — lives on the
+  // one character object via app.setCharacter().
   // ---------------------------------------------------------------
-  var CONDITION_IDS_CACHE = null;
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  function playUi(app) {
+    if (!app.playUi) {
+      app.playUi = {
+        skillId: null, gearId: null, vamId: null, masterySource: null,
+        advantage: false, disadvantage: false, inspired: false, waivedConditions: [],
+        difficulty: null, mode: 'digital', showAllSkills: false,
+        result: null, rerollPick: false,
+        movedFeet: 0, notice: null, confirmNewSession: false,
+        opponentTotal: 0, combatResult: null
+      };
+    }
+    return app.playUi;
+  }
+
+  function skillById(app, id) { return app.canon.skills.skills.filter(function (s) { return s.id === id; })[0]; }
+  function gearById(app, id) { return app.canon.gear.gear.filter(function (g) { return g.id === id; })[0]; }
+  function vamById(app, id) { return app.canon.vams.vams.filter(function (v) { return v.id === id; })[0]; }
+
+  /** Any change to what's being rolled discards a result rolled from the old pool (A24: a result always matches its preview). */
+  function setRollSetup(p, changes) {
+    Object.keys(changes).forEach(function (k) { p[k] = changes[k]; });
+    p.result = null;
+    p.rerollPick = false;
+  }
+
+  /**
+   * Selecting a Skill starts a fresh roll: Gear/VAM/Mastery and situational
+   * Advantage/Disadvantage are per-action, so none carry over from the last
+   * Skill (an attack's Advantage must not leak into the next defense roll).
+   * The equipped Gear that fits is pre-selected, but only when exactly one
+   * does — never a silent pick between several.
+   */
+  function selectSkill(app, p, skillId) {
+    var relevant = State.relevantGear(skillById(app, skillId), app.character.gear.selected_ids, app.canon.gear.gear);
+    setRollSetup(p, {
+      skillId: skillId, gearId: relevant.length === 1 ? relevant[0].id : null, vamId: null, masterySource: null,
+      advantage: false, disadvantage: false, inspired: false
+    });
+  }
+
+  function humanize(id) { return String(id).replace(/_/g, ' ').toLowerCase(); }
+
+  /** One-line plain-language summary of a VAM's canonical effects, for reference at the table. */
+  function vamEffectSummary(v) {
+    var parts = (v.effects || []).map(function (e) {
+      var bits = [humanize(e.op)];
+      if (e.die) bits.push(e.die);
+      if (e.value !== undefined) bits.push('→ ' + e.value);
+      if (e.action) bits.push('(' + humanize(e.action) + ')');
+      if (e.scope) bits.push('— ' + humanize(e.scope));
+      if (e.target) bits.push('[' + humanize(e.target) + ']');
+      return bits.join(' ');
+    });
+    var timing = [];
+    if (v.activation && v.activation.ap !== undefined) timing.push(v.activation.ap + ' AP');
+    if (v.trigger) timing.push(humanize(v.trigger));
+    if (v.duration) timing.push(humanize(v.duration));
+    return (timing.length ? timing.join(' · ') + ' — ' : '') + parts.join('; ');
+  }
+
+  /** Applies a hand-off from another tab (Skills "Roll", Gear/VAMs "Use in Play"). Returns true if one was applied. */
+  function consumeShortcut(app, p) {
+    var s = app.pendingPlayShortcut;
+    if (!s) return false;
+    app.pendingPlayShortcut = null;
+    var c = app.character;
+    p.notice = null;
+    if (s.skillId) selectSkill(app, p, s.skillId);
+    if (s.gearId) {
+      var g = gearById(app, s.gearId);
+      var skill = g && g.skill && app.canon.skills.skills.filter(function (x) { return x.name === g.skill; })[0];
+      if (skill && g.die) {
+        selectSkill(app, p, skill.id);
+        setRollSetup(p, { gearId: g.id });
+      } else if (g) {
+        p.notice = { kind: 'default', text: g.name + ' adds no die to rolls — it is narrative capability. Tell your GM how you use it.' };
+      }
+    }
+    if (s.vamId) {
+      var v = vamById(app, s.vamId);
+      if (v && State.selfDieVams(c.vams.loaded_ids, [v]).length) {
+        setRollSetup(p, { vamId: v.id });
+      } else if (v && State.masteryAccessVams(c.vams.loaded_ids, [v]).length) {
+        if (c.progression.mastered_skill_ids.indexOf(p.skillId) === -1 && c.progression.mastered_skill_ids.length) {
+          selectSkill(app, p, c.progression.mastered_skill_ids[0]);
+        }
+        if (c.progression.mastered_skill_ids.indexOf(p.skillId) !== -1) {
+          setRollSetup(p, { masterySource: v.id });
+        } else {
+          p.notice = { kind: 'warn', text: v.name + ' grants Mastery access, but you have no Mastered Skill yet — Mastery slots open on the Advancement tab.' };
+        }
+      } else if (v) {
+        p.notice = { kind: 'default', text: v.name + ': ' + vamEffectSummary(v) + '. It adds no die to your own roll — apply it as described.' };
+      }
+    }
+    return true;
+  }
+
   function renderPlay(app, container) {
-    var c = app.character, rc = app.canon.rulesCore, skills = app.canon.skills.skills;
+    var c = app.character, rc = app.canon.rulesCore;
+    var p = playUi(app);
+    if (!p.skillId || !skillById(app, p.skillId)) {
+      var trained = app.canon.skills.skills.filter(function (s) { return (c.skills[s.id] && c.skills[s.id].ranks) > 0; });
+      selectSkill(app, p, c.progression.mastered_skill_ids[0] || (trained[0] || app.canon.skills.skills[0]).id);
+    }
+    var cameFromShortcut = consumeShortcut(app, p);
+
+    container.appendChild(UI.help('When you don’t know what to do, you’re in the right place. Track HP, AP and Reaction up top, pick an action or a Skill, check the labeled dice in the preview, then ROLL in the app — or roll your own physical dice and tap in what came up.'));
+
+    if (p.notice) container.appendChild(UI.note(p.notice.text, p.notice.kind));
+
+    container.appendChild(renderStatus(app, c, rc, p));
+    container.appendChild(renderQuickActions(app, c, rc, p));
+    var launcher = renderRollLauncher(app, c, rc, p);
+    container.appendChild(launcher);
+    container.appendChild(renderCombatResolver(app, c, rc, p));
+    container.appendChild(renderLoadedVams(app, c, rc, p));
+    container.appendChild(renderConditions(app, c));
+
+    if (cameFromShortcut) {
+      // Rendered into a not-yet-attached container — scroll once it's in the page.
+      setTimeout(function () { if (launcher.scrollIntoView) launcher.scrollIntoView({ block: 'start' }); }, 0);
+    }
+  }
+
+  function renderStatus(app, c, rc, p) {
     var maxHpVal = State.maxHp(startingHpOf(c, rc), c.progression.level, c.progression.edge_id === 'durable', rc);
+    var setHp = function (v) { var next = clone(c); next.play.current_hp = State.applyHpChange(0, v, maxHpVal); app.setCharacter(next); };
+    var apMax = rc.action_economy.ap_max;
+    var pips = [];
+    for (var i = 0; i < apMax; i++) {
+      (function (idx) {
+        var filled = idx < c.play.current_ap;
+        pips.push(UI.el('button', {
+          class: 'p7-ap-pip' + (filled ? ' p7-ap-pip-filled' : ''),
+          'aria-label': (filled ? 'Spend' : 'Restore') + ' AP',
+          onclick: function () { var next = clone(c); next.play.current_ap = filled ? idx : idx + 1; app.setCharacter(next); }
+        }));
+      }(i));
+    }
+    var activeConds = app.canon.conditions.conditions.filter(function (cond) { return c.play.conditions.indexOf(cond.id) !== -1; });
 
-    container.appendChild(UI.help('Your live session dashboard. Track HP and Action Points and toggle active Conditions here, then build a roll for any Skill below — pick Advantage, Disadvantage, or Mastery Access as they apply, then hit ROLL.'));
+    return UI.section('Status', [
+      UI.el('div', { class: 'p7-status-grid' }, [
+        UI.el('div', { class: 'p7-status-cell' }, [
+          UI.el('div', { class: 'p7-status-label', text: 'HP' }),
+          UI.el('div', { class: 'p7-hp-readout' + (c.play.current_hp === 0 ? ' p7-hp-zero' : ''), text: c.play.current_hp + ' / ' + maxHpVal }),
+          UI.el('div', { class: 'p7-btn-row p7-btn-row-tight' }, [
+            UI.button('−5', function () { setHp(c.play.current_hp - 5); }, { small: true, disabled: c.play.current_hp === 0 }),
+            UI.button('−1', function () { setHp(c.play.current_hp - 1); }, { small: true, disabled: c.play.current_hp === 0 }),
+            UI.button('+1', function () { setHp(c.play.current_hp + 1); }, { small: true, disabled: c.play.current_hp >= maxHpVal }),
+            UI.button('+5', function () { setHp(c.play.current_hp + 5); }, { small: true, disabled: c.play.current_hp >= maxHpVal })
+          ])
+        ]),
+        UI.el('div', { class: 'p7-status-cell' }, [
+          UI.el('div', { class: 'p7-status-label', text: 'AP ' + c.play.current_ap + ' / ' + apMax + (c.play.borrowed_next_ap ? ' · ' + c.play.borrowed_next_ap + ' borrowed from next turn' : '') }),
+          UI.el('div', { class: 'p7-ap-pips' }, pips),
+          UI.el('div', { class: 'p7-status-label', text: 'Reaction: ' + (c.play.reaction_available ? 'available' : 'used') })
+        ])
+      ]),
+      UI.el('div', { class: 'p7-btn-row' }, [
+        UI.button('Use Reaction', function () {
+          var res = State.resolveReaction(c.play, rc);
+          p.notice = { kind: res.legal ? 'success' : 'warn', text: res.reason };
+          if (!res.legal) { app.render(); return; }
+          var next = clone(c); next.play = res.play; app.setCharacter(next);
+        }, { disabled: !c.play.reaction_available, variant: 'primary' }),
+        UI.button('Start New Turn', function () {
+          var next = clone(c); next.play = State.startNewTurn(c.play, rc);
+          p.movedFeet = 0;
+          p.notice = { kind: 'default', text: 'New turn: ' + next.play.current_ap + ' AP' + (c.play.borrowed_next_ap ? ' (' + c.play.borrowed_next_ap + ' was borrowed by last Reaction)' : '') + ', Reaction ready. Unspent AP from last turn expired.' };
+          app.setCharacter(next);
+        })
+      ]),
+      UI.meter('BAR', State.loadedBar(c.vams.loaded_ids, app.canon.vams.vams), State.barCeiling(c.progression.level, rc)),
+      activeConds.length
+        ? UI.el('div', { class: 'p7-chip-row p7-active-conds' }, [UI.el('span', { class: 'p7-status-label', text: 'Conditions:' })].concat(activeConds.map(function (cond) { return UI.badge(cond.name, 'warn'); })))
+        : null,
+      renderSessionResources(app, c, rc, p)
+    ]);
+  }
 
-    container.appendChild(UI.section('Status', [
-      UI.el('div', { class: 'p7-hp-row' }, [
-        UI.el('div', { class: 'p7-hp-readout', text: 'HP ' + c.play.current_hp + ' / ' + maxHpVal }),
-        UI.stepper('', c.play.current_hp, function (v) {
-          var next = JSON.parse(JSON.stringify(c)); next.play.current_hp = State.applyHpChange(0, v, maxHpVal); app.setCharacter(next);
-        }, { min: 0, max: maxHpVal })
-      ]),
-      UI.el('div', { class: 'p7-ap-row' }, [
-        UI.el('span', { text: 'AP: ' }),
-        UI.el('div', { class: 'p7-ap-pips' }, [0, 1, 2].map(function (i) {
-          var filled = i < c.play.current_ap;
-          return UI.el('button', {
-            class: 'p7-ap-pip' + (filled ? ' p7-ap-pip-filled' : ''),
-            onclick: function () {
-              var next = JSON.parse(JSON.stringify(c));
-              next.play.current_ap = filled ? i : i + 1;
-              app.setCharacter(next);
-            }
-          });
-        }))
-      ]),
-      UI.button('Use Reaction (' + (c.play.reaction_available ? 'Available' : 'Used') + ')', function () {
-        var res = State.resolveReaction(c.play, rc);
-        if (!res.legal) { alert(res.reason); return; }
-        var next = JSON.parse(JSON.stringify(c)); next.play = res.play; app.setCharacter(next); alert(res.reason);
-      }, { disabled: !c.play.reaction_available, variant: 'primary' }),
-      UI.button('Start New Turn', function () {
-        var next = JSON.parse(JSON.stringify(c)); next.play = State.startNewTurn(c.play, rc); app.setCharacter(next);
-      })
+  function renderSessionResources(app, c, rc, p) {
+    var feature = State.sessionFeature(c);
+    var edge = State.sessionEdge(c, rc);
+    var rows = [];
+    if (feature) {
+      rows.push(UI.el('div', { class: 'p7-resource-row' }, [
+        UI.el('div', { class: 'p7-resource-body' }, [
+          UI.el('div', { class: 'p7-resource-name', text: feature.name + (feature.kind === 'spark' ? ' (' + feature.originAbilityId + ')' : '') }),
+          UI.el('div', { class: 'p7-resource-text', text: feature.kind === 'spark'
+            ? 'Once/session: after rolling a Skill that lists ' + feature.originAbilityId + ', reroll one die showing a natural 1 and keep the new result.'
+            : 'Once/session: after any Skill roll, reroll one die showing a natural 1 and keep the new result.' })
+        ]),
+        UI.badge(feature.used ? 'Used' : 'Ready', feature.used ? 'default' : 'ready')
+      ]));
+    }
+    if (edge) {
+      // Driven and Inspired act on a roll, so they're spent from the roller; the narrative Edges are spent here.
+      var manual = edge.edge.id !== 'driven' && edge.edge.id !== 'inspired';
+      rows.push(UI.el('div', { class: 'p7-resource-row' }, [
+        UI.el('div', { class: 'p7-resource-body' }, [
+          UI.el('div', { class: 'p7-resource-name', text: 'Edge: ' + edge.edge.name }),
+          UI.el('div', { class: 'p7-resource-text', text: 'Once/session: ' + edge.edge.effect + (manual ? '' : ' Use it from the roller below.') })
+        ]),
+        manual && !edge.used
+          ? UI.button('Use', function () { var next = clone(c); next.play.edge_used = true; app.setCharacter(next); }, { small: true })
+          : UI.badge(edge.used ? 'Used' : 'Ready', edge.used ? 'default' : 'ready')
+      ]));
+    }
+    if (!rows.length) return null;
+    rows.push(p.confirmNewSession
+      ? UI.el('div', { class: 'p7-btn-row' }, [
+        UI.button('Confirm: start new session', function () {
+          var next = clone(c); next.play = State.startNewSession(c.play, rc);
+          p.confirmNewSession = false; p.movedFeet = 0;
+          p.notice = { kind: 'success', text: 'New session: once-per-session resources restored, full AP and Reaction.' };
+          app.setCharacter(next);
+        }, { variant: 'primary', small: true }),
+        UI.button('Cancel', function () { p.confirmNewSession = false; app.render(); }, { small: true })
+      ])
+      : UI.button('Start New Session…', function () { p.confirmNewSession = true; app.render(); }, { small: true }));
+    return UI.el('div', { class: 'p7-resources' }, rows);
+  }
+
+  function renderQuickActions(app, c, rc, p) {
+    var econ = rc.action_economy;
+    var spendAp = function (cost, mutate, message) {
+      if (c.play.current_ap < cost) { p.notice = { kind: 'warn', text: 'Needs ' + cost + ' AP; you have ' + c.play.current_ap + '.' }; app.render(); return false; }
+      var next = clone(c); next.play.current_ap -= cost; if (mutate) mutate(next);
+      p.notice = { kind: 'default', text: message + ' (−' + cost + ' AP — tap an AP pip to undo)' };
+      app.setCharacter(next);
+      return true;
+    };
+    var equipped = app.canon.gear.gear.filter(function (g) { return c.gear.selected_ids.indexOf(g.id) !== -1; });
+    var weapons = equipped.filter(function (g) { return g.category === 'Weapons' && g.die && g.skill; });
+    var defenseSkills = app.canon.skills.skills.filter(function (s) { return s.category === 'Defense'; });
+    var trainedDefense = defenseSkills.filter(function (s) { return (c.skills[s.id] && c.skills[s.id].ranks) > 0; });
+    var children = [];
+
+    var moveCost = econ.movement.ap_cost_per_move, feet = econ.movement.feet_per_ap, maxFeet = econ.movement.max_normal_movement_per_turn_feet;
+    children.push(UI.el('div', { class: 'p7-action-row' }, [
+      UI.el('div', { class: 'p7-action-label', text: 'Move' }),
+      UI.button('Move ' + feet + ' ft (' + moveCost + ' AP)', function () {
+        var total = p.movedFeet + feet;
+        if (spendAp(moveCost, null, 'Moved ' + feet + ' ft — ' + total + ' ft this turn')) p.movedFeet = total;
+      }, { small: true, disabled: c.play.current_ap < moveCost || p.movedFeet >= maxFeet }),
+      UI.el('div', { class: 'p7-action-hint', text: p.movedFeet + ' / ' + maxFeet + ' ft this turn. There is no Run action — just move again.' })
     ]));
 
-    container.appendChild(UI.section('Conditions', [
+    var atkCost = econ.ordinary_attack_ap_cost;
+    children.push(UI.el('div', { class: 'p7-action-row' }, [
+      UI.el('div', { class: 'p7-action-label', text: 'Attack' }),
+      weapons.length
+        ? UI.el('div', { class: 'p7-chip-row' }, weapons.map(function (g) {
+          return UI.button(g.name + ' (' + atkCost + ' AP)', function () {
+            var skill = app.canon.skills.skills.filter(function (s) { return s.name === g.skill; })[0];
+            selectSkill(app, p, skill.id); setRollSetup(p, { gearId: g.id });
+            spendAp(atkCost, null, 'Attacking with ' + g.name + ': roll ' + skill.name + ' below, then use the resolver');
+          }, { small: true, disabled: c.play.current_ap < atkCost });
+        }))
+        : UI.el('div', { class: 'p7-action-hint', text: 'No weapon equipped — equip one on the Gear tab, or pick an unarmed/melee Skill in the roller.' })
+    ]));
+
+    children.push(UI.el('div', { class: 'p7-action-row' }, [
+      UI.el('div', { class: 'p7-action-label', text: 'Defend' }),
+      UI.el('div', { class: 'p7-chip-row' }, (trainedDefense.length ? trainedDefense : defenseSkills).map(function (s) {
+        return UI.chip(s.name, p.skillId === s.id, function () { p.notice = null; selectSkill(app, p, s.id); app.render(); });
+      })),
+      UI.el('div', { class: 'p7-action-hint', text: 'Active defense: roll it against the attacker’s total. Armor that fits is added as your Gear die.' })
+    ]));
+
+    var swapCost = rc.vam.field_swap_ap_cost;
+    children.push(UI.el('div', { class: 'p7-action-row' }, [
+      UI.el('div', { class: 'p7-action-label', text: 'VAMs' }),
+      UI.button('Field Swap (' + swapCost + ' AP)', function () {
+        var res = State.fieldSwap(c.play, rc);
+        if (!res.legal) { p.notice = { kind: 'warn', text: res.reason }; app.render(); return; }
+        var next = clone(c); next.play = res.play;
+        next.meta.updated_at = new Date().toISOString();
+        app.character = next; app.save();
+        app.goTo('vams');
+      }, { small: true, disabled: c.play.current_ap < swapCost }),
+      UI.el('div', { class: 'p7-action-hint', text: 'Pays ' + swapCost + ' AP once, then opens VAMs so you can swap any number of loaded VAMs.' })
+    ]));
+
+    // Condition-removal actions come straight from the canonical registry (e.g. Prone → Stand, 1 AP).
+    app.canon.conditions.conditions.forEach(function (cond) {
+      if (c.play.conditions.indexOf(cond.id) === -1) return;
+      (cond.removal || []).forEach(function (r) {
+        if (r.type !== 'ACTION' || r.ap === undefined) return;
+        var label = r.action || r.name;
+        children.push(UI.el('div', { class: 'p7-action-row' }, [
+          UI.el('div', { class: 'p7-action-label', text: cond.name }),
+          UI.button(label + ' (' + r.ap + ' AP)', function () {
+            spendAp(r.ap, function (next) { next.play.conditions = next.play.conditions.filter(function (id) { return id !== cond.id; }); }, label + ': ' + cond.name + ' removed');
+          }, { small: true, disabled: c.play.current_ap < r.ap })
+        ]));
+      });
+    });
+
+    return UI.section('Actions', children);
+  }
+
+  var SOURCE_GROUPS = [
+    { type: 'skill', label: 'Skill' }, { type: 'ability', label: 'Abilities' }, { type: 'gear', label: 'Gear' },
+    { type: 'vam', label: 'VAM' }, { type: 'advantage', label: 'Advantage' }, { type: 'mastery', label: 'Mastery' }
+  ];
+
+  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function renderRollLauncher(app, c, rc, p) {
+    var skills = app.canon.skills.skills;
+    var skill = skillById(app, p.skillId);
+    var isMastered = c.progression.mastered_skill_ids.indexOf(skill.id) !== -1;
+    var edge = State.sessionEdge(c, rc);
+    var box = UI.section('Roll', []);
+    box.classList.add('p7-roll-section');
+
+    // 1 · Skill
+    var trained = skills.filter(function (s) { return (c.skills[s.id] && c.skills[s.id].ranks) > 0; });
+    var shown = p.showAllSkills || !trained.length ? skills : trained;
+    if (shown.indexOf(skill) === -1) shown = shown.concat([skill]);
+    var skillStep = UI.el('div', { class: 'p7-roll-step' }, [UI.el('div', { class: 'p7-roll-step-label', text: '1 · Skill' })]);
+    var cats = [];
+    shown.forEach(function (s) { if (cats.indexOf(s.category) === -1) cats.push(s.category); });
+    cats.forEach(function (cat) {
+      if (cats.length > 1) skillStep.appendChild(UI.el('div', { class: 'p7-roll-cat', text: cat }));
+      skillStep.appendChild(UI.el('div', { class: 'p7-chip-row' }, shown.filter(function (s) { return s.category === cat; }).map(function (s) {
+        var mastered = c.progression.mastered_skill_ids.indexOf(s.id) !== -1;
+        return UI.chip(s.name + (mastered ? ' ★' : ''), s.id === skill.id, function () { p.notice = null; selectSkill(app, p, s.id); app.render(); });
+      })));
+    });
+    skillStep.appendChild(UI.button(p.showAllSkills ? 'Show only my trained Skills' : 'Show all ' + skills.length + ' Skills', function () { p.showAllSkills = !p.showAllSkills; app.render(); }, { small: true, variant: 'ghost' }));
+    box.appendChild(skillStep);
+
+    // 2 · Named sources: Gear, VAM, Mastery
+    var sources = UI.el('div', { class: 'p7-roll-step' }, [UI.el('div', { class: 'p7-roll-step-label', text: '2 · Named dice sources (optional)' })]);
+    var relevantIds = State.relevantGear(skill, c.gear.selected_ids, app.canon.gear.gear).map(function (g) { return g.id; });
+    var equipped = app.canon.gear.gear.filter(function (g) { return c.gear.selected_ids.indexOf(g.id) !== -1 && g.die; });
+    var fitsFirst = equipped.filter(function (g) { return relevantIds.indexOf(g.id) !== -1; })
+      .concat(equipped.filter(function (g) { return relevantIds.indexOf(g.id) === -1; }));
+    sources.appendChild(UI.el('div', { class: 'p7-roll-cat', text: 'Gear — at most ' + rc.gear.ordinary_primary_relevant_limit + ' primary relevant item (✓ = listed for ' + skill.name + ')' }));
+    sources.appendChild(fitsFirst.length
+      ? UI.el('div', { class: 'p7-chip-row' }, fitsFirst.map(function (g) {
+        var fits = relevantIds.indexOf(g.id) !== -1;
+        return UI.chip(g.name + ' ' + g.die + (fits ? ' ✓' : ''), p.gearId === g.id, function () { setRollSetup(p, { gearId: p.gearId === g.id ? null : g.id }); app.render(); });
+      }))
+      : UI.el('div', { class: 'p7-action-hint', text: 'No dice-bearing Gear equipped (Gear tab).' }));
+    if (p.gearId && relevantIds.indexOf(p.gearId) === -1) {
+      var g0 = gearById(app, p.gearId);
+      sources.appendChild(UI.note(g0.name + ' is listed for ' + g0.skill + ', not ' + skill.name + ' — only use it if your GM agrees it is relevant here.', 'warn'));
+    }
+
+    var dieVams = State.selfDieVams(c.vams.loaded_ids, app.canon.vams.vams);
+    if (dieVams.length) {
+      sources.appendChild(UI.el('div', { class: 'p7-roll-cat', text: 'Loaded VAM dice — only when the VAM’s trigger applies' }));
+      sources.appendChild(UI.el('div', { class: 'p7-chip-row' }, dieVams.map(function (v) {
+        var eff = v.effects.filter(function (e) { return e.op === 'ADD_DIE' && !e.target; })[0];
+        return UI.chip(v.name + ' ' + eff.die + (eff.scope ? ' (' + humanize(eff.scope) + ')' : ''), p.vamId === v.id, function () { setRollSetup(p, { vamId: p.vamId === v.id ? null : v.id }); app.render(); });
+      })));
+    }
+
+    if (isMastered) {
+      var accessVams = State.masteryAccessVams(c.vams.loaded_ids, app.canon.vams.vams);
+      sources.appendChild(UI.el('div', { class: 'p7-roll-cat', text: skill.name + ' is Mastered — its Mastery die needs explicit access' }));
+      sources.appendChild(UI.el('div', { class: 'p7-chip-row' }, accessVams.map(function (v) {
+        return UI.chip('Access via ' + v.name, p.masterySource === v.id, function () { setRollSetup(p, { masterySource: p.masterySource === v.id ? null : v.id }); app.render(); });
+      }).concat([UI.chip('GM-granted access', p.masterySource === 'gm', function () { setRollSetup(p, { masterySource: p.masterySource === 'gm' ? null : 'gm' }); app.render(); })])));
+    }
+    box.appendChild(sources);
+
+    // 3 · Situation: Advantage / Disadvantage / Inspired / Conditions
+    var situation = UI.el('div', { class: 'p7-roll-step' }, [UI.el('div', { class: 'p7-roll-step-label', text: '3 · Situation' })]);
+    var sitChips = [
+      UI.chip('Advantage', p.advantage, function () { setRollSetup(p, { advantage: !p.advantage }); app.render(); }),
+      UI.chip('Disadvantage', p.disadvantage, function () { setRollSetup(p, { disadvantage: !p.disadvantage }); app.render(); })
+    ];
+    if (edge && edge.edge.id === 'inspired' && !edge.used) {
+      sitChips.push(UI.chip('Spend Inspired (Edge): Advantage', p.inspired, function () { setRollSetup(p, { inspired: !p.inspired }); app.render(); }));
+    }
+    situation.appendChild(UI.el('div', { class: 'p7-chip-row' }, sitChips));
+    situation.appendChild(UI.el('div', { class: 'p7-action-hint', text: 'Advantage adds ' + rc.dice_sources.advantage_disadvantage.advantage.die + '; Disadvantage removes your smallest Ability die. One of each cancels out; neither stacks.' }));
+
+    var activeConds = app.canon.conditions.conditions.filter(function (cond) { return c.play.conditions.indexOf(cond.id) !== -1; });
+    var baseOpts = { skillId: skill.id, skillsRegistry: skills, characterState: c, rulesCore: rc };
+    // Which active Conditions propose Disadvantage for this Skill — asked of the builder itself, one Condition at a time.
+    var proposing = activeConds.filter(function (cond) {
+      return RollBuilder.buildRollPool(Object.assign({ activeConditions: [cond] }, baseOpts)).conditionSources.length > 0;
+    });
+    if (proposing.length) {
+      situation.appendChild(UI.el('div', { class: 'p7-roll-cat', text: 'Conditions proposing Disadvantage — your GM decides if each hinders this roll' }));
+      situation.appendChild(UI.el('div', { class: 'p7-chip-row' }, proposing.map(function (cond) {
+        var applies = p.waivedConditions.indexOf(cond.id) === -1;
+        return UI.chip(cond.name + (applies ? ': applies' : ': waived by GM'), applies, function () {
+          setRollSetup(p, { waivedConditions: applies ? p.waivedConditions.concat([cond.id]) : p.waivedConditions.filter(function (id) { return id !== cond.id; }) });
+          app.render();
+        });
+      })));
+    }
+    box.appendChild(situation);
+
+    // 4 · Difficulty
+    var diffStep = UI.el('div', { class: 'p7-roll-step' }, [UI.el('div', { class: 'p7-roll-step-label', text: '4 · Difficulty' })]);
+    diffStep.appendChild(UI.el('div', { class: 'p7-chip-row' }, [UI.chip('Opposed / none', p.difficulty === null, function () { p.difficulty = null; if (p.result) p.result.difficulty = null; app.render(); })].concat(
+      Object.keys(rc.difficulty).map(function (k) {
+        var n = rc.difficulty[k];
+        return UI.chip(capitalize(humanize(k)) + ' ' + n, p.difficulty === n, function () { p.difficulty = n; if (p.result) p.result.difficulty = n; app.render(); });
+      }))));
+    box.appendChild(diffStep);
+
+    var built = RollBuilder.buildRollPool(Object.assign({
+      gearCandidates: p.gearId ? [gearById(app, p.gearId)] : [],
+      vamCandidates: p.vamId ? [vamById(app, p.vamId)].map(function (v) {
+        // Only self-targeted ADD_DIE effects reach the builder; ally-targeted dice belong in someone else's pool.
+        return Object.assign({}, v, { effects: v.effects.filter(function (e) { return e.op === 'ADD_DIE' && !e.target; }) });
+      }) : [],
+      activeConditions: activeConds.filter(function (cond) { return p.waivedConditions.indexOf(cond.id) === -1; }),
+      advantageReasons: [].concat(p.advantage ? ['situational (GM)'] : [], p.inspired ? ['Inspired (Edge)'] : []),
+      disadvantageReasons: p.disadvantage ? ['situational (GM)'] : [],
+      masteryAccessGranted: isMastered && !!p.masterySource
+    }, baseOpts));
+    app.rollPreview = built;
+
+    box.appendChild(renderPoolPreview(built));
+    built.restrictions.forEach(function (r) { box.appendChild(UI.note(r, 'warn')); });
+    built.warnings.forEach(function (w) { box.appendChild(UI.note(w, 'warn')); });
+
+    // Roll: App ROLL or physical dice (G01/G05) — both consume exactly built.pool.
+    box.appendChild(UI.el('div', { class: 'p7-chip-row' }, [
+      UI.chip('App ROLL', p.mode === 'digital', function () { setRollSetup(p, { mode: 'digital' }); app.render(); }),
+      UI.chip('Physical dice', p.mode === 'physical', function () { setRollSetup(p, { mode: 'physical' }); app.render(); })
+    ]));
+    var rollBtn = UI.button(p.mode === 'digital' ? 'ROLL ' + built.pool.length + ' DICE' : 'I rolled these — enter faces', function () {
+      var rolled = p.mode === 'digital' ? RollBuilder.rollPool(built.pool, rc, Math.random) : RollBuilder.startManualRoll(built.pool, rc);
+      p.result = { rolled: rolled, skillId: skill.id, skillName: skill.name, difficulty: p.difficulty, mode: p.mode };
+      p.rerollPick = false;
+      p.combatResult = null;
+      p.notice = null;
+      if (p.inspired) {
+        p.inspired = false;
+        var next = clone(c); next.play.edge_used = true; app.setCharacter(next);
+        return;
+      }
+      app.render();
+    }, { variant: 'primary' });
+    rollBtn.classList.add('p7-roll-btn');
+    box.appendChild(rollBtn);
+
+    if (p.result) box.appendChild(renderRollResult(app, c, rc, p));
+    return box;
+  }
+
+  function renderPoolPreview(built) {
+    var rows = SOURCE_GROUPS.map(function (grp) {
+      var dice = built.pool.filter(function (d) { return d.source_type === grp.type; });
+      if (!dice.length) return null;
+      return UI.el('div', { class: 'p7-pool-row' }, [
+        UI.el('div', { class: 'p7-pool-label', text: grp.label }),
+        UI.el('div', { class: 'p7-pool-dice' }, dice.map(function (d) {
+          return UI.el('span', { class: 'p7-pool-die p7-pool-die-' + d.source_type, title: d.reason }, [
+            UI.el('b', { text: d.die }), UI.el('span', { text: ' ' + d.label })
+          ]);
+        }))
+      ]);
+    });
+    if (built.removedDice.length) {
+      rows.push(UI.el('div', { class: 'p7-pool-row' }, [
+        UI.el('div', { class: 'p7-pool-label', text: 'Removed' }),
+        UI.el('div', { class: 'p7-pool-dice' }, built.removedDice.map(function (d) {
+          return UI.el('span', { class: 'p7-pool-die p7-pool-die-removed' }, [UI.el('b', { text: d.die }), UI.el('span', { text: ' ' + d.source_id + ' — ' + d.reason })]);
+        }))
+      ]));
+    }
+    return UI.el('div', { class: 'p7-pool-preview' }, [UI.el('div', { class: 'p7-roll-step-label', text: 'Your pool — ' + built.pool.length + ' dice' })].concat(rows));
+  }
+
+  function renderRollResult(app, c, rc, p) {
+    var res = p.result, rolled = res.rolled;
+    var skill = skillById(app, res.skillId);
+    var feature = State.sessionFeature(c);
+    var edge = State.sessionEdge(c, rc);
+    var sparkIdx = rolled.complete ? State.naturalOneRerollIndices(c, skill, rolled.results) : [];
+    var drivenReady = rolled.complete && edge && edge.edge.id === 'driven' && !edge.used;
+    var physical = res.mode === 'physical';
+
+    // A physical reroll clears the face for the player to re-enter; an app reroll rolls it.
+    var reroll = function (i, markUsed) {
+      res.rolled = RollBuilder.rerollDie(rolled, i, rc, physical ? null : Math.random);
+      p.rerollPick = false;
+      p.combatResult = null;
+      var next = clone(c); markUsed(next.play); app.setCharacter(next);
+    };
+
+    var dice = rolled.results.map(function (r, i) {
+      var blank = r.face !== null && r.scored === 0;
+      var cell = [
+        UI.el('div', { class: 'p7-die-face' + (blank ? ' p7-die-blank' : '') + (r.face === null ? ' p7-die-pending' : ''), text: r.face === null ? '?' : String(r.face) }),
+        UI.el('div', { class: 'p7-die-caption', text: r.die + ' · ' + r.label }),
+        UI.el('div', { class: 'p7-die-caption' + (blank ? ' p7-die-caption-blank' : ''), text: r.face === null ? 'tap the face' : blank ? 'blank · 0' : '+' + r.scored })
+      ];
+      if (r.rerolled) cell.push(UI.el('div', { class: 'p7-die-caption', text: 'rerolled' + (r.previous_face ? ' (was ' + r.previous_face + ')' : '') }));
+      if (r.face === null) {
+        var faces = [];
+        for (var f = 1; f <= State.sidesOf(r.die); f++) {
+          (function (face) {
+            faces.push(UI.dieChip(String(face), function () { res.rolled = RollBuilder.setFace(rolled, i, face, rc); app.render(); }, {}));
+          }(f));
+        }
+        cell.push(UI.el('div', { class: 'p7-face-picker' }, faces));
+      }
+      if (sparkIdx.indexOf(i) !== -1) {
+        cell.push(UI.button('Reroll · ' + feature.name, function () { reroll(i, function (play) { play.vitality_spark_used = true; }); }, { small: true, variant: 'primary' }));
+      }
+      if (p.rerollPick && drivenReady) {
+        cell.push(UI.button('Reroll · Driven', function () { reroll(i, function (play) { play.edge_used = true; }); }, { small: true, variant: 'primary' }));
+      }
+      return UI.el('div', { class: 'p7-die-cell' + (r.face === null ? ' p7-die-cell-wide' : '') }, cell);
+    });
+
+    var children = [
+      UI.el('div', { class: 'p7-roll-step-label', text: (physical ? 'Physical roll' : 'App roll') + ' — ' + res.skillName }),
+      UI.el('div', { class: 'p7-die-grid' }, dice)
+    ];
+
+    if (!rolled.complete) {
+      children.push(UI.note('Tap the face showing on each of your physical dice. Faces ' + rc.protocol_dice.blank_faces.join(', ') + ' are blanks and score 0.', 'default'));
+    } else {
+      children.push(UI.el('div', { class: 'p7-total', text: 'Total ' + rolled.total }));
+      if (res.difficulty !== null) {
+        var ev = RollBuilder.evaluateDifficulty(rolled.total, res.difficulty, rc);
+        children.push(UI.el('div', { class: 'p7-verdict ' + (ev.success ? 'p7-verdict-success' : 'p7-verdict-fail'), text:
+          (ev.success ? 'SUCCESS' : 'FAILURE') + ' vs ' + res.difficulty + ' — ' +
+          (ev.margin === 0 ? 'met exactly, no winning margin' : (ev.margin > 0 ? 'winning' : 'failing') + ' margin ' + Math.abs(ev.margin) + (ev.band ? ' (' + ev.band + ')' : '')) }));
+      } else {
+        children.push(UI.el('div', { class: 'p7-action-hint', text: 'Opposed roll: compare with the other side’s total in the resolver below. Winning margins: ' + rc.margin_bands.map(function (b) { return b.label + ' ' + b.min + (b.max === null ? '+' : '–' + b.max); }).join(', ') + '.' }));
+      }
+      if (sparkIdx.length) children.push(UI.note(feature.name + ' is ready: tap “Reroll” on a die showing a natural 1. You must keep the new result.', 'success'));
+      if (drivenReady) {
+        children.push(UI.button(p.rerollPick ? 'Cancel Driven reroll' : 'Spend Driven (Edge): reroll one die', function () { p.rerollPick = !p.rerollPick; app.render(); }, { small: true }));
+      }
+    }
+    // Reserved area for any later-authorized blank-pattern rule (Screen Map → Play → result display).
+    children.push(UI.el('div', { class: 'p7-blank-pattern', text: rc.matched_blanks.enabled
+      ? 'Blank patterns: enabled'
+      : 'Blank patterns: Matched Blanks are ' + rc.matched_blanks.release_state + ' in this playtest — blanks simply score 0.' }));
+
+    return UI.el('div', { class: 'p7-roll-result' }, children);
+  }
+
+  function renderCombatResolver(app, c, rc, p) {
+    var rolled = p.result && p.result.rolled.complete ? p.result.rolled : null;
+    var myTotal = rolled ? rolled.total : null;
+    var maxHpVal = State.maxHp(startingHpOf(c, rc), c.progression.level, c.progression.edge_id === 'durable', rc);
+    var setOpp = function (v) { p.opponentTotal = Math.max(0, v); p.combatResult = null; app.render(); };
+    var box = UI.section('Attack & Defense', [
+      UI.el('div', { class: 'p7-action-hint', text: 'Opposed: the attacker must beat the defender’s total. Damage = the winning margin — no separate damage die, and armor already counted in the defense roll.' }),
+      UI.el('div', { text: 'Your last roll: ' + (myTotal === null ? '— roll above first' : myTotal + ' (' + p.result.skillName + ')') }),
+      UI.el('div', { class: 'p7-btn-row p7-btn-row-tight p7-opp-row' }, [
+        UI.el('span', { class: 'p7-stepper-label', text: 'Their total' }),
+        UI.button('−5', function () { setOpp(p.opponentTotal - 5); }, { small: true, disabled: p.opponentTotal === 0 }),
+        UI.button('−1', function () { setOpp(p.opponentTotal - 1); }, { small: true, disabled: p.opponentTotal === 0 }),
+        UI.el('span', { class: 'p7-stepper-value', text: String(p.opponentTotal) }),
+        UI.button('+1', function () { setOpp(p.opponentTotal + 1); }, { small: true }),
+        UI.button('+5', function () { setOpp(p.opponentTotal + 5); }, { small: true })
+      ]),
+      UI.el('div', { class: 'p7-btn-row' }, [
+        UI.button('I attacked', function () { p.combatResult = Object.assign({ role: 'attack' }, State.resolveAttack(myTotal, p.opponentTotal)); app.render(); }, { variant: 'primary', disabled: myTotal === null }),
+        UI.button('I defended', function () { p.combatResult = Object.assign({ role: 'defend' }, State.resolveAttack(p.opponentTotal, myTotal)); app.render(); }, { variant: 'primary', disabled: myTotal === null })
+      ])
+    ]);
+    var r = p.combatResult;
+    if (r) {
+      if (r.role === 'attack') {
+        box.appendChild(UI.note(r.hit ? 'HIT — you deal ' + r.damage + ' damage (winning margin).' : 'MISS — your total did not beat their defense.', r.hit ? 'success' : 'warn'));
+      } else if (r.hit) {
+        box.appendChild(UI.note('You are HIT for ' + r.damage + ' damage.', 'warn'));
+        if (!r.applied) {
+          box.appendChild(UI.button('Take ' + r.damage + ' damage', function () {
+            r.applied = true;
+            var next = clone(c); next.play.current_hp = State.applyHpChange(c.play.current_hp, -r.damage, maxHpVal); app.setCharacter(next);
+          }, { variant: 'danger' }));
+        } else {
+          box.appendChild(UI.note(r.damage + ' damage applied to your HP.', 'default'));
+        }
+      } else {
+        box.appendChild(UI.note('Defended — the attack did not beat your total. No damage.', 'success'));
+      }
+    }
+    return box;
+  }
+
+  function renderLoadedVams(app, c, rc, p) {
+    var loaded = c.vams.loaded_ids.map(function (id) { return vamById(app, id); }).filter(Boolean);
+    if (!loaded.length) return UI.section('Loaded VAMs', [UI.el('div', { class: 'p7-action-hint', text: 'No VAMs loaded — load them on the VAMs tab.' })]);
+    var dieVamIds = State.selfDieVams(c.vams.loaded_ids, app.canon.vams.vams).map(function (v) { return v.id; });
+    var masteryVamIds = State.masteryAccessVams(c.vams.loaded_ids, app.canon.vams.vams).map(function (v) { return v.id; });
+    var isMastered = c.progression.mastered_skill_ids.indexOf(p.skillId) !== -1;
+    return UI.section('Loaded VAMs', [UI.el('div', { class: 'p7-vam-grid' }, loaded.map(function (v) {
+      var action = null;
+      if (dieVamIds.indexOf(v.id) !== -1) {
+        action = UI.button(p.vamId === v.id ? 'Remove from roll' : 'Add its die to roll', function () { setRollSetup(p, { vamId: p.vamId === v.id ? null : v.id }); app.render(); }, { small: true, variant: p.vamId === v.id ? 'secondary' : 'primary' });
+      } else if (masteryVamIds.indexOf(v.id) !== -1 && isMastered) {
+        action = UI.button(p.masterySource === v.id ? 'Stop Mastery access' : 'Grant Mastery access', function () { setRollSetup(p, { masterySource: p.masterySource === v.id ? null : v.id }); app.render(); }, { small: true, variant: 'primary' });
+      }
+      var inRoll = p.vamId === v.id || p.masterySource === v.id;
+      return UI.card([
+        UI.el('div', { class: 'p7-vam-name', text: v.name }),
+        UI.el('div', { class: 'p7-vam-meta', text: formatFamily(v.family) + ' · ' + v.bar + ' BAR' }),
+        UI.el('div', { class: 'p7-resource-text', text: vamEffectSummary(v) }),
+        action
+      ], { class: 'p7-vam-card' + (inRoll ? ' p7-vam-in-roll' : '') });
+    }))]);
+  }
+
+  function renderConditions(app, c) {
+    return UI.section('Conditions', [
       // Chips need their own flex-wrap row — .p7-section is itself a flex
-      // *column* (for gap between its blocks), so a flat array of chips
-      // passed straight in as section children would stack one-per-line
-      // instead of wrapping into a compact grid.
+      // *column*, so chips passed straight in would stack one-per-line.
       UI.el('div', { class: 'p7-chip-row' }, app.canon.conditions.conditions.map(function (cond) {
         var active = c.play.conditions.indexOf(cond.id) !== -1;
         return UI.chip(cond.name, active, function () {
-          var next = JSON.parse(JSON.stringify(c));
+          var next = clone(c);
           next.play.conditions = active ? next.play.conditions.filter(function (id) { return id !== cond.id; }) : next.play.conditions.concat([cond.id]);
           app.setCharacter(next);
         });
-      }))
-    ]));
-
-    container.appendChild(renderRollLauncher(app, c, rc, skills));
-    container.appendChild(renderCombatResolver(app, c));
-  }
-
-  function renderRollLauncher(app, c, rc, skills) {
-    if (!app.rollSkillId) app.rollSkillId = (c.progression.mastered_skill_ids[0] || skills[0].id);
-    if (!app.rollFlags) app.rollFlags = { advantage: false, disadvantage: false, mastery: false, gear: null, vam: null };
-
-    var trainedSkills = skills.filter(function (s) { return (c.skills[s.id] && c.skills[s.id].ranks) > 0; });
-    var box = UI.section('Roll Launcher (one canonical roll builder)', [
-      UI.el('div', { class: 'p7-tabbar' }, (trainedSkills.length ? trainedSkills : skills.slice(0, 5)).map(function (s) {
-        return UI.chip(s.name, app.rollSkillId === s.id, function () { app.rollSkillId = s.id; app.render(); });
       })),
-      UI.el('div', { class: 'p7-btn-row' }, [
-        UI.chip('Advantage', app.rollFlags.advantage, function () { app.rollFlags.advantage = !app.rollFlags.advantage; app.render(); }),
-        UI.chip('Disadvantage', app.rollFlags.disadvantage, function () { app.rollFlags.disadvantage = !app.rollFlags.disadvantage; app.render(); }),
-        UI.chip('Mastery Access', app.rollFlags.mastery, function () { app.rollFlags.mastery = !app.rollFlags.mastery; app.render(); })
-      ])
+      UI.el('div', { class: 'p7-action-hint', text: 'Active Conditions show in Status, add their removal actions (e.g. Stand) to Actions, and propose Disadvantage in the roller where they apply.' })
     ]);
-
-    var built = RollBuilder.buildRollPool({
-      skillId: app.rollSkillId, skillsRegistry: skills, characterState: c, rulesCore: rc,
-      gearCandidates: [], vamCandidates: [],
-      advantageReasons: app.rollFlags.advantage ? ['player-declared'] : [],
-      disadvantageReasons: app.rollFlags.disadvantage ? ['player-declared'] : [],
-      masteryAccessGranted: app.rollFlags.mastery
-    });
-    app.rollPreview = built;
-
-    box.appendChild(UI.el('div', { class: 'p7-roll-preview', text: built.explanation }));
-    if (built.restrictions.length) box.appendChild(UI.note(built.restrictions.join(' | '), 'warn'));
-    box.appendChild(UI.button('ROLL', function () {
-      var rolled = RollBuilder.rollPool(built.pool, rc, Math.random);
-      app.rollResult = rolled;
-      app.render();
-    }, { variant: 'primary' }));
-
-    if (app.rollResult) {
-      box.appendChild(UI.el('div', { class: 'p7-roll-result', text: 'Total: ' + app.rollResult.total + ' — ' + app.rollResult.results.map(function (r) { return r.label + ':' + r.face + (r.scored ? '' : '(blank)'); }).join(', ') }));
-    }
-    return box;
-  }
-
-  function renderCombatResolver(app, c) {
-    if (app.opponentTotal === undefined) app.opponentTotal = 0;
-    var myTotal = app.rollResult ? app.rollResult.total : 0;
-    var box = UI.section('Active Defense Resolver', [
-      UI.el('div', { text: 'Your last roll total: ' + myTotal }),
-      // 60 is a UI-only stepper ceiling for manual entry, not a rule value —
-      // there is no canonical maximum roll total.
-      UI.stepper('Opponent Total', app.opponentTotal, function (v) { app.opponentTotal = v; app.render(); }, { min: 0, max: 60 }),
-      UI.button('Resolve', function () {
-        var res = State.resolveAttack(myTotal, app.opponentTotal);
-        app.combatResult = res;
-        app.render();
-      }, { variant: 'primary' })
-    ]);
-    if (app.combatResult) {
-      box.appendChild(UI.note(app.combatResult.hit ? 'HIT — margin ' + app.combatResult.margin + ', damage ' + app.combatResult.damage : 'MISS — margin ' + app.combatResult.margin, app.combatResult.hit ? 'success' : 'warn'));
-    }
-    return box;
   }
 
   // ---------------------------------------------------------------

@@ -139,9 +139,14 @@ Data.loadCanonicalData().then(function (canon) {
     'NOTE: this confirms the data layer has one source; full A37 needs re-verification once a UI exists that could add a second one.');
 
   // ---- A38 One-roll audit (module-level proxy; same caveat as A37) ----
+  // The Play screen's physical-dice entry, rerolls and Difficulty check are
+  // exported too, but none of them builds a pool — they only fill in or
+  // score faces on a pool buildRollPool already returned. The audit is
+  // therefore "exactly one *Pool-building* export", not "exactly two exports".
   const rollExportKeys = Object.keys(RollBuilder).sort();
-  record('A38', JSON.stringify(rollExportKeys) === JSON.stringify(['buildRollPool', 'rollPool']),
-    'roll-builder.js exports exactly buildRollPool+rollPool, no second pool-building function. ' +
+  const poolBuilders = rollExportKeys.filter(k => /^build/i.test(k));
+  record('A38', JSON.stringify(poolBuilders) === JSON.stringify(['buildRollPool']) && rollExportKeys.indexOf('rollPool') !== -1,
+    'roll-builder.js has exactly one pool builder (buildRollPool) among exports [' + rollExportKeys.join(', ') + ']. ' +
     'NOTE: this confirms one module exists; full A38 needs re-verification once real UI roll launchers call it.');
 
   // ---- A39 No flat roll modifiers ----

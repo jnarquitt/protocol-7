@@ -66,6 +66,7 @@
     var warnings = [];
     var restrictions = [];
     var requiresGmResolution = false;
+    var conditionSources = []; // {id, name} of each Condition that proposed Disadvantage
 
     // Step 1 — RESOLVE_SKILL
     var skill = opts.skillsRegistry.filter(function (s) { return s.id === opts.skillId; })[0];
@@ -105,10 +106,19 @@
 
     // Step 5 — RESOLVE_CONDITIONS (conditions may propose Disadvantage; GM adjudicates)
     var disadvantageReasons = (opts.disadvantageReasons || []).slice();
+    // Both CONDITIONAL_DISADVANTAGE and IMPOSE_DISADVANTAGE are scoped
+    // ("exposed movement, careful aim", "awareness checks"), so both are
+    // proposals the GM confirms for this specific roll. An IMPOSE effect
+    // that names explicit Skill IDs only proposes for those Skills.
     (opts.activeConditions || []).forEach(function (cond) {
-      var proposesDisadvantage = (cond.effects || []).some(function (e) { return e.type === 'CONDITIONAL_DISADVANTAGE'; });
+      var proposesDisadvantage = (cond.effects || []).some(function (e) {
+        if (e.type === 'CONDITIONAL_DISADVANTAGE') return true;
+        if (e.type === 'IMPOSE_DISADVANTAGE') return !e.skills || e.skills.indexOf(opts.skillId) !== -1;
+        return false;
+      });
       if (proposesDisadvantage) {
         disadvantageReasons.push(cond.name + ' (condition — GM adjudicated)');
+        conditionSources.push({ id: cond.id, name: cond.name });
         requiresGmResolution = true;
         restrictions.push(cond.name + ': Disadvantage applies only if the GM rules it actually hinders this action');
       }
@@ -163,8 +173,31 @@
       restrictions: restrictions,
       warnings: warnings,
       requiresGmResolution: requiresGmResolution,
+      conditionSources: conditionSources,
       explanation: explanation
     };
+  }
+
+  /** Protocol Dice scoring: blank faces (rulesCore.protocol_dice) score 0, every other face scores its value. */
+  function scoreFace(face, rulesCore) {
+    return rulesCore.protocol_dice.blank_faces.indexOf(face) === -1 ? face : 0;
+  }
+
+  /**
+   * Re-scores a result set. Faces may be null while a physical-dice roll
+   * is still being entered; `complete` is false until every die has one.
+   */
+  function scoreResults(results, rulesCore) {
+    var scored = results.map(function (r) {
+      return Object.assign({}, r, { scored: r.face === null ? null : scoreFace(r.face, rulesCore) });
+    });
+    var complete = scored.every(function (r) { return r.face !== null; });
+    var total = scored.reduce(function (sum, r) { return sum + (r.scored || 0); }, 0);
+    return { results: scored, total: total, complete: complete };
+  }
+
+  function resultFor(d, face) {
+    return { source_type: d.source_type, source_id: d.source_id, label: d.label, die: d.die, face: face, rerolled: false };
   }
 
   /**
@@ -174,16 +207,66 @@
    */
   function rollPool(pool, rulesCore, rng) {
     rng = rng || Math.random;
-    var blanks = rulesCore.protocol_dice.blank_faces;
-    var results = pool.map(function (d) {
-      var sides = dieValue(d.die);
-      var face = Math.floor(rng() * sides) + 1;
-      var scored = blanks.indexOf(face) === -1 ? face : 0;
-      return { source_type: d.source_type, label: d.label, die: d.die, face: face, scored: scored };
-    });
-    var total = results.reduce(function (sum, r) { return sum + r.scored; }, 0);
-    return { results: results, total: total };
+    return scoreResults(pool.map(function (d) {
+      return resultFor(d, Math.floor(rng() * dieValue(d.die)) + 1);
+    }), rulesCore);
   }
 
-  return { buildRollPool: buildRollPool, rollPool: rollPool };
+  /**
+   * Physical-dice parity (G01/G05): the same previewed pool, but every face
+   * starts empty and is filled in by setFace() as the player reads their
+   * real dice. Nothing is randomized.
+   */
+  function startManualRoll(pool, rulesCore) {
+    return scoreResults(pool.map(function (d) { return resultFor(d, null); }), rulesCore);
+  }
+
+  function setFace(rolled, index, face, rulesCore) {
+    var r = rolled.results[index];
+    if (!r) throw new Error('No die at index ' + index);
+    if (face < 1 || face > dieValue(r.die)) throw new Error('Face ' + face + ' is not legal for ' + r.die);
+    var results = rolled.results.slice();
+    results[index] = Object.assign({}, r, { face: face });
+    return scoreResults(results, rulesCore);
+  }
+
+  /**
+   * Reroll one die and keep the new result (Driven Edge, Vitality Spark,
+   * Perfect Equilibrium). rng === null means a physical reroll: the face is
+   * cleared for the player to enter. Never adds or removes a die.
+   */
+  function rerollDie(rolled, index, rulesCore, rng) {
+    var r = rolled.results[index];
+    if (!r) throw new Error('No die at index ' + index);
+    var face = rng === null ? null : Math.floor((rng || Math.random)() * dieValue(r.die)) + 1;
+    var results = rolled.results.slice();
+    results[index] = Object.assign({}, r, { face: face, previous_face: r.face, rerolled: true });
+    return scoreResults(results, rulesCore);
+  }
+
+  /**
+   * Compare a total to a Difficulty from rulesCore.difficulty. Winning
+   * margin bands come from rulesCore.margin_bands. Meeting the Difficulty
+   * exactly counts as success with no winning margin (band null) — the
+   * rules source lists bands from margin 1 and does not otherwise say.
+   */
+  function evaluateDifficulty(total, difficulty, rulesCore) {
+    var margin = total - difficulty;
+    var band = null;
+    rulesCore.margin_bands.forEach(function (b) {
+      var m = Math.abs(margin);
+      if (m >= b.min && (b.max === null || m <= b.max)) band = b.label;
+    });
+    return { success: margin >= 0, margin: margin, band: margin === 0 ? null : band };
+  }
+
+  return {
+    buildRollPool: buildRollPool,
+    rollPool: rollPool,
+    scoreResults: scoreResults,
+    startManualRoll: startManualRoll,
+    setFace: setFace,
+    rerollDie: rerollDie,
+    evaluateDifficulty: evaluateDifficulty
+  };
 }));

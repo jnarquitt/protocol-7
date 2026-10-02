@@ -26,6 +26,8 @@
     screen: 'character',
     creation: null, // transient in-progress creation wizard state, or null
     rollPreview: null, // transient last-built roll pool for the Play screen
+    playUi: null, // transient Play-screen launcher/result state (see screens.js)
+    pendingPlayShortcut: null, // {skillId|gearId|vamId} handed to Play by another tab
     root: null
   };
 
@@ -70,6 +72,7 @@
   };
 
   App.setCharacter = function (character) {
+    if (App.character && App.character.meta.created_at !== character.meta.created_at) App.playUi = null;
     character.meta.updated_at = new Date().toISOString();
     App.character = character;
     App.save();
@@ -78,6 +81,7 @@
 
   App.deleteCharacter = function () {
     App.character = null;
+    App.playUi = null;
     App.creation = null;
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
     App.screen = 'character';
@@ -87,6 +91,16 @@
   App.goTo = function (screen) {
     App.screen = screen;
     App.render();
+  };
+
+  /**
+   * Play Tab Interaction Standard: tapping a Skill, loaded VAM or equipped
+   * Gear outside PLAY configures the roll and navigates to PLAY — the roll
+   * itself always happens there.
+   */
+  App.openInPlay = function (shortcut) {
+    App.pendingPlayShortcut = shortcut;
+    App.goTo('play');
   };
 
   App.render = function () {
