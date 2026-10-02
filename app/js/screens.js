@@ -1307,7 +1307,7 @@
     });
 
     var children = [
-      UI.el('div', { class: 'p7-roll-step-label', text: (physical ? 'Physical roll' : 'App roll') + ' — ' + res.skillName }),
+      UI.el('div', { class: 'p7-roll-step-label', text: (physical ? 'Physical roll' : 'App roll') + ' — ' + res.skillName + (res.tieRerolls ? ' · tie reroll ' + res.tieRerolls : '') }),
       UI.el('div', { class: 'p7-die-grid' }, dice)
     ];
 
@@ -1317,9 +1317,19 @@
       children.push(UI.el('div', { class: 'p7-total', text: 'Total ' + rolled.total }));
       if (res.difficulty !== null) {
         var ev = RollBuilder.evaluateDifficulty(rolled.total, res.difficulty, rc);
-        children.push(UI.el('div', { class: 'p7-verdict ' + (ev.success ? 'p7-verdict-success' : 'p7-verdict-fail'), text:
-          (ev.success ? 'SUCCESS' : 'FAILURE') + ' vs ' + res.difficulty + ' — ' +
-          (ev.margin === 0 ? 'met exactly, no winning margin' : (ev.margin > 0 ? 'winning' : 'failing') + ' margin ' + Math.abs(ev.margin) + (ev.band ? ' (' + ev.band + ')' : '')) }));
+        if (ev.tie) {
+          children.push(UI.el('div', { class: 'p7-verdict p7-verdict-tie', text: 'TIE at ' + res.difficulty + ' — no margin. Reroll the same pool until there is one.' }));
+          children.push(UI.button(physical ? 'Reroll tie — enter new faces' : 'Reroll tie (same ' + rolled.results.length + ' dice)', function () {
+            res.rolled = RollBuilder.rerollPool(rolled, rc, physical ? null : Math.random);
+            res.tieRerolls = (res.tieRerolls || 0) + 1;
+            p.rerollPick = false;
+            p.combatResult = null;
+            app.render();
+          }, { variant: 'primary' }));
+        } else {
+          children.push(UI.el('div', { class: 'p7-verdict ' + (ev.success ? 'p7-verdict-success' : 'p7-verdict-fail'), text:
+            (ev.success ? 'SUCCESS' : 'FAILURE') + ' vs ' + res.difficulty + ' — ' + (ev.success ? 'winning' : 'failing') + ' margin ' + Math.abs(ev.margin) + (ev.band ? ' (' + ev.band + ')' : '') }));
+        }
       } else {
         children.push(UI.el('div', { class: 'p7-action-hint', text: 'Opposed roll: compare with the other side’s total in the resolver below. Winning margins: ' + rc.margin_bands.map(function (b) { return b.label + ' ' + b.min + (b.max === null ? '+' : '–' + b.max); }).join(', ') + '.' }));
       }

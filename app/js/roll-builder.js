@@ -246,18 +246,30 @@
 
   /**
    * Compare a total to a Difficulty from rulesCore.difficulty. Winning
-   * margin bands come from rulesCore.margin_bands. Difficulty is a target
-   * number: meeting it exactly is a success (designer ruling 2026-10-02),
-   * with no winning margin (band null), since bands start at margin 1.
+   * margin bands come from rulesCore.margin_bands. A tie is not resolved
+   * (designer ruling 2026-10-02): success and failure are both withheld
+   * and the same pool is rerolled (rerollPool) until there is a margin.
    */
   function evaluateDifficulty(total, difficulty, rulesCore) {
     var margin = total - difficulty;
+    if (margin === 0) return { tie: true, success: null, margin: 0, band: null };
     var band = null;
     rulesCore.margin_bands.forEach(function (b) {
       var m = Math.abs(margin);
       if (m >= b.min && (b.max === null || m <= b.max)) band = b.label;
     });
-    return { success: margin >= 0, margin: margin, band: margin === 0 ? null : band };
+    return { tie: false, success: margin > 0, margin: margin, band: band };
+  }
+
+  /**
+   * Tie-break reroll: every die of the same rolled pool rolled fresh — no
+   * die added, removed or relabeled (A24 still holds). rng === null clears
+   * every face for physical re-entry.
+   */
+  function rerollPool(rolled, rulesCore, rng) {
+    return scoreResults(rolled.results.map(function (r) {
+      return resultFor(r, rng === null ? null : Math.floor((rng || Math.random)() * dieValue(r.die)) + 1);
+    }), rulesCore);
   }
 
   return {
@@ -267,6 +279,7 @@
     startManualRoll: startManualRoll,
     setFace: setFace,
     rerollDie: rerollDie,
-    evaluateDifficulty: evaluateDifficulty
+    evaluateDifficulty: evaluateDifficulty,
+    rerollPool: rerollPool
   };
 }));

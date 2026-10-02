@@ -207,8 +207,14 @@ Data.loadCanonicalData().then(function (canon) {
   const evWin = RollBuilder.evaluateDifficulty(20, rulesCore.difficulty.moderate, rulesCore);
   const evLose = RollBuilder.evaluateDifficulty(10, rulesCore.difficulty.moderate, rulesCore);
   const evTie = RollBuilder.evaluateDifficulty(12, rulesCore.difficulty.moderate, rulesCore);
-  record('PLAY-04', evWin.success && evWin.margin === 8 && evWin.band === 'Powerful' && !evLose.success && evLose.band === 'Narrow' && evTie.success && evTie.band === null,
-    '20 vs 12 = +8 ' + evWin.band + '; 10 vs 12 = ' + evLose.margin + ' ' + evLose.band + '; 12 vs 12 = met exactly (no band)');
+  const tiedRoll = RollBuilder.rollPool(fullPool.pool, rulesCore, () => 0.5);
+  const tieRerolled = RollBuilder.rerollPool(tiedRoll, rulesCore, () => 0.999);
+  const tiePhysical = RollBuilder.rerollPool(tiedRoll, rulesCore, null);
+  record('PLAY-04', evWin.success === true && evWin.margin === 8 && evWin.band === 'Powerful' && evLose.success === false && evLose.band === 'Narrow' &&
+    evTie.tie === true && evTie.success === null &&
+    tieRerolled.results.length === tiedRoll.results.length && tieRerolled.results.every((r, i) => r.die === tiedRoll.results[i].die && r.label === tiedRoll.results[i].label) &&
+    tieRerolled.total === maxRolled.total && tiePhysical.complete === false,
+    '20 vs 12 = +8 ' + evWin.band + '; 10 vs 12 = ' + evLose.margin + ' ' + evLose.band + '; 12 vs 12 = tie, unresolved; tie reroll rolls the same ' + tiedRoll.results.length + ' dice (physical: all faces cleared)');
 
   // PLAY-05 Scoped IMPOSE_DISADVANTAGE Conditions only propose for their listed Skills.
   const disoriented = canon.conditions.conditions.filter(c => c.id === 'COND-DISORIENTED')[0];

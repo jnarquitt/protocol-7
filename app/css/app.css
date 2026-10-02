@@ -239,6 +239,7 @@ html, body { margin: 0; padding: 0; background: var(--p7-bg); color: var(--p7-te
 .p7-total { font-size: 1.6em; font-weight: 800; color: var(--p7-gold); }
 .p7-verdict { font-weight: 800; padding: 8px 10px; border-radius: 8px; }
 .p7-verdict-success { background: rgba(74,140,58,0.2); color: #8fd07c; }
+.p7-verdict-tie { background: rgba(179,130,31,0.2); color: var(--p7-warn); }
 .p7-verdict-fail { background: rgba(192,57,43,0.2); color: #ff9f96; }
 .p7-blank-pattern { font-size: 0.78em; color: var(--p7-text-dim); border: 1px dashed var(--p7-border); border-radius: 8px; padding: 6px 10px; }
 

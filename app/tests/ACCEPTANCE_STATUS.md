@@ -163,8 +163,10 @@ Spark in physical mode, Prone cancel/waive/Stand, movement cap, new
 session, all three shortcuts, Mastery die, no horizontal overflow, reload,
 zero console errors).
 
-**Rules ruling (designer, 2026-10-02):** Difficulty is a target number —
-a total exactly equal to the Difficulty succeeds (shown as "met exactly",
-no winning margin). Implemented in `RollBuilder.evaluateDifficulty`;
-covered by PLAY-04. (Opposed combat is unchanged: the attacker must
-*exceed* the defender's total.)
+**Rules ruling (designer, 2026-10-02, supersedes an earlier same-day
+"ties succeed" note):** a total exactly equal to the Difficulty is a tie
+and is *not* resolved — the same pool is rerolled until there is a margin.
+`RollBuilder.evaluateDifficulty` returns `tie: true, success: null`;
+`RollBuilder.rerollPool` rerolls every die of the same pool (physical mode
+clears all faces for re-entry). Covered by PLAY-04. Opposed combat is
+unchanged: the attacker must *exceed* the defender's total (rules source).
