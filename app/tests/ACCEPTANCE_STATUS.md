@@ -174,6 +174,6 @@ The same ruling applies to opposed rolls (attack vs. active defense):
 a tie is neither hit nor miss — both sides reroll until there is a margin.
 `State.resolveAttack` returns `tie: true, hit: null`; the resolver offers
 "Reroll my pool" and the GM enters their new total. Covered by PLAY-07.
-This is how the table has been playtesting; the rules source text ("If
-attacker total does not exceed defense, no normal damage") predates it
-and should be updated to match.
+This is how the table has been playtesting. The living rules source
+(now r007, "Ties reroll" under Protocol Dice, plus Combat and Chases) and
+the Interactive Rules Guide were updated to match in the same pass.
